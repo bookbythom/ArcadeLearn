@@ -205,17 +205,17 @@ export default function LearnPage(props: LearnPageProps) {
     const shouldShowTimer = isContentSlide && !props.isAdmin && !canUserProceed;
 
     return (
-      <div className="fixed bottom-0 left-0 right-0 bg-[#1c1c1e] border-t border-[#4e4e57] z-[106] pb-[env(safe-area-inset-bottom)]">
+      <div className="fixed bottom-0 left-0 right-0 bg-[#1c1c1e] border-t border-[#4e4e57] z-[106]">
         <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-16">
           <div className="min-h-[88px] sm:h-[110px] py-3 sm:py-0 flex items-center justify-between gap-2 sm:gap-4">
             <button
               onClick={handleBackButton}
-              className="bg-[#ec4545] hover:bg-[#d63939] text-white font-['Inter:Bold',sans-serif] font-bold text-[13px] sm:text-[clamp(14px,1.5vw,24px)] rounded-[12px] sm:rounded-[15px] transition-colors px-3 sm:px-6 h-[46px] sm:h-[54px] w-[96px] sm:w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
+              className="bg-[#ec4545] hover:bg-[#d63939] text-white font-['Inter:Bold',sans-serif] font-bold text-[13px] sm:text-[clamp(14px,1.5vw,24px)] rounded-[12px] sm:rounded-[15px] transition-colors px-4 sm:px-6 h-[46px] sm:h-[54px] w-[112px] sm:w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
             >
               ← Back
             </button>
 
-            <div className="flex items-center justify-center gap-3 sm:gap-[50px] flex-1 overflow-x-auto px-1 sm:px-0">
+            <div className="flex items-center justify-center gap-6 sm:gap-[50px] flex-1 overflow-x-auto px-1 sm:px-0">
               {Array.from({ length: totalSlidesCount }).map((_, index) => (
                 <div key={index} className="flex-shrink-0">
                   <Dot isActive={index === currentSlideIndex} />
@@ -228,7 +228,7 @@ export default function LearnPage(props: LearnPageProps) {
               disabled={shouldShowTimer}
               className={`
                 ${shouldShowTimer ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#4cb025] hover:bg-[#3d9d1e]'}
-                rounded-[12px] sm:rounded-[15px] transition-colors flex items-center justify-center gap-[6px] px-3 sm:px-6 h-[46px] sm:h-[54px] w-[96px] sm:w-[155px] flex-shrink-0
+                rounded-[12px] sm:rounded-[15px] transition-colors flex items-center justify-center gap-[6px] px-4 sm:px-6 h-[46px] sm:h-[54px] w-[112px] sm:w-[155px] flex-shrink-0
               `}
             >
               <span className="font-['Inter:Bold',sans-serif] font-bold text-white text-[13px] sm:text-[clamp(14px,1.5vw,24px)]">
