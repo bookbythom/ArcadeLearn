@@ -159,7 +159,7 @@ function KeywordPopup(props: KeywordPopupProps) {
       />
       <div 
         ref={popupRef}
-        className="fixed z-[111] bg-[#2c2c2e] rounded-[27px] p-[32px] w-[602px] max-w-[92vw] shadow-xl"
+        className="fixed z-[111] bg-[#2c2c2e] rounded-[27px] p-[32px] w-[452px] max-w-[92vw] shadow-xl"
         style={{
           left: `${adjustedPosition.x}px`,
           top: `${adjustedPosition.y}px`,
