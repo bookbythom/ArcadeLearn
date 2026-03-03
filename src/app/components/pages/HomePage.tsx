@@ -386,7 +386,7 @@ export function HomePage(props: HomePageProps) {
         <div className="w-full px-3 sm:px-5 md:px-8">
           <SectionHeader level="beginner" />
           <div className="max-w-6xl mx-auto">
-            <div className="relative w-full aspect-[6/7] max-h-[1000px]">
+            <div className="relative w-full aspect-[6/7] max-h-[1000px] overflow-hidden">
               {renderIslandsForLevel('beginner')}
               <BeginnerIllustrations />
             </div>
@@ -399,7 +399,7 @@ export function HomePage(props: HomePageProps) {
         <div className="w-full px-3 sm:px-5 md:px-8">
           <SectionHeader level="intermediate" />
           <div className="max-w-6xl mx-auto">
-            <div className="relative w-full aspect-[6/7] max-h-[1000px]">
+            <div className="relative w-full aspect-[6/7] max-h-[1000px] overflow-hidden">
               {renderIslandsForLevel('intermediate')}
               <IntermediateIllustrations />
             </div>
@@ -412,7 +412,7 @@ export function HomePage(props: HomePageProps) {
         <div className="w-full px-3 sm:px-5 md:px-8">
           <SectionHeader level="professional" />
           <div className="max-w-6xl mx-auto">
-            <div className="relative w-full aspect-[6/7] max-h-[1000px]">
+            <div className="relative w-full aspect-[6/7] max-h-[1000px] overflow-hidden">
               {renderIslandsForLevel('professional')}
               <ProfessionalIllustrations />
             </div>

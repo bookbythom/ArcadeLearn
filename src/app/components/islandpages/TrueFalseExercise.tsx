@@ -192,26 +192,26 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
       </div>
 
       {/* Spodna navigacia */}
-      <div className="absolute bottom-0 left-0 right-0 bg-[#1c1c1e] border-t border-[#4e4e57]">
+      <div className="absolute bottom-0 left-0 right-0 bg-[#1c1c1e] border-t border-[#4e4e57] pb-[env(safe-area-inset-bottom)]">
         <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-16">
           <div className="min-h-[88px] sm:h-[110px] py-3 sm:py-0 flex items-center justify-between gap-2 sm:gap-4">
             {/* Tlacidlo Back */}
             {!props.hideBackButton ? (
               <button
                 onClick={props.onBack}
-                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-['Inter:Bold',sans-serif] font-bold text-[13px] sm:text-[20.55px] rounded-[12px] sm:rounded-[15px] transition-colors px-4 sm:px-6 h-[46px] sm:h-[54px] w-[112px] sm:w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
+                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-['Inter:Bold',sans-serif] font-bold text-[13px] sm:text-[20.55px] rounded-[12px] sm:rounded-[15px] transition-colors px-3 sm:px-6 h-[46px] sm:h-[54px] w-[96px] sm:w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
               >
                 ← Back
               </button>
             ) : (
-              <div className="w-[112px] sm:w-[155px] flex-shrink-0" />
+              <div className="w-[96px] sm:w-[155px] flex-shrink-0" />
             )}
 
             {/* Progress bodky */}
             <div className="flex items-center justify-center gap-6 sm:gap-[50px] flex-1 overflow-x-auto px-1">
               {Array.from({ length: props.totalSlides }).map((_, index) => (
                 <div key={index} className="flex-shrink-0">
-                  <div className="w-[24px] h-[24px]">
+                  <div className="w-4 h-4 sm:w-[24px] sm:h-[24px]">
                     <svg className="block size-full" fill="none" viewBox="0 0 24 24">
                       <path
                         d={svgPaths.p1c665200}
@@ -228,7 +228,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
               <button
                 onClick={handleSubmitButton}
                 disabled={selectedOption === null}
-                className={`h-[46px] sm:h-[54px] w-[112px] sm:w-[155px] rounded-[12px] sm:rounded-[15px] px-4 sm:px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0 ${
+                className={`h-[46px] sm:h-[54px] w-[96px] sm:w-[155px] rounded-[12px] sm:rounded-[15px] px-3 sm:px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0 ${
                   selectedOption === null ? "bg-gray-400 cursor-not-allowed opacity-50" : "bg-[#4cb025] hover:bg-[#5cc030]"
                 }`}
               >
@@ -244,7 +244,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
             ) : (
               <button
                 onClick={props.onNext}
-                className="bg-[#4cb025] hover:bg-[#5cc030] h-[46px] sm:h-[54px] w-[112px] sm:w-[155px] rounded-[12px] sm:rounded-[15px] px-4 sm:px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
+                className="bg-[#4cb025] hover:bg-[#5cc030] h-[46px] sm:h-[54px] w-[96px] sm:w-[155px] rounded-[12px] sm:rounded-[15px] px-3 sm:px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
               >
                 <p className="font-['Inter:Bold',sans-serif] font-bold text-[13px] sm:text-[20.55px] text-center text-white">
                   {props.isLastExercise ? 'Finish' : 'Next →'}
