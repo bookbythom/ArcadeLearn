@@ -278,6 +278,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
   const [allImagesLoaded, setAllImagesLoaded] = useState(false);
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const [keywordImages, setKeywordImages] = useState<Map<number, string | null>>(new Map());
+  const [keywordImagesReady, setKeywordImagesReady] = useState(false);
   const [descriptionFontSize, setDescriptionFontSize] = useState(20);
   
   const textContainerRef = useRef<HTMLDivElement>(null);
@@ -290,6 +291,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
       try {
         setAllImagesLoaded(false);
         setInitialLoadComplete(false);
+        setKeywordImagesReady(false);
         setLoadedImageStates([false, false, false, false]);
         const { adminAPI } = await import("@/app/utils/api");
         
@@ -315,7 +317,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
 
   // Effect pre kontrolu ci su vsetky obrazky nacitane
   useEffect(() => {
-    if (!initialLoadComplete) {
+    if (!initialLoadComplete || !keywordImagesReady) {
       return;
     }
 
@@ -340,7 +342,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
         setAllImagesLoaded(true);
       }, 400);
     }
-  }, [loadedImageStates, customImages, initialLoadComplete]);
+  }, [loadedImageStates, customImages, initialLoadComplete, keywordImagesReady]);
 
   // Effect pre preloadovanie obrazkov
   useEffect(() => {
@@ -442,6 +444,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
   useEffect(() => {
     const loadKeywordImages = async () => {
       try {
+        setKeywordImagesReady(false);
         const { adminAPI } = await import("@/app/utils/api");
         const imageMap = new Map<number, string | null>();
         
@@ -459,10 +462,22 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
         results.forEach(({ index, imageUrl }) => {
           imageMap.set(index, imageUrl);
         });
+
+        const keywordUrlsToPreload = results
+          .map((item) => item.imageUrl)
+          .filter((url): url is string => url !== null);
+
+        if (keywordUrlsToPreload.length > 0) {
+          await Promise.all(
+            keywordUrlsToPreload.map((url) => preloadImage(url).catch(() => {}))
+          );
+        }
         
         setKeywordImages(imageMap);
+        setKeywordImagesReady(true);
       } catch (error) {
         // Chyba pri nacitavani keyword obrazkov
+        setKeywordImagesReady(true);
       }
     };
     
@@ -472,6 +487,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
   // Funkcia pre reload keyword obrazkov
   const reloadKeywordImages = async () => {
     try {
+      setKeywordImagesReady(false);
       const { adminAPI } = await import("@/app/utils/api");
       const imageMap = new Map<number, string | null>();
       
@@ -488,8 +504,19 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
       results.forEach(({ index, imageUrl }) => {
         imageMap.set(index, imageUrl);
       });
+
+      const keywordUrlsToPreload = results
+        .map((item) => item.imageUrl)
+        .filter((url): url is string => url !== null);
+
+      if (keywordUrlsToPreload.length > 0) {
+        await Promise.all(
+          keywordUrlsToPreload.map((url) => preloadImage(url).catch(() => {}))
+        );
+      }
       
       setKeywordImages(imageMap);
+      setKeywordImagesReady(true);
     } catch (error) {}
   };
 
