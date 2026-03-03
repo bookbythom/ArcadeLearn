@@ -175,7 +175,7 @@ export function renderContentSlide({
 }: ContentSlideProps) {
   return (
     <div className="fixed inset-0 bg-[#1c1c1e] z-[105] flex flex-col overflow-y-auto overflow-x-hidden overscroll-y-contain touch-pan-y">
-      <div className="flex-1 w-full flex items-center justify-center overflow-y-auto overscroll-y-contain touch-pan-y pb-[96px] sm:pb-[130px] px-2 sm:px-0">
+      <div className="flex-1 w-full flex items-start sm:items-center justify-start sm:justify-center overflow-y-auto overscroll-y-contain touch-pan-y pb-[96px] sm:pb-[130px] pt-3 sm:pt-0 px-2 sm:px-0">
         <LearnPageMechanics 
           level={level} 
           theme={theme} 
