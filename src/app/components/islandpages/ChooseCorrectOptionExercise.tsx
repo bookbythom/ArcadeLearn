@@ -161,7 +161,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
             <div className="flex flex-wrap items-center justify-center gap-[8px]">
               {/* Text pred medzerou */}
               {questionParts[0] && (
-                <span className={`font-['Inter:Regular',sans-serif] font-normal ${getDynamicQuestionFontSize()} ${getDynamicQuestionLineHeight()} text-white text-center`}>
+                <span className={`font-normal ${getDynamicQuestionFontSize()} ${getDynamicQuestionLineHeight()} text-white text-center`}>
                   {questionParts[0]}
                 </span>
               )}
@@ -181,13 +181,13 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
                 >
                   {selectedOption ? (
                     <span 
-                      className={`font-['Inter:Regular',sans-serif] font-normal ${getOptionFontSize(selectedOption)} leading-[1.3]`}
+                      className={`font-normal ${getOptionFontSize(selectedOption)} leading-[1.3]`}
                       style={{ color: isSubmitted ? '#ffffff' : '#323235' }}
                     >
                       {selectedOption}
                     </span>
                   ) : (
-                    <span className="font-['Inter:Regular',sans-serif] font-normal text-[27.4px] leading-[1.5] text-[#666]">
+                    <span className="font-normal text-[27.4px] leading-[1.5] text-[#666]">
                       klikni sem
                     </span>
                   )}
@@ -207,7 +207,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
                         onClick={() => selectOption(option)}
                         className="bg-white rounded-[11px] h-[50px] hover:bg-[#4cb025] hover:text-white transition-all px-[16px]"
                       >
-                        <span className={`font-['Inter:Bold',sans-serif] font-bold ${getOptionFontSize(option)} leading-[1.3]`}>
+                        <span className={`font-bold ${getOptionFontSize(option)} leading-[1.3]`}>
                           {option}
                         </span>
                       </button>
@@ -218,7 +218,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
 
               {/* Text po medzere */}
               {questionParts[1] && (
-                <span className={`font-['Inter:Regular',sans-serif] font-normal ${getDynamicQuestionFontSize()} ${getDynamicQuestionLineHeight()} text-white text-center`}>
+                <span className={`font-normal ${getDynamicQuestionFontSize()} ${getDynamicQuestionLineHeight()} text-white text-center`}>
                   {questionParts[1]}
                 </span>
               )}
@@ -235,7 +235,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
             {!props.hideBackButton ? (
               <button
                 onClick={props.onBack}
-                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-['Inter:Bold',sans-serif] font-bold text-[20.55px] rounded-[15px] transition-colors px-6 h-[54px] w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
+                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-bold text-[20.55px] rounded-[15px] transition-colors px-6 h-[54px] w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
               >
                 ← Back
               </button>
@@ -268,7 +268,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
                   !selectedOption ? "bg-gray-400 cursor-not-allowed opacity-50" : "bg-[#4cb025] hover:bg-[#5cc030]"
                 }`}
               >
-                <p className="font-['Inter:Bold',sans-serif] font-bold text-[20.55px] text-center text-white">
+                <p className="font-bold text-[20.55px] text-center text-white">
                   Submit
                 </p>
                 <div className="w-[29px] h-[23px]">
@@ -282,7 +282,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
                 onClick={props.onNext}
                 className="bg-[#4cb025] hover:bg-[#5cc030] h-[54px] w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
               >
-                <p className="font-['Inter:Bold',sans-serif] font-bold text-[20.55px] text-center text-white">
+                <p className="font-bold text-[20.55px] text-center text-white">
                   {props.isLastExercise ? 'Finish' : 'Next →'}
                 </p>
               </button>

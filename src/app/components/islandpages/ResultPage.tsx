@@ -61,7 +61,7 @@ export default function ResultPage(props: ResultPageProps) {
               
               {/* Text so skore v strede */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <p className="font-['Inter:Bold',sans-serif] font-bold text-white text-[clamp(50px,8vw,80px)] leading-[1.5]">
+                <p className="font-bold text-white text-[clamp(50px,8vw,80px)] leading-[1.5]">
                   {props.correctAnswers}/{props.totalExercises}
                 </p>
               </div>
@@ -75,7 +75,7 @@ export default function ResultPage(props: ResultPageProps) {
               className="bg-[#ffe76f] rounded-[24px] px-8 py-5 transition-colors cursor-default flex-shrink-0"
               disabled
             >
-              <p className="font-['Inter:Bold',sans-serif] font-bold text-[#c99e00] text-[clamp(18px,3vw,32px)] leading-[1.5]">
+              <p className="font-bold text-[#c99e00] text-[clamp(18px,3vw,32px)] leading-[1.5]">
                 +{xpEarned}xp
               </p>
             </button>
@@ -86,7 +86,7 @@ export default function ResultPage(props: ResultPageProps) {
                 onClick={props.onCheckMistakes}
                 className="bg-[#ff7d7d] rounded-[24px] px-8 py-5 hover:bg-[#ff6b6b] transition-colors flex-shrink-0"
               >
-                <p className="font-['Inter:Bold',sans-serif] font-bold text-[#bb2323] text-[clamp(18px,3vw,32px)] leading-[1.5] whitespace-nowrap">
+                <p className="font-bold text-[#bb2323] text-[clamp(18px,3vw,32px)] leading-[1.5] whitespace-nowrap">
                   Check Mistakes
                 </p>
               </button>
@@ -97,7 +97,7 @@ export default function ResultPage(props: ResultPageProps) {
               onClick={props.onFinish}
               className="bg-white rounded-[24px] px-8 py-5 hover:bg-[#f0f0f0] transition-colors flex-shrink-0"
             >
-              <p className="font-['Inter:Bold',sans-serif] font-bold text-[#222224] text-[clamp(18px,3vw,32px)] leading-[1.5]">
+              <p className="font-bold text-[#222224] text-[clamp(18px,3vw,32px)] leading-[1.5]">
                 FINISH
               </p>
             </button>

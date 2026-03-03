@@ -13,7 +13,6 @@ export function LoadingSpinner() {
           width={spinnerSize} 
           height={spinnerSize} 
           viewBox={'0 0 ' + spinnerSize + ' ' + spinnerSize}
-          style={{ animation: 'spin 1s linear infinite' }}
         >
           <circle
             cx={spinnerSize / 2}

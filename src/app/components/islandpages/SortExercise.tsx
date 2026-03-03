@@ -101,7 +101,7 @@ function DraggableItemComponent(props: {
       }}
     >
       <p
-        className={`font-['Inter:Bold',sans-serif] font-bold text-center leading-[1.2] ${getFontSize()} break-words`}
+        className={`font-bold text-center leading-[1.2] ${getFontSize()} break-words`}
         style={{ 
           color: getTextColor(),
         }}
@@ -214,7 +214,7 @@ function SortExerciseContent(props: SortExerciseProps) {
         {/* Pozadie otazky */}
         <div className="relative w-full max-w-[1278px] mb-[66px]">
           <div className="w-full bg-[#212123] rounded-[38px] px-[32px] py-[35px]">
-            <p className={`font-['Inter:Regular',sans-serif] font-normal ${getDynamicQuestionFontSize()} ${getDynamicQuestionLineHeight()} text-center text-white`}>
+            <p className={`font-normal ${getDynamicQuestionFontSize()} ${getDynamicQuestionLineHeight()} text-center text-white`}>
               {props.question}
             </p>
           </div>
@@ -230,7 +230,7 @@ function SortExerciseContent(props: SortExerciseProps) {
                   key={`category-${index}`}
                   className="h-[120px] w-full bg-[#d9d9d9] rounded-[34px] flex items-center justify-center px-[24px]"
                 >
-                  <p className="font-['Inter:Bold',sans-serif] font-bold text-[34.25px] leading-[1.3] text-black text-center">
+                  <p className="font-bold text-[34.25px] leading-[1.3] text-black text-center">
                     {category}
                   </p>
                 </div>
@@ -244,7 +244,7 @@ function SortExerciseContent(props: SortExerciseProps) {
                     key={`category-${index}`}
                     className="h-[120px] w-full bg-[#d9d9d9] rounded-[34px] flex items-center justify-center px-[24px]"
                   >
-                    <p className="font-['Inter:Bold',sans-serif] font-bold text-[34.25px] leading-[1.3] text-black text-center">
+                    <p className="font-bold text-[34.25px] leading-[1.3] text-black text-center">
                       {leftText}
                     </p>
                   </div>
@@ -278,7 +278,7 @@ function SortExerciseContent(props: SortExerciseProps) {
             {!props.hideBackButton ? (
               <button
                 onClick={props.onBack}
-                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-['Inter:Bold',sans-serif] font-bold text-[20.55px] rounded-[15px] transition-colors px-6 h-[54px] w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
+                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-bold text-[20.55px] rounded-[15px] transition-colors px-6 h-[54px] w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
               >
                 ← Back
               </button>
@@ -308,7 +308,7 @@ function SortExerciseContent(props: SortExerciseProps) {
                 onClick={handleSubmitButton}
                 className="bg-[#4cb025] hover:bg-[#5cc030] h-[54px] w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
               >
-                <p className="font-['Inter:Bold',sans-serif] font-bold text-[20.55px] text-center text-white">
+                <p className="font-bold text-[20.55px] text-center text-white">
                   Submit
                 </p>
                 <div className="w-[29px] h-[23px]">
@@ -322,7 +322,7 @@ function SortExerciseContent(props: SortExerciseProps) {
                 onClick={props.onNext}
                 className="bg-[#4cb025] hover:bg-[#5cc030] h-[54px] w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
               >
-                <p className="font-['Inter:Bold',sans-serif] font-bold text-[20.55px] text-center text-white">
+                <p className="font-bold text-[20.55px] text-center text-white">
                   {props.isLastExercise ? 'Finish' : 'Next →'}
                 </p>
               </button>

@@ -143,7 +143,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
         {/* Otazka s pozadim obdlznika - Fixna vyska na desktope */}
         <div className="w-full max-w-[1214px] mb-[100px] flex-shrink-0">
           <div className="bg-[#212123] rounded-[38px] px-[80px] py-0 h-[492px] flex items-center justify-center overflow-auto">
-            <p className={`font-['Inter:Regular',sans-serif] font-normal ${getDynamicFontSize()} ${getDynamicLineHeight()} text-center text-white whitespace-pre-wrap`}>
+            <p className={`font-normal ${getDynamicFontSize()} ${getDynamicLineHeight()} text-center text-white whitespace-pre-wrap`}>
               {props.question}
             </p>
           </div>
@@ -199,7 +199,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
             {!props.hideBackButton ? (
               <button
                 onClick={props.onBack}
-                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-['Inter:Bold',sans-serif] font-bold text-[20.55px] rounded-[15px] transition-colors px-6 h-[54px] w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
+                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-bold text-[20.55px] rounded-[15px] transition-colors px-6 h-[54px] w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
               >
                 ← Back
               </button>
@@ -232,7 +232,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
                   selectedOption === null ? "bg-gray-400 cursor-not-allowed opacity-50" : "bg-[#4cb025] hover:bg-[#5cc030]"
                 }`}
               >
-                <p className="font-['Inter:Bold',sans-serif] font-bold text-[20.55px] text-center text-white">
+                <p className="font-bold text-[20.55px] text-center text-white">
                   Submit
                 </p>
                 <div className="w-[29px] h-[23px]">
@@ -246,7 +246,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
                 onClick={props.onNext}
                 className="bg-[#4cb025] hover:bg-[#5cc030] h-[54px] w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
               >
-                <p className="font-['Inter:Bold',sans-serif] font-bold text-[20.55px] text-center text-white">
+                <p className="font-bold text-[20.55px] text-center text-white">
                   {props.isLastExercise ? 'Finish' : 'Next →'}
                 </p>
               </button>

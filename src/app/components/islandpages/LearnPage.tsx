@@ -210,7 +210,7 @@ export default function LearnPage(props: LearnPageProps) {
           <div className="h-[110px] flex items-center justify-between gap-4">
             <button
               onClick={handleBackButton}
-              className="bg-[#ec4545] hover:bg-[#d63939] text-white font-['Inter:Bold',sans-serif] font-bold text-[clamp(14px,1.5vw,24px)] rounded-[15px] transition-colors px-6 h-[54px] w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
+              className="bg-[#ec4545] hover:bg-[#d63939] text-white font-bold text-[clamp(14px,1.5vw,24px)] rounded-[15px] transition-colors px-6 h-[54px] w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
             >
               ← Back
             </button>
@@ -231,7 +231,7 @@ export default function LearnPage(props: LearnPageProps) {
                 rounded-[15px] transition-colors flex items-center justify-center gap-[6px] px-6 h-[54px] w-[155px] flex-shrink-0
               `}
             >
-              <span className="font-['Inter:Bold',sans-serif] font-bold text-white text-[clamp(14px,1.5vw,24px)]">
+              <span className="font-bold text-white text-[clamp(14px,1.5vw,24px)]">
                 {shouldShowTimer ? `${timerSeconds}s` : 'Next →'}
               </span>
             </button>

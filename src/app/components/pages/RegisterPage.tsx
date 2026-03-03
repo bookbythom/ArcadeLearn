@@ -63,7 +63,6 @@ export default function RegisterPage(props: RegisterPageProps) {
               width="80"
               height="80"
               viewBox="0 0 80 80"
-              style={{ animation: 'spin 1s linear infinite' }}
             >
               <circle
                 cx="40"
