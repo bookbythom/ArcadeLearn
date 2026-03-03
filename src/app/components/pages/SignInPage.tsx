@@ -73,7 +73,7 @@ export default function SignInPage(props: SignInPageProps) {
   const isCurrentlyLoading = props.isLoading === true;
 
   return (
-    <div className="min-h-screen bg-[#1c1c1e] flex items-start sm:items-center justify-center p-4 sm:p-6 py-8 sm:py-4">
+    <div className="min-h-screen bg-[#1c1c1e] flex items-center justify-center p-4">
       {/* Loading overlay - zobrazuje sa ked je isLoading true */}
       {isCurrentlyLoading && (
         <div 
@@ -107,7 +107,7 @@ export default function SignInPage(props: SignInPageProps) {
       )}
 
       {/* Hlavny kontajner formulara */}
-      <div className="bg-[#222224] min-h-[560px] sm:h-[600px] overflow-clip relative rounded-[28px] sm:rounded-[40px] w-[94vw] max-w-[500px]" data-name="component-profile-popup/sign-in">
+      <div className="bg-[#222224] h-[600px] overflow-clip relative rounded-[40px] w-[90vw] max-w-[500px]" data-name="component-profile-popup/sign-in">
         
         {/* Email input pole */}
         <div className="absolute bg-[#d9d9d9] content-stretch flex h-[60px] items-center left-[50%] translate-x-[-50%] px-[20px] py-[19px] rounded-[21px] top-[185px] w-[85%]">
@@ -159,7 +159,7 @@ export default function SignInPage(props: SignInPageProps) {
         </div>
         
         {/* Nadpis Sign in */}
-        <div className="absolute flex flex-col font-['Roboto:Medium',sans-serif] font-medium justify-center leading-[0] left-[50%] text-[42px] sm:text-[56px] text-center text-white top-[85px] tracking-[0.15px] translate-x-[-50%]" style={{ fontVariationSettings: "'wdth' 100" }}>
+        <div className="absolute flex flex-col font-['Roboto:Medium',sans-serif] font-medium justify-center leading-[0] left-[50%] text-[56px] text-center text-white top-[85px] tracking-[0.15px] translate-x-[-50%]" style={{ fontVariationSettings: "'wdth' 100" }}>
           <p className="css-4hzbpn leading-[24px]">Sign in</p>
         </div>
         

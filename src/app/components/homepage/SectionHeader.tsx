@@ -27,16 +27,16 @@ export function SectionHeader(props: SectionHeaderProps) {
   const rightLineGradient = 'linear-gradient(to right, ' + levelColor + ', ' + levelColor + ', transparent)';
   
   return (
-    <div className="flex items-center justify-center mb-10 md:mb-16">
+    <div className="flex items-center justify-center mb-16">
       {/* Lava ciara */}
       <div 
-        className="flex-1 max-w-[80px] sm:max-w-xs md:max-w-md h-[2px]" 
+        className="flex-1 max-w-md h-[2px]" 
         style={{ background: leftLineGradient }} 
       />
       
       {/* Nazov urovne */}
       <h2 
-        className="px-3 sm:px-6 md:px-8 text-xl sm:text-2xl md:text-3xl font-bold whitespace-nowrap" 
+        className="px-8 text-3xl font-bold whitespace-nowrap" 
         style={{ color: levelColor }}
       >
         {levelDisplayName}
@@ -44,7 +44,7 @@ export function SectionHeader(props: SectionHeaderProps) {
       
       {/* Prava ciara */}
       <div 
-        className="flex-1 max-w-[80px] sm:max-w-xs md:max-w-md h-[2px]" 
+        className="flex-1 max-w-md h-[2px]" 
         style={{ background: rightLineGradient }} 
       />
     </div>

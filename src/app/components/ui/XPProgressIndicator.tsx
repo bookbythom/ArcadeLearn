@@ -80,7 +80,7 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
 
     return (
       <div 
-        className="fixed left-2 right-2 sm:left-4 sm:right-4 md:left-8 md:right-auto z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-4 sm:p-5 w-auto md:w-[320px] transition-opacity duration-300"
+        className="fixed left-8 z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-5 w-[320px] transition-opacity duration-300"
         style={{
           top: 'calc(4rem + env(safe-area-inset-top) + 1rem)',
         }}
@@ -155,7 +155,7 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
 
   return (
     <div 
-      className="fixed left-2 right-2 sm:left-4 sm:right-4 md:left-8 md:right-auto z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-4 sm:p-5 w-auto md:w-[320px] transition-opacity duration-300"
+      className="fixed left-8 z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-5 w-[320px] transition-opacity duration-300"
       style={{
         top: 'calc(4rem + env(safe-area-inset-top) + 1rem)',
       }}
