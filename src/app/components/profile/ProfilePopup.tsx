@@ -288,13 +288,13 @@ export default function ProfilePopup(props: ProfilePopupProps) {
 
   return (
     <div 
-      className="bg-[#222224] max-h-[92vh] overflow-y-auto overflow-x-hidden relative rounded-[24px] sm:rounded-[40px] w-[95vw] max-w-[800px] mx-auto min-h-[650px] sm:min-h-[710px]"
+      className="bg-[#222224] max-h-[90vh] overflow-clip relative rounded-[40px] w-[95vw] max-w-[800px] mx-auto min-h-[710px]"
       data-name="component-profile-popup/signed-in"
     >
       {/* Profilovy obrazok */}
       <button 
         onClick={handleProfilePictureClick}
-        className="absolute left-[50%] translate-x-[-50%] top-[32px] sm:top-[56px] w-[120px] h-[120px] sm:w-[160px] sm:h-[160px] cursor-pointer hover:opacity-80 transition-opacity group" 
+        className="absolute left-[50%] translate-x-[-50%] top-[56px] w-[160px] h-[160px] cursor-pointer hover:opacity-80 transition-opacity group" 
       >
         {profileData.profilePicture ? (
           <img 
@@ -314,12 +314,12 @@ export default function ProfilePopup(props: ProfilePopupProps) {
       </button>
       
       {/* Sekcia s menom */}
-      <div className="absolute left-[50%] translate-x-[-50%] top-[170px] sm:top-[236px] w-[88%] sm:w-[85%] max-w-[500px]">
+      <div className="absolute left-[50%] translate-x-[-50%] top-[236px] w-[85%] max-w-[500px]">
         <div className="relative flex items-center justify-center">
           {/* Na mobile: klikatelne meno, na desktope: meno s tuzkou */}
           <button
             onClick={handleNameEditClick}
-            className="font-['Roboto:Medium',sans-serif] font-medium text-[30px] sm:text-[44px] text-white tracking-[0.15px] text-center hover:text-white transition-colors"
+            className="pointer-events-none font-['Roboto:Medium',sans-serif] font-medium text-[44px] text-white tracking-[0.15px] text-center hover:text-white transition-colors"
             style={{ fontVariationSettings: "'wdth' 100" }}
           >
             <p ref={nameRef}>{profileData.name}</p>
@@ -328,7 +328,7 @@ export default function ProfilePopup(props: ProfilePopupProps) {
           {/* Ikona tuzky pre edit - viditelna len na desktope */}
           <button 
             onClick={handleNameEditClick}
-            className="absolute hidden sm:block w-[30px] h-[20px] rotate-[-19deg] hover:scale-110 transition-transform"
+            className="absolute w-[30px] h-[20px] rotate-[-19deg] hover:scale-110 transition-transform"
             style={{ left: `calc(50% + ${nameWidth / 2}px + 20px)` }}
           >
             <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 46.2917 29.2584">
@@ -343,12 +343,11 @@ export default function ProfilePopup(props: ProfilePopupProps) {
       </div>
       
       {/* Email a Heslo - Stacked vertikalne */}
-      <div className="absolute left-[50%] translate-x-[-50%] top-[230px] sm:top-[305px] w-[88%] sm:w-[85%] max-w-[500px] flex flex-col gap-3.5">
+      <div className="absolute left-[50%] translate-x-[-50%] top-[305px] w-[85%] max-w-[500px] flex flex-col gap-3.5">
         {/* Email */}
         <div className="relative">
           <div
-            onClick={handleEmailEditClick}
-            className="bg-[#d9d9d9] hover:bg-[#d9d9d9] cursor-pointer sm:cursor-default flex h-[56px] items-center px-4 py-3 rounded-[18px] w-full transition-colors"
+            className="bg-[#d9d9d9] hover:bg-[#d9d9d9] cursor-default flex h-[56px] items-center px-4 py-3 rounded-[18px] w-full transition-colors"
           >
             <div className="font-['Roboto:Medium',sans-serif] font-medium text-[18px] text-black tracking-[0.15px] text-left" style={{ fontVariationSettings: "'wdth' 100" }}>
               <p>{profileData.email}</p>
@@ -358,7 +357,7 @@ export default function ProfilePopup(props: ProfilePopupProps) {
           {/* Ikona tuzky pre edit - viditelna a klikatelna len na desktope */}
           <button 
             onClick={handleEmailEditClick}
-            className="hidden sm:flex absolute w-[30px] h-[20px] rotate-[-19deg] hover:scale-110 transition-transform right-[-40px] top-1/2 -translate-y-1/2 cursor-pointer items-center justify-center"
+            className="flex absolute w-[30px] h-[20px] rotate-[-19deg] hover:scale-110 transition-transform right-[-40px] top-1/2 -translate-y-1/2 cursor-pointer items-center justify-center"
           >
             <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 46.2917 29.2584">
               <g>
@@ -373,8 +372,7 @@ export default function ProfilePopup(props: ProfilePopupProps) {
         {/* Heslo */}
         <div className="relative">
           <div
-            onClick={handlePasswordEditClick}
-            className="bg-[#d9d9d9] hover:bg-[#d9d9d9] cursor-pointer sm:cursor-default flex h-[56px] items-center px-4 py-3 rounded-[18px] w-full transition-colors"
+            className="bg-[#d9d9d9] hover:bg-[#d9d9d9] cursor-default flex h-[56px] items-center px-4 py-3 rounded-[18px] w-full transition-colors"
           >
             <div className="font-['Roboto:Medium',sans-serif] font-medium text-[18px] text-black tracking-[0.15px]" style={{ fontVariationSettings: "'wdth' 100" }}>
               <p>{displayPassword}</p>
@@ -384,7 +382,7 @@ export default function ProfilePopup(props: ProfilePopupProps) {
           {/* Ikona tuzky pre edit - viditelna a klikatelna len na desktope */}
           <button 
             onClick={handlePasswordEditClick}
-            className="hidden sm:flex absolute w-[30px] h-[20px] rotate-[-19deg] hover:scale-110 transition-transform right-[-40px] top-1/2 -translate-y-1/2 cursor-pointer items-center justify-center"
+            className="flex absolute w-[30px] h-[20px] rotate-[-19deg] hover:scale-110 transition-transform right-[-40px] top-1/2 -translate-y-1/2 cursor-pointer items-center justify-center"
           >
             <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 46.2915 29.2583">
               <g>
@@ -398,7 +396,7 @@ export default function ProfilePopup(props: ProfilePopupProps) {
       </div>
       
       {/* Tip box a Logout tlacidlo - stacked vertikalne s tipom hore */}
-      <div className="absolute left-[50%] translate-x-[-50%] top-[410px] sm:top-[475px] w-[88%] sm:w-[85%] max-w-[500px] flex flex-col gap-3 pb-6">
+      <div className="absolute left-[50%] translate-x-[-50%] top-[475px] w-[85%] max-w-[500px] flex flex-col gap-3">
         {/* Okno s tipom */}
         <div className="bg-[#323235] flex min-h-[110px] items-center justify-center p-5 rounded-[20px]">
           <p 

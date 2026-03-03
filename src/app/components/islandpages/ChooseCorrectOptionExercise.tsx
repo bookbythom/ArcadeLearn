@@ -117,11 +117,11 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
   // Funkcia pre dynamicku velkost pisma otazky
   const getDynamicQuestionFontSize = () => {
     const totalLength = props.question.length;
-    if (totalLength < 80) return 'text-[28px] sm:text-[41.1px]';
-    if (totalLength < 120) return 'text-[24px] sm:text-[36px]';
-    if (totalLength < 180) return 'text-[20px] sm:text-[30px]';
-    if (totalLength < 250) return 'text-[18px] sm:text-[26px]';
-    return 'text-[16px] sm:text-[22px]';
+    if (totalLength < 80) return 'text-[41.1px]';
+    if (totalLength < 120) return 'text-[36px]';
+    if (totalLength < 180) return 'text-[30px]';
+    if (totalLength < 250) return 'text-[26px]';
+    return 'text-[22px]';
   };
 
   const getDynamicQuestionLineHeight = () => {
@@ -131,11 +131,11 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
   // Funkcia pre velkost pisma moznosti
   const getOptionFontSize = (text: string) => {
     const length = text.length;
-    if (length < 20) return 'text-[18px] sm:text-[22px]';
-    if (length < 28) return 'text-[17px] sm:text-[20px]';
-    if (length < 38) return 'text-[16px] sm:text-[18px]';
-    if (length < 50) return 'text-[15px] sm:text-[17px]';
-    return 'text-[14px] sm:text-[16px]';
+    if (length < 20) return 'text-[22px]';
+    if (length < 28) return 'text-[20px]';
+    if (length < 38) return 'text-[18px]';
+    if (length < 50) return 'text-[17px]';
+    return 'text-[16px]';
   };
 
   // Zatvorenie dropdown menu pri kliknuti mimo
@@ -154,10 +154,10 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
   return (
     <div className="fixed inset-0 bg-[#1c1c1e] z-[105] flex flex-col">
       {/* Hlavny obsah - vertikalne centrovaný */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-8 lg:px-12 pb-[96px] sm:pb-[110px] pt-4 overflow-y-auto">
+      <div className="flex-1 flex flex-col items-center justify-center px-12 pb-[110px] pt-4 overflow-y-auto">
         {/* Kontajner s otazkou - Fixna vyska na desktope */}
-        <div className="w-full max-w-[1180px] mb-8 sm:mb-[50px] flex-shrink-0">
-          <div className="bg-[#212123] rounded-[20px] sm:rounded-[38px] px-4 sm:px-8 lg:px-[80px] py-6 sm:py-0 min-h-[240px] sm:h-[492px] flex items-center justify-center overflow-auto">
+        <div className="w-full max-w-[1180px] mb-[50px] flex-shrink-0">
+          <div className="bg-[#212123] rounded-[38px] px-[80px] py-0 h-[492px] flex items-center justify-center overflow-auto">
             <div className="flex flex-wrap items-center justify-center gap-[8px]">
               {/* Text pred medzerou */}
               {questionParts[0] && (
@@ -167,12 +167,12 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
               )}
 
               {/* Dropdown pre medzeru */}
-              <div className="relative inline-block w-full max-w-[320px]" data-dropdown>
+              <div className="relative inline-block" data-dropdown>
                 <button
                   onClick={toggleExpandDropdown}
                   disabled={isSubmitted}
                   className={`
-                    rounded-[12px] sm:rounded-[15px] h-[56px] sm:h-[60px] w-full
+                    rounded-[15px] h-[60px] w-[320px]
                     transition-all duration-200
                     ${!isSubmitted ? "cursor-pointer hover:opacity-90" : "cursor-default"}
                     flex items-center justify-center px-2
@@ -187,7 +187,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
                       {selectedOption}
                     </span>
                   ) : (
-                    <span className="font-['Inter:Regular',sans-serif] font-normal text-[22px] sm:text-[27.4px] leading-[1.5] text-[#666]">
+                    <span className="font-['Inter:Regular',sans-serif] font-normal text-[27.4px] leading-[1.5] text-[#666]">
                       klikni sem
                     </span>
                   )}
@@ -196,7 +196,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
                 {/* Dropdown moznosti */}
                 {isExpanded && !isSubmitted && (
                   <div
-                    className="absolute top-0 left-0 z-[120] bg-[#d9d9d9] rounded-[12px] sm:rounded-[15px] w-full p-4 sm:p-[20px] flex flex-col gap-2 sm:gap-[12px] shadow-2xl"
+                    className="absolute top-0 left-0 z-[120] bg-[#d9d9d9] rounded-[15px] w-[320px] p-[20px] flex flex-col gap-[12px] shadow-2xl"
                     style={{ 
                       boxShadow: "0 0 0 4px #4cb025",
                     }}
@@ -205,7 +205,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
                       <button
                         key={index}
                         onClick={() => selectOption(option)}
-                        className="bg-white rounded-[10px] sm:rounded-[11px] h-[46px] sm:h-[50px] hover:bg-[#4cb025] hover:text-white transition-all px-[16px]"
+                        className="bg-white rounded-[11px] h-[50px] hover:bg-[#4cb025] hover:text-white transition-all px-[16px]"
                       >
                         <span className={`font-['Inter:Bold',sans-serif] font-bold ${getOptionFontSize(option)} leading-[1.3]`}>
                           {option}
@@ -229,22 +229,22 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
 
       {/* Spodna navigacia */}
       <div className="absolute bottom-0 left-0 right-0 bg-[#1c1c1e] border-t border-[#4e4e57]">
-        <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-16">
-          <div className="min-h-[88px] sm:h-[110px] py-3 sm:py-0 flex items-center justify-between gap-2 sm:gap-4">
+        <div className="w-full max-w-[1920px] mx-auto px-16">
+          <div className="h-[110px] flex items-center justify-between gap-4">
             {/* Tlacidlo Back */}
             {!props.hideBackButton ? (
               <button
                 onClick={props.onBack}
-                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-['Inter:Bold',sans-serif] font-bold text-[13px] sm:text-[20.55px] rounded-[12px] sm:rounded-[15px] transition-colors px-4 sm:px-6 h-[46px] sm:h-[54px] w-[112px] sm:w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
+                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-['Inter:Bold',sans-serif] font-bold text-[20.55px] rounded-[15px] transition-colors px-6 h-[54px] w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
               >
                 ← Back
               </button>
             ) : (
-              <div className="w-[112px] sm:w-[155px] flex-shrink-0" />
+              <div className="w-[155px] flex-shrink-0" />
             )}
 
             {/* Progress bodky */}
-            <div className="flex items-center justify-center gap-6 sm:gap-[50px] flex-1 overflow-x-auto px-1">
+            <div className="flex items-center justify-center gap-[50px] flex-1 overflow-x-auto px-1">
               {Array.from({ length: props.totalSlides }).map((_, index) => (
                 <div key={index} className="flex-shrink-0">
                   <div className="w-[24px] h-[24px]">
@@ -264,14 +264,14 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
               <button
                 onClick={handleSubmitButton}
                 disabled={!selectedOption}
-                className={`h-[46px] sm:h-[54px] w-[112px] sm:w-[155px] rounded-[12px] sm:rounded-[15px] px-4 sm:px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0 ${
+                className={`h-[54px] w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0 ${
                   !selectedOption ? "bg-gray-400 cursor-not-allowed opacity-50" : "bg-[#4cb025] hover:bg-[#5cc030]"
                 }`}
               >
-                <p className="font-['Inter:Bold',sans-serif] font-bold text-[13px] sm:text-[20.55px] text-center text-white">
+                <p className="font-['Inter:Bold',sans-serif] font-bold text-[20.55px] text-center text-white">
                   Submit
                 </p>
-                <div className="w-[22px] h-[18px] sm:w-[29px] sm:h-[23px]">
+                <div className="w-[29px] h-[23px]">
                   <svg className="block size-full" fill="none" viewBox="0 0 29 23">
                     <path d={svgPaths.pf95e080} fill="white" />
                   </svg>
@@ -280,9 +280,9 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
             ) : (
               <button
                 onClick={props.onNext}
-                className="bg-[#4cb025] hover:bg-[#5cc030] h-[46px] sm:h-[54px] w-[112px] sm:w-[155px] rounded-[12px] sm:rounded-[15px] px-4 sm:px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
+                className="bg-[#4cb025] hover:bg-[#5cc030] h-[54px] w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
               >
-                <p className="font-['Inter:Bold',sans-serif] font-bold text-[13px] sm:text-[20.55px] text-center text-white">
+                <p className="font-['Inter:Bold',sans-serif] font-bold text-[20.55px] text-center text-white">
                   {props.isLastExercise ? 'Finish' : 'Next →'}
                 </p>
               </button>
