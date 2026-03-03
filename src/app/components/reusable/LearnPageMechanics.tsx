@@ -173,7 +173,7 @@ function KeywordPopup(props: KeywordPopupProps) {
             <img 
               src={props.imageUrl} 
               alt={props.keyword}
-              className="w-full h-[400px] rounded-lg object-cover bg-[#1c1c1e]"
+              className="w-full h-[200px] rounded-lg object-contain bg-[#1c1c1e]"
             />
             {props.isAdmin && (
               <button
