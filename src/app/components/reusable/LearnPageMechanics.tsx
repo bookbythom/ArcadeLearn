@@ -159,7 +159,7 @@ function KeywordPopup(props: KeywordPopupProps) {
       />
       <div 
         ref={popupRef}
-        className="fixed z-[111] bg-[#2c2c2e] rounded-[27px] p-[32px] w-[640px] max-w-[92vw] shadow-xl"
+        className="fixed z-[111] bg-[#2c2c2e] rounded-[27px] p-[32px] w-[850px] max-w-[92vw] shadow-xl"
         style={{
           left: `${adjustedPosition.x}px`,
           top: `${adjustedPosition.y}px`,
@@ -173,7 +173,7 @@ function KeywordPopup(props: KeywordPopupProps) {
             <img 
               src={props.imageUrl} 
               alt={props.keyword}
-              className="w-full h-[200px] rounded-lg object-contain bg-[#1c1c1e]"
+              className="w-full aspect-[17/10] rounded-lg object-cover bg-[#1c1c1e]"
             />
             {props.isAdmin && (
               <button
