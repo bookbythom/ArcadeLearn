@@ -83,7 +83,7 @@ export default function RegisterPage(props: RegisterPageProps) {
   const isCurrentlyLoading = props.isLoading === true;
 
   return (
-    <div className="min-h-screen bg-[#1c1c1e] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#1c1c1e] flex items-start sm:items-center justify-center p-4 sm:p-6 py-8 sm:py-4">
       {/* Loading overlay - zobrazuje sa ked je isLoading true */}
       {isCurrentlyLoading && (
         <div 
@@ -117,7 +117,7 @@ export default function RegisterPage(props: RegisterPageProps) {
       )}
 
       {/* Hlavny kontajner formulara */}
-      <div className="bg-[#222224] h-[600px] overflow-clip relative rounded-[40px] w-[90vw] max-w-[500px] mx-auto" data-name="component-profile-popup/register">
+      <div className="bg-[#222224] min-h-[560px] sm:h-[600px] overflow-clip relative rounded-[28px] sm:rounded-[40px] w-[94vw] max-w-[500px] mx-auto" data-name="component-profile-popup/register">
         
         {/* Name input pole */}
         <div className="absolute bg-[#d9d9d9] content-stretch flex h-[60px] items-center left-[50%] translate-x-[-50%] px-[20px] py-[19px] rounded-[21px] top-[165px] w-[85%]">
@@ -184,7 +184,7 @@ export default function RegisterPage(props: RegisterPageProps) {
         </div>
         
         {/* Nadpis Register */}
-        <div className="absolute flex flex-col font-['Roboto:Medium',sans-serif] font-medium justify-center leading-[0] left-[50%] translate-x-[-50%] text-[56px] text-white top-[85px] tracking-[0.15px]" style={{ fontVariationSettings: "'wdth' 100" }}>
+        <div className="absolute flex flex-col font-['Roboto:Medium',sans-serif] font-medium justify-center leading-[0] left-[50%] translate-x-[-50%] text-[42px] sm:text-[56px] text-white top-[85px] tracking-[0.15px]" style={{ fontVariationSettings: "'wdth' 100" }}>
           <p className="css-4hzbpn leading-[24px]">Register</p>
         </div>
         

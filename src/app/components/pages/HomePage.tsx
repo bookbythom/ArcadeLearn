@@ -382,8 +382,8 @@ export function HomePage(props: HomePageProps) {
       />
       
       {/* Beginner sekcia */}
-      <section ref={beginnerSectionRef} className="py-20">
-        <div className="w-full px-8">
+      <section ref={beginnerSectionRef} className="py-12 md:py-16 lg:py-20">
+        <div className="w-full px-3 sm:px-5 md:px-8">
           <SectionHeader level="beginner" />
           <div className="max-w-6xl mx-auto">
             <div className="relative w-full aspect-[6/7] max-h-[1000px]">
@@ -395,8 +395,8 @@ export function HomePage(props: HomePageProps) {
       </section>
       
       {/* Intermediate sekcia */}
-      <section ref={intermediateSectionRef} className="py-20">
-        <div className="w-full px-8">
+      <section ref={intermediateSectionRef} className="py-12 md:py-16 lg:py-20">
+        <div className="w-full px-3 sm:px-5 md:px-8">
           <SectionHeader level="intermediate" />
           <div className="max-w-6xl mx-auto">
             <div className="relative w-full aspect-[6/7] max-h-[1000px]">
@@ -408,8 +408,8 @@ export function HomePage(props: HomePageProps) {
       </section>
       
       {/* Professional sekcia */}
-      <section ref={professionalSectionRef} className="py-20">
-        <div className="w-full px-8">
+      <section ref={professionalSectionRef} className="py-12 md:py-16 lg:py-20">
+        <div className="w-full px-3 sm:px-5 md:px-8">
           <SectionHeader level="professional" />
           <div className="max-w-6xl mx-auto">
             <div className="relative w-full aspect-[6/7] max-h-[1000px]">
