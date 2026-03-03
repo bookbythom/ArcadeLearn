@@ -202,7 +202,7 @@ function KeywordPopup(props: KeywordPopupProps) {
           </div>
         ) : null}
         
-        <p className="text-[clamp(14px,2vw,20px)] font-bold text-white leading-normal">
+        <p className="text-[clamp(13px,1.6vw,17px)] font-bold text-white leading-[1.35]">
           <span className="text-white">{props.keyword} - </span>
           <span className="font-normal">{props.explanation}</span>
         </p>
