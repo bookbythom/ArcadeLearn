@@ -137,7 +137,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-[#1c1c1e] z-[105] flex flex-col overflow-y-auto overscroll-y-contain touch-pan-y">
+    <div className="fixed inset-0 bg-[#1c1c1e] z-[105] flex flex-col">
       {/* Hlavny obsah - vertikalne centrovaný */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-8 lg:px-12 pb-[96px] sm:pb-[110px] pt-4 overflow-y-auto">
         {/* Otazka s pozadim obdlznika - Fixna vyska na desktope */}
