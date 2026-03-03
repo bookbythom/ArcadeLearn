@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248.25 327.46">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #af4545;
+      }
+
+      .cls-2 {
+        fill: #ec4545;
+      }
+    </style>
+  </defs>
+  <g id="Map">
+    <g>
+      <path class="cls-2" d="M0,0v327.46h248.25V0H0ZM16.52,102.01h44.27v26.54H16.52v-26.54ZM16.52,149.81h102.29v67.35H16.52v-67.35ZM74.53,128.55v-26.54h44.27v26.54h-44.27ZM231.72,290.25H16.52v-53.2h215.2v53.2ZM231.72,217.16h-99.18v-67.35h99.18v67.35ZM132.55,128.55v-26.54h44.27v26.54h-44.27ZM231.72,128.55h-44.27v-26.54h44.27v26.54ZM231.72,86.76H16.52V19.41h215.2v67.35Z"/>
+      <rect class="cls-1" x="16.52" y="19.41" width="215.2" height="67.35"/>
+      <rect class="cls-1" x="16.52" y="102.01" width="44.27" height="26.54"/>
+      <rect class="cls-1" x="74.53" y="102.01" width="44.27" height="26.54"/>
+      <rect class="cls-1" x="132.55" y="102.01" width="44.27" height="26.54"/>
+      <rect class="cls-1" x="187.45" y="102.01" width="44.27" height="26.54"/>
+      <rect class="cls-1" x="16.52" y="149.81" width="102.29" height="67.35"/>
+      <rect class="cls-1" x="132.55" y="149.81" width="99.18" height="67.35"/>
+      <rect class="cls-1" x="16.52" y="237.06" width="215.2" height="53.2"/>
+    </g>
+  </g>
+</svg>

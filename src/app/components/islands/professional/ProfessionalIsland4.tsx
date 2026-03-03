@@ -1,0 +1,31 @@
+import svgPaths from "@/imports/professional-island-04";
+
+// Properties pre ProfessionalIsland4 komponent
+interface ProfessionalIsland4Props {
+  onClick?: () => void;
+}
+
+// Komponent pre professional ostrov c. 4
+export default function ProfessionalIsland4(props: ProfessionalIsland4Props) {
+  return (
+    <button
+      onClick={props.onClick}
+      className="relative group cursor-pointer transition-transform hover:scale-110 active:scale-95 w-28 h-24"
+      aria-label="professional theme 4"
+    >
+      <div className="relative size-full">
+        <div className="absolute inset-[-1.67%_-1.25%]">
+          <svg className="block size-full drop-shadow-lg" fill="none" preserveAspectRatio="none" viewBox="0 0 123 93.0003">
+            <g>
+              <g>
+                <path d={svgPaths.p16912b00} fill="#6E44FF" stroke="#582DFF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" />
+                <path d={svgPaths.p36ca1100} fill="#6E44FF" stroke="#582DFF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" />
+              </g>
+              <path d={svgPaths.p3b921d00} fill="#582DFF" />
+            </g>
+          </svg>
+        </div>
+      </div>
+    </button>
+  );
+}

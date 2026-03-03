@@ -1,0 +1,594 @@
+import { useState, useRef, useEffect } from "react";
+import svgPathsProfile from "@/imports/edit-pencil";
+import {
+  validateEmail,
+  validatePassword,
+  validateName,
+  imageToBase64,
+  type UserProfile
+} from "@/app/utils/profileUtils";
+import { profileAPI } from "@/app/utils/api";
+
+// Interface pre properties profile popup komponentu
+interface ProfilePopupProps {
+  onLogout: () => void;
+  profile: UserProfile;
+  onProfileUpdate: (profile: UserProfile) => void;
+}
+
+// Hlavny komponent pre profile popup
+export default function ProfilePopup(props: ProfilePopupProps) {
+  // State premenne pre profil
+  const [profileData, setProfileData] = useState<UserProfile>(props.profile);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
+  const [temporaryName, setTemporaryName] = useState(profileData.name);
+  const [temporaryEmail, setTemporaryEmail] = useState(profileData.email);
+  const [temporaryPassword, setTemporaryPassword] = useState("");
+  const [displayPassword, setDisplayPassword] = useState("********");
+  const [nameWidth, setNameWidth] = useState(0);
+  const nameRef = useRef<HTMLParagraphElement>(null);
+  const [currentPasswordForChange, setCurrentPasswordForChange] = useState("");
+  
+  // Pole tipov pre uzivatelov
+  const tips = [
+    "Layer Mask v Photoshope používa 256 odtieňov šedej na presné zobrazovanie a skrývanie.",
+    "Illustrator používa matematické Bézierove krivky, preto vektory zostávajú ostré aj pri 1000% zväčšení.",
+    "Pen Tool v Illustratori bol pomenovaný podľa fyzických technických pier používaných dizajnérmi pred digitálnou érou.",
+    "Smart Objects v Photoshope môžu obsahovať až 10 vrstiev v sebe a zachovávajú všetky transformácie nedeštruktívne.",
+    "Content-Aware Fill analyzuje približne 200 000 pixelov okolia na inteligentné doplnenie.",
+    "Pathfinder v Illustratori dokáže vytvoriť 8 rôznych typov kombinácie tvarov vrátane Unite, Minus Front a Intersect.",
+    "Clipping Mask v Illustratori funguje tak, že spodný objekt definuje viditeľnú oblasť objektu nad ním.",
+    "Photoshop používa RGB (Red Green Blue) pre web pretože monitory emitujú svetlo, a CMYK pre tlač pretože atrament odráža svetlo.",
+    "Gradient Mesh v Illustratori môže mať až 200 bodov pre vytvorenie fotorealistických farebných prechodov.",
+    "Artboards v Illustratori boli pridané vo verzии CS4 a umožňujú až 100 artboardov v jednom súbore.",
+    "Curves v Photoshope poskytujú 16-bitovú presnosť, čo znamená až 65 536 úrovní jasu namiesto 256 úrovní.",
+    "Appearance panel v Illustratori umožňuje aplikovať až 20 výplní a 20 obrysov na jeden objekt naraz.",
+    "Healing Brush v Photoshope analyzuje textúru, osvetlenie a tieňovanie v okruhu približne 1000 pixelov.",
+    "Live Paint Bucket v Illustratori konvertuje vektorové cesty na špeciálne Live Paint skupiny s inteligentným farbením.",
+    "Alpha Channels v Photoshope sú v skutočnosti 8-bitové škálové obrázky, ktoré uchovávajú uložené výbery.",
+    "Type on a Path v Illustratori umožňuje text obtekať po krivke a automaticky upravovať medzery medzi písmenami.",
+    "Gradient Annotator v Illustratori bol predstavený vo verzии CS5 a poskytuje vizuálnu kontrolu s farebnou stopou.",
+    "Camera RAW v Photoshope pracuje s 12 alebo 14-bitovými dátami, čo zachováva viac informácií ako štandardný 8-bitový JPEG.",
+    "Offset Path v Illustratori vytvára paralelnú kópiu cesty s presnosťou na 0.001 pixela.",
+    "Liquify filter v Photoshope používa mesh sieť s 128x128 bodmi na tekuté deformácie.",
+    "Puppet Warp v Illustratori používa algoritmus ARAP (As-Rigid-As-Possible) na prirodzené deformácie vektorov.",
+    "Frequency Separation v Photoshope oddeľuje textúru od farby pomocou Gaussian Blur a Apply Image kombinácií.",
+    "Width Tool v Illustratori dokáže meniť hrúbku čiary v rozsahu 0.001 až 1000 bodov.",
+    "Blend Modes v Photoshope fungujú na základe matematických algoritmov kde Multiply násobí hodnoty pixelov a delí ich 255.",
+    "Adjustment Layers v Photoshope sú nedeštruktívne pretože pracujú s odkazmi namiesto priamej úpravy pixelov.",
+    "Symboly v Illustratori môžu obsahovať až 9 typov symbolov vrátane statických a dynamických variant.",
+    "Layer Groups v Photoshope podporujú až 8 úrovní vnorenia, čo umožňuje komplexnú organizáciu projektov.",
+    "Photoshop obsahuje 3D funkcie s podporou pre OpenGL rendering a až 8 zdrojov svetla.",
+    "Illustrator podporuje Pantone súradnice pre presné tlačové farby s vyše 2000 odtieňmi.",
+    "History panel v Photoshope ukladá štandardne 50 krokov späť, ale dá sa nastaviť až na 1000 krokov.",
+    "Gradient Tool v Illustratori podporuje 5 typov gradientov vrátane Linear, Radial a Freeform.",
+    "Channels v Photoshope obsahujú Red, Green, Blue a voliteľné Alpha channel na transparentnosť.",
+    "Stroke panel v Illustratori umožňuje nastaviť hrúbku čiary, cap style a join style s miter limit až 500.",
+    "Photoshop dokáže pracovať s obrázkami až do rozlíšenia 300 000 x 300 000 pixelov.",
+    "Color Picker v Illustratori pracuje s HSB hodnotami (Hue, Saturation, Brightness) pre presnú farebnosť.",
+    "Brush Tool v Photoshope má viac ako 50 prednastavených štetcov a podporuje tlak s 2048 úrovňami.",
+    "Transform panel v Illustratori zobrazuje hodnoty s presnosťou na 4 desatinné miesta.",
+    "Smart Guides v Illustratori zobrazujú zelené čiary pri zarovnaní objektov s presnosťou 1 pixel.",
+    "Blending Options v Photoshope ponúkajú 27 blend modes vrátane Hard Mix a Divide.",
+    "Document Setup v Illustratori umožňuje nastaviť bleed až 72 palcov pre tlačové projekty.",
+    "Shape Builder Tool v Illustratori kombinuje a delí tvary v reálnom čase s vizuálnym náhľadom.",
+    "Filter Gallery v Photoshope obsahuje vyše 100 efektov organizovaných do 6 kategórií.",
+    "Expand Appearance v Illustratori konvertuje efekty na živé cesty, čo zvyšuje kompatibilitu.",
+    "Warp Tool v Photoshope má 15 preddefinovaných štýlov vrátane Arc, Fish a Inflate.",
+    "Direct Selection Tool v Illustratori umožňuje editovať jednotlivé anchor pointy s Bézierovými handles.",
+    "Photoshop používa LZW kompresiu pre TIFF súbory, čo zachováva 100% kvalitu pri menšej veľkosti.",
+    "Pattern Options v Illustratori umožňujú vytvoriť 9 typov vzoriek vrátane Brick Row a Hex by Column.",
+    "Quick Mask v Photoshope vizualizuje výber ako červený overlay s 50% priehľadnosťou.",
+    "Pathfinder efekty v Illustratori zostávajú editovateľné až do použitia Expand príkazu.",
+    "Photoshop podporuje až 56 farebných kanálov v jednom súbore v Multichannel režime.",
+    "Illustrator dokáže exportovať SVG súbory s inline CSS štýlmi pre webové použitie."
+  ];
+  
+  const [currentTip, setCurrentTip] = useState("");
+  
+  // Effect pre nahodny vyber tipu pri nacitani
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * tips.length);
+    setCurrentTip(tips[randomIndex]);
+  }, []);
+  
+  const isEditingRef = useRef(false);
+  const lastProfileRef = useRef(JSON.stringify(props.profile));
+
+  // Effect pre sledovanie stavu editacie
+  useEffect(() => {
+    isEditingRef.current = isEditingName || isEditingEmail || isEditingPassword;
+  }, [isEditingName, isEditingEmail, isEditingPassword]);
+
+  // Effect pre aktualizaciu profilu ked sa zmeni externy profil
+  useEffect(() => {
+    const currentProfileString = JSON.stringify(props.profile);
+    const hasChanged = currentProfileString !== lastProfileRef.current;
+    
+    if (!isEditingRef.current && hasChanged) {
+      setProfileData(props.profile);
+      setTemporaryName(props.profile.name);
+      setTemporaryEmail(props.profile.email);
+      lastProfileRef.current = currentProfileString;
+    }
+  }, [props.profile]);
+
+  // Effect pre vypocet sirky mena
+  useEffect(() => {
+    if (nameRef.current && !isEditingName) {
+      setNameWidth(nameRef.current.offsetWidth);
+    }
+  }, [profileData.name, isEditingName]);
+
+  // Funkcia pre zacatie editacie mena
+  const handleNameEditClick = () => {
+    setTemporaryName(profileData.name);
+    setIsEditingName(true);
+  };
+
+  // Funkcia pre ulozenie mena
+  const handleNameSaveClick = async () => {
+    const validation = validateName(temporaryName);
+    if (!validation.valid) {
+      alert(validation.error);
+      return;
+    }
+    
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      alert('Not authenticated');
+      return;
+    }
+    
+    try {
+      const newProfile = { ...profileData, name: temporaryName };
+      await profileAPI.updateProfile(accessToken, newProfile);
+      setProfileData(newProfile);
+      props.onProfileUpdate(newProfile);
+      setIsEditingName(false);
+      alert("Name changed successfully!");
+    } catch (error: any) {
+      alert(error.message || 'Failed to update name');
+    }
+  };
+
+  // Funkcia pre zacatie editacie emailu
+  const handleEmailEditClick = () => {
+    setTemporaryEmail(profileData.email);
+    setIsEditingEmail(true);
+  };
+
+  // Funkcia pre ulozenie emailu
+  const handleEmailSaveClick = async () => {
+    const validation = validateEmail(temporaryEmail.toLowerCase());
+    if (!validation.valid) {
+      alert(validation.error);
+      return;
+    }
+    
+    if (temporaryEmail.toLowerCase() === profileData.email.toLowerCase()) {
+      setIsEditingEmail(false);
+      return;
+    }
+    
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      alert('Not authenticated');
+      return;
+    }
+    
+    try {
+      // Priama zmena emailu bez verifikacie
+      await profileAPI.changeEmailDirect(accessToken, temporaryEmail.toLowerCase());
+      const newProfile = { ...profileData, email: temporaryEmail.toLowerCase() };
+      setProfileData(newProfile);
+      props.onProfileUpdate(newProfile);
+      
+      alert(`Email changed successfully to ${temporaryEmail.toLowerCase()}!`);
+      setIsEditingEmail(false);
+    } catch (error: any) {
+      if (error.status === 409) {
+        alert("This email address is already in use");
+      } else {
+        alert(error.message || 'Failed to change email');
+      }
+    }
+  };
+
+  // Funkcia pre zacatie editacie hesla
+  const handlePasswordEditClick = () => {
+    setIsEditingPassword(true);
+    setCurrentPasswordForChange("");
+    setTemporaryPassword("");
+  };
+
+  // Funkcia pre ulozenie hesla
+  const handlePasswordSaveClick = async () => {
+    if (!currentPasswordForChange) {
+      alert("Please enter your current password");
+      return;
+    }
+
+    const validation = validatePassword(temporaryPassword);
+    if (!validation.valid) {
+      alert(validation.error);
+      return;
+    }
+    
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      alert('Not authenticated');
+      return;
+    }
+    
+    try {
+      // Priama zmena hesla bez verifikacie
+      await profileAPI.changePasswordDirect(accessToken, currentPasswordForChange, temporaryPassword);
+      setDisplayPassword('•'.repeat(temporaryPassword.length));
+      
+      alert("Password changed successfully!");
+      setIsEditingPassword(false);
+      setCurrentPasswordForChange("");
+      setTemporaryPassword("");
+    } catch (error: any) {
+      if (error.status === 401) {
+        alert("Current password is incorrect");
+      } else {
+        alert(error.message || 'Failed to change password');
+      }
+    }
+  };
+
+  // Funkcia pre kliknutie na profilovy obrazok
+  const handleProfilePictureClick = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/png,image/jpeg,image/jpg,image/webp,image/gif';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        if (file.type === 'image/avif') {
+          alert('AVIF format is not supported. Please use PNG, JPEG, WebP, or GIF instead.');
+          return;
+        }
+
+        const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
+        if (!allowedTypes.includes(file.type)) {
+          alert('Unsupported image format. Please use PNG, JPEG, WebP, or GIF.');
+          return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+          alert('Image must be smaller than 5MB');
+          return;
+        }
+
+        try {
+          const base64 = await imageToBase64(file);
+          const newProfile = { ...profileData, profilePicture: base64 };
+          
+          const accessToken = localStorage.getItem('accessToken');
+          if (!accessToken) {
+            alert('Not authenticated');
+            return;
+          }
+          
+          await profileAPI.updateProfile(accessToken, newProfile);
+          setProfileData(newProfile);
+          props.onProfileUpdate(newProfile);
+        } catch (error) {
+          alert('Failed to upload image');
+        }
+      }
+    };
+    input.click();
+  };
+
+  return (
+    <div 
+      className="bg-[#222224] max-h-[90vh] overflow-clip relative rounded-[40px] w-[95vw] max-w-[800px] mx-auto min-h-[710px]"
+      data-name="component-profile-popup/signed-in"
+    >
+      {/* Profilovy obrazok */}
+      <button 
+        onClick={handleProfilePictureClick}
+        className="absolute left-[50%] translate-x-[-50%] top-[56px] w-[160px] h-[160px] cursor-pointer hover:opacity-80 transition-opacity group" 
+      >
+        {profileData.profilePicture ? (
+          <img 
+            src={profileData.profilePicture} 
+            alt="Profile" 
+            className="w-full h-full rounded-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full rounded-full bg-[#D9D9D9]" />
+        )}
+        <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+      </button>
+      
+      {/* Sekcia s menom */}
+      <div className="absolute left-[50%] translate-x-[-50%] top-[236px] w-[85%] max-w-[500px]">
+        <div className="relative flex items-center justify-center">
+          {/* Na mobile: klikatelne meno, na desktope: meno s tuzkou */}
+          <button
+            onClick={handleNameEditClick}
+            className="pointer-events-none font-['Roboto:Medium',sans-serif] font-medium text-[44px] text-white tracking-[0.15px] text-center hover:text-white transition-colors"
+            style={{ fontVariationSettings: "'wdth' 100" }}
+          >
+            <p ref={nameRef}>{profileData.name}</p>
+          </button>
+          
+          {/* Ikona tuzky pre edit - viditelna len na desktope */}
+          <button 
+            onClick={handleNameEditClick}
+            className="absolute w-[30px] h-[20px] rotate-[-19deg] hover:scale-110 transition-transform"
+            style={{ left: `calc(50% + ${nameWidth / 2}px + 20px)` }}
+          >
+            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 46.2917 29.2584">
+              <g>
+                <path d={svgPathsProfile.p164cb500} fill="#D9D9D9" />
+                <path d={svgPathsProfile.pd450700} fill="#D9D9D9" />
+                <path d={svgPathsProfile.p8833900} fill="#D9D9D9" />
+              </g>
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      {/* Email a Heslo - Stacked vertikalne */}
+      <div className="absolute left-[50%] translate-x-[-50%] top-[305px] w-[85%] max-w-[500px] flex flex-col gap-3.5">
+        {/* Email */}
+        <div className="relative">
+          <div
+            className="bg-[#d9d9d9] hover:bg-[#d9d9d9] cursor-default flex h-[56px] items-center px-4 py-3 rounded-[18px] w-full transition-colors"
+          >
+            <div className="font-['Roboto:Medium',sans-serif] font-medium text-[18px] text-black tracking-[0.15px] text-left" style={{ fontVariationSettings: "'wdth' 100" }}>
+              <p>{profileData.email}</p>
+            </div>
+          </div>
+          
+          {/* Ikona tuzky pre edit - viditelna a klikatelna len na desktope */}
+          <button 
+            onClick={handleEmailEditClick}
+            className="flex absolute w-[30px] h-[20px] rotate-[-19deg] hover:scale-110 transition-transform right-[-40px] top-1/2 -translate-y-1/2 cursor-pointer items-center justify-center"
+          >
+            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 46.2917 29.2584">
+              <g>
+                <path d={svgPathsProfile.p164cb500} fill="#D9D9D9" />
+                <path d={svgPathsProfile.pd450700} fill="#D9D9D9" />
+                <path d={svgPathsProfile.p8833900} fill="#D9D9D9" />
+              </g>
+            </svg>
+          </button>
+        </div>
+        
+        {/* Heslo */}
+        <div className="relative">
+          <div
+            className="bg-[#d9d9d9] hover:bg-[#d9d9d9] cursor-default flex h-[56px] items-center px-4 py-3 rounded-[18px] w-full transition-colors"
+          >
+            <div className="font-['Roboto:Medium',sans-serif] font-medium text-[18px] text-black tracking-[0.15px]" style={{ fontVariationSettings: "'wdth' 100" }}>
+              <p>{displayPassword}</p>
+            </div>
+          </div>
+          
+          {/* Ikona tuzky pre edit - viditelna a klikatelna len na desktope */}
+          <button 
+            onClick={handlePasswordEditClick}
+            className="flex absolute w-[30px] h-[20px] rotate-[-19deg] hover:scale-110 transition-transform right-[-40px] top-1/2 -translate-y-1/2 cursor-pointer items-center justify-center"
+          >
+            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 46.2915 29.2583">
+              <g>
+                <path d={svgPathsProfile.p30341380} fill={isEditingPassword ? "#4CB025" : "#D9D9D9"} />
+                <path d={svgPathsProfile.p2755f0f0} fill={isEditingPassword ? "#4CB025" : "#D9D9D9"} />
+                <path d={svgPathsProfile.p16a40e80} fill={isEditingPassword ? "#4CB025" : "#D9D9D9"} />
+              </g>
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      {/* Tip box a Logout tlacidlo - stacked vertikalne s tipom hore */}
+      <div className="absolute left-[50%] translate-x-[-50%] top-[475px] w-[85%] max-w-[500px] flex flex-col gap-3">
+        {/* Okno s tipom */}
+        <div className="bg-[#323235] flex min-h-[110px] items-center justify-center p-5 rounded-[20px]">
+          <p 
+            className="font-['Roboto:Medium_Italic',sans-serif] font-medium italic text-center text-white leading-snug text-[16px]"
+            style={{ fontVariationSettings: "'wdth' 100" }}
+          >
+            "{currentTip}"
+          </p>
+        </div>
+        
+        {/* Logout tlacidlo */}
+        <button 
+          onClick={props.onLogout}
+          className="bg-[#ec4545] hover:bg-[#d63939] flex h-[56px] items-center justify-center px-4 rounded-[20px] w-full transition-colors cursor-pointer"
+        >
+          <div className="font-['Roboto:Bold',sans-serif] font-bold text-[22px] text-white tracking-[0.15px]" style={{ fontVariationSettings: "'wdth' 100" }}>
+            Log out
+          </div>
+        </button>
+      </div>
+
+      {/* Modal pre zmenu mena */}
+      {isEditingName && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#2a2a2c] rounded-[20px] p-8 w-full max-w-[500px] max-h-[90%] overflow-y-auto flex flex-col gap-6 shadow-2xl border border-[#3a3a3c]">
+            <h3 className="font-['Roboto:Bold',sans-serif] font-bold text-[30px] text-white text-center" style={{ fontVariationSettings: "'wdth' 100" }}>
+              Change Name
+            </h3>
+
+            <div className="flex flex-col gap-2">
+              <label className="font-['Roboto:Medium',sans-serif] font-medium text-[16px] text-[#b6b6b6] pl-2" style={{ fontVariationSettings: "'wdth' 100" }}>
+                Your Name
+              </label>
+              <input
+                type="text"
+                value={temporaryName}
+                onChange={(e) => {
+                  if (e.target.value.length <= 25) {
+                    setTemporaryName(e.target.value);
+                  }
+                }}
+                onKeyDown={(e) => e.key === 'Enter' && handleNameSaveClick()}
+                maxLength={25}
+                placeholder="Enter your name"
+                autoFocus
+                className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-['Roboto:Medium',sans-serif] font-medium text-[17px] text-[#222224] tracking-[0.15px] placeholder:text-[#777]"
+                style={{ fontVariationSettings: "'wdth' 100" }}
+              />
+              <p className="font-['Roboto:Regular',sans-serif] text-[12px] text-[#888] pl-2" style={{ fontVariationSettings: "'wdth' 100" }}>
+                Maximum 25 characters
+              </p>
+            </div>
+            
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => {
+                  setIsEditingName(false);
+                  setTemporaryName(profileData.name);
+                }}
+                className="bg-[#ec4545] hover:bg-[#d63939] rounded-[15px] px-6 py-2.5 font-['Roboto:Bold',sans-serif] font-bold text-[18px] text-white transition-all"
+                style={{ fontVariationSettings: "'wdth' 100" }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleNameSaveClick}
+                className="bg-[#4cb025] hover:bg-[#3d9d1e] rounded-[15px] px-6 py-2.5 font-['Roboto:Bold',sans-serif] font-bold text-[18px] text-white transition-all"
+                style={{ fontVariationSettings: "'wdth' 100" }}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal pre zmenu emailu */}
+      {isEditingEmail && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#2a2a2c] rounded-[20px] p-8 w-full max-w-[500px] max-h-[90%] overflow-y-auto flex flex-col gap-6 shadow-2xl border border-[#3a3a3c]">
+            <h3 className="font-['Roboto:Bold',sans-serif] font-bold text-[30px] text-white text-center" style={{ fontVariationSettings: "'wdth' 100" }}>
+              Change Email
+            </h3>
+
+            <div className="flex flex-col gap-2">
+              <label className="font-['Roboto:Medium',sans-serif] font-medium text-[16px] text-[#b6b6b6] pl-2" style={{ fontVariationSettings: "'wdth' 100" }}>
+                New Email
+              </label>
+              <input
+                type="email"
+                value={temporaryEmail}
+                onChange={(e) => setTemporaryEmail(e.target.value.toLowerCase())}
+                onKeyDown={(e) => e.key === 'Enter' && handleEmailSaveClick()}
+                placeholder="email@example.com"
+                autoFocus
+                className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-['Roboto:Medium',sans-serif] font-medium text-[17px] text-[#222224] tracking-[0.15px] placeholder:text-[#777]"
+                style={{ fontVariationSettings: "'wdth' 100" }}
+              />
+              <p className="font-['Roboto:Regular',sans-serif] text-[12px] text-[#888] pl-2" style={{ fontVariationSettings: "'wdth' 100" }}>
+                Enter a valid email address
+              </p>
+            </div>
+            
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => {
+                  setIsEditingEmail(false);
+                  setTemporaryEmail(profileData.email);
+                }}
+                className="bg-[#ec4545] hover:bg-[#d63939] rounded-[15px] px-6 py-2.5 font-['Roboto:Bold',sans-serif] font-bold text-[18px] text-white transition-all"
+                style={{ fontVariationSettings: "'wdth' 100" }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleEmailSaveClick}
+                className="bg-[#4cb025] hover:bg-[#3d9d1e] rounded-[15px] px-6 py-2.5 font-['Roboto:Bold',sans-serif] font-bold text-[18px] text-white transition-all"
+                style={{ fontVariationSettings: "'wdth' 100" }}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal pre zmenu hesla */}
+      {isEditingPassword && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#2a2a2c] rounded-[20px] p-8 w-full max-w-[500px] max-h-[90%] overflow-y-auto flex flex-col gap-6 shadow-2xl border border-[#3a3a3c]">
+            <h3 className="font-['Roboto:Bold',sans-serif] font-bold text-[30px] text-white text-center" style={{ fontVariationSettings: "'wdth' 100" }}>
+              Change Password
+            </h3>
+
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <label className="font-['Roboto:Medium',sans-serif] font-medium text-[16px] text-[#b6b6b6] pl-2" style={{ fontVariationSettings: "'wdth' 100" }}>
+                  Current Password
+                </label>
+                <input
+                  type="password"
+                  value={currentPasswordForChange}
+                  onChange={(e) => setCurrentPasswordForChange(e.target.value.replace(/\s/g, ''))}
+                  placeholder="Enter current password"
+                  autoFocus
+                  className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-['Roboto:Medium',sans-serif] font-medium text-[17px] text-[#222224] tracking-[0.15px] placeholder:text-[#777]"
+                  style={{ fontVariationSettings: "'wdth' 100" }}
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label className="font-['Roboto:Medium',sans-serif] font-medium text-[16px] text-[#b6b6b6] pl-2" style={{ fontVariationSettings: "'wdth' 100" }}>
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  value={temporaryPassword}
+                  onChange={(e) => setTemporaryPassword(e.target.value.replace(/\s/g, ''))}
+                  placeholder="Enter new password"
+                  onKeyDown={(e) => e.key === 'Enter' && handlePasswordSaveClick()}
+                  className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-['Roboto:Medium',sans-serif] font-medium text-[17px] text-[#222224] tracking-[0.15px] placeholder:text-[#777]"
+                  style={{ fontVariationSettings: "'wdth' 100" }}
+                />
+                <p className="font-['Roboto:Regular',sans-serif] text-[12px] text-[#888] pl-2" style={{ fontVariationSettings: "'wdth' 100" }}>
+                  Password must be at least 6 characters long
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => {
+                  setIsEditingPassword(false);
+                  setCurrentPasswordForChange("");
+                  setTemporaryPassword("");
+                }}
+                className="bg-[#ec4545] hover:bg-[#d63939] rounded-[15px] px-6 py-2.5 font-['Roboto:Bold',sans-serif] font-bold text-[18px] text-white transition-all"
+                style={{ fontVariationSettings: "'wdth' 100" }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handlePasswordSaveClick}
+                className="bg-[#4cb025] hover:bg-[#3d9d1e] rounded-[15px] px-6 py-2.5 font-['Roboto:Bold',sans-serif] font-bold text-[18px] text-white transition-all"
+                style={{ fontVariationSettings: "'wdth' 100" }}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
