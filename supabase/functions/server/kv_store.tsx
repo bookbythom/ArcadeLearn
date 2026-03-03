@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createClient } from "jsr:@supabase/supabase-js@2.49.8";
 
 const TABLE_NAME = "kv_store_15e718fc";

@@ -44,6 +44,7 @@ import CompletedIslandGold from "@/app/components/islands/states/CompletedIsland
 import CompletedTestGreen from "@/app/components/islands/states/CompletedTestGreen";
 import CompletedTestGold from "@/app/components/islands/states/CompletedTestGold";
 import IslandProgressArcs from "@/app/components/islands/IslandProgressArcs";
+import type { ComponentType } from "react";
 
 // Typy pre stav ostrova
 type IslandStatus = "locked" | "unlocked" | "completed-perfect" | "completed-mistakes";
@@ -58,6 +59,59 @@ interface IslandRendererProps {
   accessToken?: string;
   exercisesCorrect?: number; // Pocet spravne vykonanych cviceni (0-5 pre normalne ostrovy, 0-10 pre finalny test)
 }
+
+type IslandComponent = ComponentType<{ onClick?: () => void }>;
+
+const regularIslandsByLevel: Record<"beginner" | "intermediate" | "professional", IslandComponent[]> = {
+  beginner: [
+    BeginnerIsland1,
+    BeginnerIsland2,
+    BeginnerIsland3,
+    BeginnerIsland4,
+    BeginnerIsland5,
+    BeginnerIsland6,
+    BeginnerIsland7,
+    BeginnerIsland8,
+    BeginnerIsland9,
+    BeginnerIsland10,
+    BeginnerIsland11,
+    BeginnerIsland12,
+  ],
+  intermediate: [
+    IntermediateIsland1,
+    IntermediateIsland2,
+    IntermediateIsland3,
+    IntermediateIsland4,
+    IntermediateIsland5,
+    IntermediateIsland6,
+    IntermediateIsland7,
+    IntermediateIsland8,
+    IntermediateIsland9,
+    IntermediateIsland10,
+    IntermediateIsland11,
+    IntermediateIsland12,
+  ],
+  professional: [
+    ProfessionalIsland1,
+    ProfessionalIsland2,
+    ProfessionalIsland3,
+    ProfessionalIsland4,
+    ProfessionalIsland5,
+    ProfessionalIsland6,
+    ProfessionalIsland7,
+    ProfessionalIsland8,
+    ProfessionalIsland9,
+    ProfessionalIsland10,
+    ProfessionalIsland11,
+    ProfessionalIsland12,
+  ],
+};
+
+const testIslandByLevel: Record<"beginner" | "intermediate" | "professional", IslandComponent> = {
+  beginner: BeginnerTestIsland,
+  intermediate: IntermediateTestIsland,
+  professional: ProfessionalTestIsland,
+};
 
 // Hlavny IslandRenderer komponent
 export default function IslandRenderer(props: IslandRendererProps) {
@@ -100,101 +154,16 @@ export default function IslandRenderer(props: IslandRendererProps) {
     
     // Default - zobrazime normalne unlocked ostrovy
     if (props.theme === 0) {
-      // Final test islands
-      if (props.level === "beginner") {
-        return <BeginnerTestIsland onClick={props.onClick} />;
-      } else if (props.level === "intermediate") {
-        return <IntermediateTestIsland onClick={props.onClick} />;
-      } else if (props.level === "professional") {
-        return <ProfessionalTestIsland onClick={props.onClick} />;
-      }
+      const TestIsland = testIslandByLevel[props.level];
+      return <TestIsland onClick={props.onClick} />;
     }
 
-    // Normalne ostrovy pre beginner uroven
-    if (props.level === "beginner") {
-      if (props.theme === 1) {
-        return <BeginnerIsland1 onClick={props.onClick} />;
-      } else if (props.theme === 2) {
-        return <BeginnerIsland2 onClick={props.onClick} />;
-      } else if (props.theme === 3) {
-        return <BeginnerIsland3 onClick={props.onClick} />;
-      } else if (props.theme === 4) {
-        return <BeginnerIsland4 onClick={props.onClick} />;
-      } else if (props.theme === 5) {
-        return <BeginnerIsland5 onClick={props.onClick} />;
-      } else if (props.theme === 6) {
-        return <BeginnerIsland6 onClick={props.onClick} />;
-      } else if (props.theme === 7) {
-        return <BeginnerIsland7 onClick={props.onClick} />;
-      } else if (props.theme === 8) {
-        return <BeginnerIsland8 onClick={props.onClick} />;
-      } else if (props.theme === 9) {
-        return <BeginnerIsland9 onClick={props.onClick} />;
-      } else if (props.theme === 10) {
-        return <BeginnerIsland10 onClick={props.onClick} />;
-      } else if (props.theme === 11) {
-        return <BeginnerIsland11 onClick={props.onClick} />;
-      } else if (props.theme === 12) {
-        return <BeginnerIsland12 onClick={props.onClick} />;
-      }
-    }
+    const islandIndex = props.theme - 1;
+    const islandsForLevel = regularIslandsByLevel[props.level];
+    const IslandComponentForTheme = islandsForLevel[islandIndex];
 
-    // Normalne ostrovy pre intermediate uroven
-    if (props.level === "intermediate") {
-      if (props.theme === 1) {
-        return <IntermediateIsland1 onClick={props.onClick} />;
-      } else if (props.theme === 2) {
-        return <IntermediateIsland2 onClick={props.onClick} />;
-      } else if (props.theme === 3) {
-        return <IntermediateIsland3 onClick={props.onClick} />;
-      } else if (props.theme === 4) {
-        return <IntermediateIsland4 onClick={props.onClick} />;
-      } else if (props.theme === 5) {
-        return <IntermediateIsland5 onClick={props.onClick} />;
-      } else if (props.theme === 6) {
-        return <IntermediateIsland6 onClick={props.onClick} />;
-      } else if (props.theme === 7) {
-        return <IntermediateIsland7 onClick={props.onClick} />;
-      } else if (props.theme === 8) {
-        return <IntermediateIsland8 onClick={props.onClick} />;
-      } else if (props.theme === 9) {
-        return <IntermediateIsland9 onClick={props.onClick} />;
-      } else if (props.theme === 10) {
-        return <IntermediateIsland10 onClick={props.onClick} />;
-      } else if (props.theme === 11) {
-        return <IntermediateIsland11 onClick={props.onClick} />;
-      } else if (props.theme === 12) {
-        return <IntermediateIsland12 onClick={props.onClick} />;
-      }
-    }
-
-    // Normalne ostrovy pre professional uroven
-    if (props.level === "professional") {
-      if (props.theme === 1) {
-        return <ProfessionalIsland1 onClick={props.onClick} />;
-      } else if (props.theme === 2) {
-        return <ProfessionalIsland2 onClick={props.onClick} />;
-      } else if (props.theme === 3) {
-        return <ProfessionalIsland3 onClick={props.onClick} />;
-      } else if (props.theme === 4) {
-        return <ProfessionalIsland4 onClick={props.onClick} />;
-      } else if (props.theme === 5) {
-        return <ProfessionalIsland5 onClick={props.onClick} />;
-      } else if (props.theme === 6) {
-        return <ProfessionalIsland6 onClick={props.onClick} />;
-      } else if (props.theme === 7) {
-        return <ProfessionalIsland7 onClick={props.onClick} />;
-      } else if (props.theme === 8) {
-        return <ProfessionalIsland8 onClick={props.onClick} />;
-      } else if (props.theme === 9) {
-        return <ProfessionalIsland9 onClick={props.onClick} />;
-      } else if (props.theme === 10) {
-        return <ProfessionalIsland10 onClick={props.onClick} />;
-      } else if (props.theme === 11) {
-        return <ProfessionalIsland11 onClick={props.onClick} />;
-      } else if (props.theme === 12) {
-        return <ProfessionalIsland12 onClick={props.onClick} />;
-      }
+    if (IslandComponentForTheme) {
+      return <IslandComponentForTheme onClick={props.onClick} />;
     }
 
     // Fallback ak nenajdeme spravny ostrov
