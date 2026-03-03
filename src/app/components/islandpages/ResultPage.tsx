@@ -22,15 +22,15 @@ export default function ResultPage(props: ResultPageProps) {
   const strokeDashOffset = circleCircumference - (percentageScore / 100) * circleCircumference;
 
   return (
-    <div className="fixed inset-0 bg-[#1c1c1e] z-[105] flex items-center justify-center">
+    <div className="fixed inset-0 bg-[#1c1c1e] z-[105] flex items-center justify-center overflow-y-auto p-3 sm:p-4">
       {/* Hlavny kontajner - tmavo sedy zaobleny box */}
-      <div className="relative w-[90vw] max-w-[999px] h-auto">
+      <div className="relative w-full max-w-[999px] h-auto my-4 sm:my-0">
         {/* Pozadie kontajnera */}
-        <div className="bg-[#212123] rounded-[46px] w-full px-16 py-16">
+        <div className="bg-[#212123] rounded-[24px] sm:rounded-[46px] w-full px-4 sm:px-10 lg:px-16 py-6 sm:py-10 lg:py-16">
           
           {/* Kruhovy indikator progresu */}
-          <div className="flex justify-center mb-12">
-            <div className="relative w-[296px] h-[296px]">
+          <div className="flex justify-center mb-6 sm:mb-12">
+            <div className="relative w-[210px] h-[210px] sm:w-[296px] sm:h-[296px]">
               {/* SVG kruhovy progres */}
               <div className="absolute inset-0 -rotate-90">
                 <svg className="block size-full" fill="none" viewBox="0 0 296 296">
@@ -69,10 +69,10 @@ export default function ResultPage(props: ResultPageProps) {
           </div>
 
           {/* Kontajner s tlacidlami */}
-          <div className="flex flex-nowrap items-center justify-center gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
             {/* XP Tlacidlo (Zlte) */}
             <button
-              className="bg-[#ffe76f] rounded-[24px] px-8 py-5 transition-colors cursor-default flex-shrink-0"
+              className="bg-[#ffe76f] rounded-[16px] sm:rounded-[24px] px-5 sm:px-8 py-3 sm:py-5 transition-colors cursor-default flex-shrink-0"
               disabled
             >
               <p className="font-['Inter:Bold',sans-serif] font-bold text-[#c99e00] text-[clamp(18px,3vw,32px)] leading-[1.5]">
@@ -84,7 +84,7 @@ export default function ResultPage(props: ResultPageProps) {
             {props.correctAnswers < props.totalExercises && (
               <button
                 onClick={props.onCheckMistakes}
-                className="bg-[#ff7d7d] rounded-[24px] px-8 py-5 hover:bg-[#ff6b6b] transition-colors flex-shrink-0"
+                className="bg-[#ff7d7d] rounded-[16px] sm:rounded-[24px] px-5 sm:px-8 py-3 sm:py-5 hover:bg-[#ff6b6b] transition-colors flex-shrink-0"
               >
                 <p className="font-['Inter:Bold',sans-serif] font-bold text-[#bb2323] text-[clamp(18px,3vw,32px)] leading-[1.5] whitespace-nowrap">
                   Check Mistakes
@@ -95,7 +95,7 @@ export default function ResultPage(props: ResultPageProps) {
             {/* Tlacidlo FINISH (Biele) */}
             <button
               onClick={props.onFinish}
-              className="bg-white rounded-[24px] px-8 py-5 hover:bg-[#f0f0f0] transition-colors flex-shrink-0"
+              className="bg-white rounded-[16px] sm:rounded-[24px] px-5 sm:px-8 py-3 sm:py-5 hover:bg-[#f0f0f0] transition-colors flex-shrink-0"
             >
               <p className="font-['Inter:Bold',sans-serif] font-bold text-[#222224] text-[clamp(18px,3vw,32px)] leading-[1.5]">
                 FINISH

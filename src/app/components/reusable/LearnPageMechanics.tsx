@@ -145,7 +145,7 @@ function KeywordPopup(props: KeywordPopupProps) {
       />
       <div 
         ref={popupRef}
-        className="fixed z-[111] bg-[#2c2c2e] rounded-[27px] p-[32px] max-w-[401px] shadow-xl"
+        className="fixed z-[111] bg-[#2c2c2e] rounded-[20px] sm:rounded-[27px] p-4 sm:p-[32px] w-[92vw] max-w-[401px] shadow-xl"
         style={{
           left: `${adjustedPosition.x}px`,
           top: `${adjustedPosition.y}px`,
@@ -159,7 +159,7 @@ function KeywordPopup(props: KeywordPopupProps) {
             <img 
               src={props.imageUrl} 
               alt={props.keyword}
-              className="w-full h-[200px] rounded-lg object-cover bg-[#1c1c1e]"
+              className="w-full h-[160px] sm:h-[200px] rounded-lg object-cover bg-[#1c1c1e]"
             />
             {props.isAdmin && (
               <button
@@ -719,10 +719,10 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
         </div>
       )}
 
-      <div className="w-full flex items-center justify-center overflow-visible px-8 xl:px-12 2xl:px-16">
+      <div className="w-full flex items-center justify-center overflow-visible px-3 sm:px-6 xl:px-12 2xl:px-16">
         <div className="w-full max-w-[1600px] overflow-visible">
-          <div className="bg-[#1c1c1e] rounded-[46px] w-full p-14 xl:p-20 2xl:p-24 overflow-visible">
-            <div className="flex flex-col lg:flex-row gap-24 xl:gap-32 items-start overflow-visible">
+          <div className="bg-[#1c1c1e] rounded-[20px] sm:rounded-[46px] w-full p-4 sm:p-8 xl:p-20 2xl:p-24 overflow-visible">
+            <div className="flex flex-col lg:flex-row gap-8 sm:gap-12 xl:gap-32 items-start overflow-visible">
               <div ref={textContainerRef} className="flex flex-col gap-4 w-full max-w-[640px]">
                 {/* Sekcia s nadpisom */}
                 <h1 className="font-['Inter:Bold',sans-serif] font-bold text-[clamp(16px,2.5vw,32px)] text-white leading-tight">
@@ -746,7 +746,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
               </div>
 
               <div ref={imagesContainerRef} className="w-full max-w-[700px]">
-                <div className="grid grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
                   {[1, 2, 3, 4].map((num) => {
                     const displayImage = customImages[num - 1];
                     const isLoaded = loadedImageStates[num - 1];

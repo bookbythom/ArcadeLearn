@@ -174,8 +174,8 @@ export function renderContentSlide({
   renderNavigationBar
 }: ContentSlideProps) {
   return (
-    <div className="fixed inset-0 bg-[#1c1c1e] z-[105] flex flex-col overflow-hidden">
-      <div className="flex-1 w-full flex items-center justify-center overflow-y-auto pb-[130px]">
+    <div className="fixed inset-0 bg-[#1c1c1e] z-[105] flex flex-col overflow-y-auto overflow-x-hidden">
+      <div className="flex-1 w-full flex items-center justify-center overflow-y-auto pb-[96px] sm:pb-[130px] px-2 sm:px-0">
         <LearnPageMechanics 
           level={level} 
           theme={theme} 

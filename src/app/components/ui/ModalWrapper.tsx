@@ -33,7 +33,7 @@ export function ModalWrapper({ isOpen, onClose, children, canClose = true, modal
   
   return (
     <div 
-      className={'fixed inset-0 backdrop-blur-md z-[100] flex items-center justify-center p-4 ' + bgClass}
+      className={'fixed inset-0 backdrop-blur-md z-[100] flex items-start sm:items-center justify-center p-2 sm:p-4 overflow-y-auto ' + bgClass}
       onClick={handleBackdropClick}
     >
       <div onClick={handleContentClick}>
