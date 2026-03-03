@@ -6,35 +6,81 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const app = new Hono();
 
-const hash = async (p: string) => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p)))).map(b => b.toString(16).padStart(2, '0')).join('');
-const getTok = (c: any) => c.req.header('X-Session-Token') || c.req.header('Authorization')?.split(' ')[1];
-const valSess = async (t: string) => { try { const s = await kv.get(`session:${t}`); return s ? JSON.parse(s) : null; } catch { return null; } };
-const isAdm = async (u: string) => { try { return await kv.get(`admin:${u}`) === 'true'; } catch { return false; } };
-const day = (d: Date) => d.toISOString().split('T')[0];
+const hash = async (plainText: string) => {
+  const bytes = new TextEncoder().encode(plainText);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
 
-const auth = async (c: any) => { const t = getTok(c); return t ? await valSess(t) : null; };
-const admAuth = async (c: any) => { const s = await auth(c); if (!s) return { err: c.json({ error: 'Unauthorized' }, 401), s: null }; if (!await isAdm(s.userId)) return { err: c.json({ error: 'Forbidden' }, 403), s: null }; return { err: null, s }; };
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+};
+
+const getTok = (context: any) =>
+  context.req.header('X-Session-Token') ||
+  context.req.header('Authorization')?.split(' ')[1];
+
+const valSess = async (token: string) => {
+  try {
+    const sessionData = await kv.get(`session:${token}`);
+    return sessionData ? JSON.parse(sessionData) : null;
+  } catch {
+    return null;
+  }
+};
+
+const isAdm = async (userId: string) => {
+  try {
+    return await kv.get(`admin:${userId}`) === 'true';
+  } catch {
+    return false;
+  }
+};
+
+const day = (date: Date) => date.toISOString().split('T')[0];
+
+const auth = async (context: any) => {
+  const token = getTok(context);
+  if (!token) {
+    return null;
+  }
+
+  return await valSess(token);
+};
+
+const admAuth = async (context: any) => {
+  const session = await auth(context);
+
+  if (!session) {
+    return { err: context.json({ error: 'Unauthorized' }, 401), s: null };
+  }
+
+  if (!(await isAdm(session.userId))) {
+    return { err: context.json({ error: 'Forbidden' }, 403), s: null };
+  }
+
+  return { err: null, s: session };
+};
 
 // Inicializacia Supabase Storage bucket pri starte servera
 const initStorage = async () => {
   try {
-    const su = Deno.env.get('SUPABASE_URL');
-    const sk = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-    if (!su || !sk) {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    if (!supabaseUrl || !serviceRoleKey) {
       console.log('[STORAGE] Skipping bucket initialization - missing credentials');
       return;
     }
     
-    const sb = createClient(su, sk);
+    const storageClient = createClient(supabaseUrl, serviceRoleKey);
     const bucketName = 'make-15e718fc-island-images';
     
     // Skontrolujeme ci bucket existuje
-    const { data: buckets } = await sb.storage.listBuckets();
+    const { data: buckets } = await storageClient.storage.listBuckets();
     const bucketExists = buckets?.some(bucket => bucket.name === bucketName);
     
     if (!bucketExists) {
       console.log('[STORAGE] Creating bucket:', bucketName);
-      const { error } = await sb.storage.createBucket(bucketName, {
+      const { error } = await storageClient.storage.createBucket(bucketName, {
         public: false,
         fileSizeLimit: 5242880 // 5MB limit
       });
@@ -53,7 +99,7 @@ const initStorage = async () => {
 };
 
 // Spustime inicializaciu storage (non-blocking)
-initStorage().catch(err => console.error('[STORAGE] Init failed:', err));
+initStorage().catch((error) => console.error('[STORAGE] Init failed:', error));
 
 app.use('*', cors({ origin: '*', allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], allowHeaders: ['Content-Type', 'Authorization', 'apikey', 'X-Session-Token'], credentials: true }));
 app.use('*', logger());
@@ -483,7 +529,14 @@ app.get('/make-server-15e718fc/admin/keyword-diagnostics', async (c) => {
   const { err } = await admAuth(c);
   if (err) return err;
   const allKeys = await kv.getByPrefix('keyword-image:');
-  const diag = allKeys.map(d => { try { const p = JSON.parse(d); return { key: Object.keys(p)[0], data: p }; } catch { return { key: 'parse-error', data: d }; } });
+  const diag = allKeys.map((entry) => {
+    try {
+      const parsed = JSON.parse(entry);
+      return { key: Object.keys(parsed)[0], data: parsed };
+    } catch {
+      return { key: 'parse-error', data: entry };
+    }
+  });
   return c.json({ totalKeys: allKeys.length, keys: diag });
 });
 
