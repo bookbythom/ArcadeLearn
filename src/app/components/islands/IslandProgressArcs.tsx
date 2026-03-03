@@ -1,4 +1,3 @@
-// Properties pre IslandProgressArcs komponent
 interface IslandProgressArcsProps {
   correctCount: number; // Pocet spravnych cviceni (0-5 pre normalne ostrovy, 0-10 pre testy)
   totalCount?: number; // Celkovy pocet cviceni (default 5)
@@ -6,7 +5,6 @@ interface IslandProgressArcsProps {
   status: "locked" | "unlocked" | "completed-perfect" | "completed-mistakes";
 }
 
-// Komponent pre zobrazenie progress kruhu okolo ostrova
 export default function IslandProgressArcs(props: IslandProgressArcsProps) {
   // Nastavime default hodnotu pre totalCount
   const totalExercises = props.totalCount || 5;

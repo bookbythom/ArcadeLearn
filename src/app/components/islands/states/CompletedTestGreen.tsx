@@ -1,11 +1,9 @@
 import svgPaths from "@/imports/test-completed-green";
 
-// Properties pre CompletedTestGreen komponent
 interface CompletedTestGreenProps {
   onClick?: () => void;
 }
 
-// Komponent pre completed test ostrov (green)
 export default function CompletedTestGreen(props: CompletedTestGreenProps) {
   return (
     <button

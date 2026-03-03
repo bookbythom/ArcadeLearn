@@ -1,11 +1,9 @@
 import svgPaths from "@/imports/island-locked-test";
 
-// Properties pre LockedTestIsland komponent
 interface LockedTestIslandProps {
   onClick?: () => void;
 }
 
-// Komponent pre zobrazenie zamknuteho test ostrova
 export default function LockedTestIsland(props: LockedTestIslandProps) {
   void props;
   // Zamknute test ostrovy nemaju onClick handler, su neaktivne

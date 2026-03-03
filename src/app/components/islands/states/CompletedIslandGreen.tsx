@@ -1,11 +1,9 @@
 import svgPaths from "@/imports/island-completed-green";
 
-// Properties pre CompletedIslandGreen komponent
 interface CompletedIslandGreenProps {
   onClick?: () => void;
 }
 
-// Komponent pre completed ostrov (green)
 export default function CompletedIslandGreen(props: CompletedIslandGreenProps) {
   return (
     <button

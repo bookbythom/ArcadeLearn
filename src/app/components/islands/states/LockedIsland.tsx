@@ -1,11 +1,9 @@
 import svgPaths from "@/imports/island-locked";
 
-// Properties pre LockedIsland komponent
 interface LockedIslandProps {
   onClick?: () => void;
 }
 
-// Komponent pre zobrazenie zamknuteho ostrova
 export default function LockedIsland(props: LockedIslandProps) {
   void props;
   // Zamknute ostrovy nemaju onClick handler, su neaktivne

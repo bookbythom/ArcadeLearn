@@ -1,11 +1,9 @@
 import svgPaths from "@/imports/test-completed-gold";
 
-// Properties pre CompletedTestGold komponent
 interface CompletedTestGoldProps {
   onClick?: () => void;
 }
 
-// Komponent pre completed test ostrov (gold)
 export default function CompletedTestGold(props: CompletedTestGoldProps) {
   return (
     <button

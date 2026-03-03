@@ -1,11 +1,9 @@
 import svgPaths from "@/imports/beginner-island-07";
 
-// Properties pre BeginnerIsland7 komponent
 interface BeginnerIsland7Props {
   onClick?: () => void;
 }
 
-// Komponent pre beginner ostrov c. 7
 export default function BeginnerIsland7(props: BeginnerIsland7Props) {
   return (
     <button

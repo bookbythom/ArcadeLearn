@@ -1,11 +1,9 @@
 import svgPaths from "@/imports/intermediate-island-06";
 
-// Properties pre IntermediateIsland6 komponent
 interface IntermediateIsland6Props {
   onClick?: () => void;
 }
 
-// Komponent pre intermediate ostrov c. 6
 export default function IntermediateIsland6(props: IntermediateIsland6Props) {
   return (
     <button

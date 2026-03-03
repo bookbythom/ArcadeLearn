@@ -1,11 +1,9 @@
 import svgPaths from "@/imports/beginner-island-10";
 
-// Properties pre BeginnerIsland10 komponent
 interface BeginnerIsland10Props {
   onClick?: () => void;
 }
 
-// Pomocny komponent pre dodatocnu grafiku
 function GroupComponent() {
   return (
     <div className="absolute inset-[21.05%_20.72%_31.46%_18.32%]">
@@ -19,7 +17,6 @@ function GroupComponent() {
   );
 }
 
-// Komponent pre beginner ostrov c. 10
 export default function BeginnerIsland10(props: BeginnerIsland10Props) {
   return (
     <button

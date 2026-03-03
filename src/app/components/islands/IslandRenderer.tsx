@@ -48,7 +48,6 @@ import IslandProgressArcs from "@/app/components/islands/IslandProgressArcs";
 // Typy pre stav ostrova
 type IslandStatus = "locked" | "unlocked" | "completed-perfect" | "completed-mistakes";
 
-// Properties pre IslandRenderer komponent
 interface IslandRendererProps {
   level: "beginner" | "intermediate" | "professional";
   theme: number; // 0 je finalny test, 1-12 su normalne ostrovy

@@ -1,11 +1,9 @@
 import svgPaths from "@/imports/island-completed-gold";
 
-// Properties pre CompletedIslandGold komponent
 interface CompletedIslandGoldProps {
   onClick?: () => void;
 }
 
-// Komponent pre completed ostrov (gold)
 export default function CompletedIslandGold(props: CompletedIslandGoldProps) {
   return (
     <button

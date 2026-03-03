@@ -1,11 +1,9 @@
 import svgPaths from "@/imports/professional-island-11";
 
-// Properties pre ProfessionalIsland11 komponent
 interface ProfessionalIsland11Props {
   onClick?: () => void;
 }
 
-// Pomocny komponent pre dodatocnu grafiku
 function GroupComponent() {
   return (
     <div className="absolute inset-[21.05%_28.58%_32.87%_26.07%]">
@@ -19,7 +17,6 @@ function GroupComponent() {
   );
 }
 
-// Komponent pre professional ostrov c. 11
 export default function ProfessionalIsland11(props: ProfessionalIsland11Props) {
   return (
     <button

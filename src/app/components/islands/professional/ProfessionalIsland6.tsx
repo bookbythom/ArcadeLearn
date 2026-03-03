@@ -1,11 +1,9 @@
 import svgPaths from "@/imports/professional-island-06";
 
-// Properties pre ProfessionalIsland6 komponent
 interface ProfessionalIsland6Props {
   onClick?: () => void;
 }
 
-// Komponent pre professional ostrov c. 6
 export default function ProfessionalIsland6(props: ProfessionalIsland6Props) {
   return (
     <button

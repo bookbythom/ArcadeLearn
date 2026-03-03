@@ -1,11 +1,9 @@
 import svgPaths from "@/imports/intermediate-island-10";
 
-// Properties pre IntermediateIsland10 komponent
 interface IntermediateIsland10Props {
   onClick?: () => void;
 }
 
-// Pomocny komponent pre dodatocnu grafiku
 function GroupComponent() {
   return (
     <div className="absolute inset-[21.05%_20.53%_31.46%_18.51%]">
@@ -19,7 +17,6 @@ function GroupComponent() {
   );
 }
 
-// Komponent pre intermediate ostrov c. 10
 export default function IntermediateIsland10(props: IntermediateIsland10Props) {
   return (
     <button
