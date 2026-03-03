@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import svgPathsProfile from "@/imports/edit-pencil";
 import {
   validateEmail,
   validatePassword,
@@ -27,8 +26,6 @@ export default function ProfilePopup(props: ProfilePopupProps) {
   const [temporaryEmail, setTemporaryEmail] = useState(profileData.email);
   const [temporaryPassword, setTemporaryPassword] = useState("");
   const [displayPassword, setDisplayPassword] = useState("********");
-  const [nameWidth, setNameWidth] = useState(0);
-  const nameRef = useRef<HTMLParagraphElement>(null);
   const [currentPasswordForChange, setCurrentPasswordForChange] = useState("");
   
   // Pole tipov pre uzivatelov
@@ -114,13 +111,6 @@ export default function ProfilePopup(props: ProfilePopupProps) {
       lastProfileRef.current = currentProfileString;
     }
   }, [props.profile]);
-
-  // Effect pre vypocet sirky mena
-  useEffect(() => {
-    if (nameRef.current && !isEditingName) {
-      setNameWidth(nameRef.current.offsetWidth);
-    }
-  }, [profileData.name, isEditingName]);
 
   // Funkcia pre zacatie editacie mena
   const handleNameEditClick = () => {
@@ -287,134 +277,70 @@ export default function ProfilePopup(props: ProfilePopupProps) {
   };
 
   return (
-    <div 
-      className="bg-[#222224] max-h-[90vh] overflow-clip relative rounded-[40px] w-[95vw] max-w-[800px] mx-auto min-h-[710px]"
-      data-name="component-profile-popup/signed-in"
-    >
-      {/* Profilovy obrazok */}
-      <button 
-        onClick={handleProfilePictureClick}
-        className="absolute left-[50%] translate-x-[-50%] top-[56px] w-[160px] h-[160px] cursor-pointer hover:opacity-80 transition-opacity group" 
-      >
-        {profileData.profilePicture ? (
-          <img 
-            src={profileData.profilePicture} 
-            alt="Profile" 
-            className="w-full h-full rounded-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full rounded-full bg-[#D9D9D9]" />
-        )}
-        <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-        </div>
-      </button>
-      
-      {/* Sekcia s menom */}
-      <div className="absolute left-[50%] translate-x-[-50%] top-[236px] w-[85%] max-w-[500px]">
-        <div className="relative flex items-center justify-center">
-          {/* Na mobile: klikatelne meno, na desktope: meno s tuzkou */}
+    <div className="bg-[#222224] max-h-[90vh] overflow-y-auto rounded-[40px] w-[95vw] max-w-[800px] mx-auto p-8">
+      <div className="max-w-[560px] mx-auto flex flex-col gap-6">
+        <button
+          onClick={handleProfilePictureClick}
+          className="w-[160px] h-[160px] self-center cursor-pointer hover:opacity-80 transition-opacity group relative"
+        >
+          {profileData.profilePicture ? (
+            <img
+              src={profileData.profilePicture}
+              alt="Profile"
+              className="w-full h-full rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full rounded-full bg-[#D9D9D9]" />
+          )}
+          <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+        </button>
+
+        <div className="flex items-center justify-center gap-3">
+          <h2 className="text-[44px] leading-none text-white text-center">{profileData.name}</h2>
           <button
             onClick={handleNameEditClick}
-            className="pointer-events-none font-['Roboto:Medium',sans-serif] font-medium text-[44px] text-white tracking-[0.15px] text-center hover:text-white transition-colors"
-            style={{ fontVariationSettings: "'wdth' 100" }}
+            className="text-[#d9d9d9] hover:text-white transition-colors text-sm font-semibold px-2 py-1 rounded"
           >
-            <p ref={nameRef}>{profileData.name}</p>
-          </button>
-          
-          {/* Ikona tuzky pre edit - viditelna len na desktope */}
-          <button 
-            onClick={handleNameEditClick}
-            className="absolute w-[30px] h-[20px] rotate-[-19deg] hover:scale-110 transition-transform"
-            style={{ left: `calc(50% + ${nameWidth / 2}px + 20px)` }}
-          >
-            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 46.2917 29.2584">
-              <g>
-                <path d={svgPathsProfile.p164cb500} fill="#D9D9D9" />
-                <path d={svgPathsProfile.pd450700} fill="#D9D9D9" />
-                <path d={svgPathsProfile.p8833900} fill="#D9D9D9" />
-              </g>
-            </svg>
+            Edit
           </button>
         </div>
-      </div>
-      
-      {/* Email a Heslo - Stacked vertikalne */}
-      <div className="absolute left-[50%] translate-x-[-50%] top-[305px] w-[85%] max-w-[500px] flex flex-col gap-3.5">
-        {/* Email */}
-        <div className="relative">
-          <div
-            className="bg-[#d9d9d9] hover:bg-[#d9d9d9] cursor-default flex h-[56px] items-center px-4 py-3 rounded-[18px] w-full transition-colors"
-          >
-            <div className="font-['Roboto:Medium',sans-serif] font-medium text-[18px] text-black tracking-[0.15px] text-left" style={{ fontVariationSettings: "'wdth' 100" }}>
-              <p>{profileData.email}</p>
-            </div>
+
+        <div className="flex flex-col gap-3.5">
+          <div className="bg-[#d9d9d9] h-[56px] rounded-[18px] px-4 flex items-center justify-between">
+            <span className="text-[18px] text-black truncate">{profileData.email}</span>
+            <button
+              onClick={handleEmailEditClick}
+              className="text-[#3a3a3c] hover:text-black transition-colors text-sm font-semibold px-2 py-1"
+            >
+              Edit
+            </button>
           </div>
-          
-          {/* Ikona tuzky pre edit - viditelna a klikatelna len na desktope */}
-          <button 
-            onClick={handleEmailEditClick}
-            className="flex absolute w-[30px] h-[20px] rotate-[-19deg] hover:scale-110 transition-transform right-[-40px] top-1/2 -translate-y-1/2 cursor-pointer items-center justify-center"
-          >
-            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 46.2917 29.2584">
-              <g>
-                <path d={svgPathsProfile.p164cb500} fill="#D9D9D9" />
-                <path d={svgPathsProfile.pd450700} fill="#D9D9D9" />
-                <path d={svgPathsProfile.p8833900} fill="#D9D9D9" />
-              </g>
-            </svg>
-          </button>
-        </div>
-        
-        {/* Heslo */}
-        <div className="relative">
-          <div
-            className="bg-[#d9d9d9] hover:bg-[#d9d9d9] cursor-default flex h-[56px] items-center px-4 py-3 rounded-[18px] w-full transition-colors"
-          >
-            <div className="font-['Roboto:Medium',sans-serif] font-medium text-[18px] text-black tracking-[0.15px]" style={{ fontVariationSettings: "'wdth' 100" }}>
-              <p>{displayPassword}</p>
-            </div>
+
+          <div className="bg-[#d9d9d9] h-[56px] rounded-[18px] px-4 flex items-center justify-between">
+            <span className="text-[18px] text-black">{displayPassword}</span>
+            <button
+              onClick={handlePasswordEditClick}
+              className="text-[#3a3a3c] hover:text-black transition-colors text-sm font-semibold px-2 py-1"
+            >
+              Edit
+            </button>
           </div>
-          
-          {/* Ikona tuzky pre edit - viditelna a klikatelna len na desktope */}
-          <button 
-            onClick={handlePasswordEditClick}
-            className="flex absolute w-[30px] h-[20px] rotate-[-19deg] hover:scale-110 transition-transform right-[-40px] top-1/2 -translate-y-1/2 cursor-pointer items-center justify-center"
-          >
-            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 46.2915 29.2583">
-              <g>
-                <path d={svgPathsProfile.p30341380} fill={isEditingPassword ? "#4CB025" : "#D9D9D9"} />
-                <path d={svgPathsProfile.p2755f0f0} fill={isEditingPassword ? "#4CB025" : "#D9D9D9"} />
-                <path d={svgPathsProfile.p16a40e80} fill={isEditingPassword ? "#4CB025" : "#D9D9D9"} />
-              </g>
-            </svg>
-          </button>
         </div>
-      </div>
-      
-      {/* Tip box a Logout tlacidlo - stacked vertikalne s tipom hore */}
-      <div className="absolute left-[50%] translate-x-[-50%] top-[475px] w-[85%] max-w-[500px] flex flex-col gap-3">
-        {/* Okno s tipom */}
-        <div className="bg-[#323235] flex min-h-[110px] items-center justify-center p-5 rounded-[20px]">
-          <p 
-            className="font-['Roboto:Medium_Italic',sans-serif] font-medium italic text-center text-white leading-snug text-[16px]"
-            style={{ fontVariationSettings: "'wdth' 100" }}
-          >
-            "{currentTip}"
-          </p>
+
+        <div className="bg-[#323235] min-h-[110px] rounded-[20px] p-5 flex items-center justify-center">
+          <p className="italic text-center text-white leading-snug text-[16px]">"{currentTip}"</p>
         </div>
-        
-        {/* Logout tlacidlo */}
-        <button 
+
+        <button
           onClick={props.onLogout}
-          className="bg-[#ec4545] hover:bg-[#d63939] flex h-[56px] items-center justify-center px-4 rounded-[20px] w-full transition-colors cursor-pointer"
+          className="bg-[#ec4545] hover:bg-[#d63939] h-[56px] rounded-[20px] text-[22px] text-white font-bold transition-colors"
         >
-          <div className="font-['Roboto:Bold',sans-serif] font-bold text-[22px] text-white tracking-[0.15px]" style={{ fontVariationSettings: "'wdth' 100" }}>
-            Log out
-          </div>
+          Log out
         </button>
       </div>
 
@@ -422,12 +348,12 @@ export default function ProfilePopup(props: ProfilePopupProps) {
       {isEditingName && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-[#2a2a2c] rounded-[20px] p-8 w-full max-w-[500px] max-h-[90%] overflow-y-auto flex flex-col gap-6 shadow-2xl border border-[#3a3a3c]">
-            <h3 className="font-['Roboto:Bold',sans-serif] font-bold text-[30px] text-white text-center" style={{ fontVariationSettings: "'wdth' 100" }}>
+            <h3 className="font-bold text-[30px] text-white text-center">
               Change Name
             </h3>
 
             <div className="flex flex-col gap-2">
-              <label className="font-['Roboto:Medium',sans-serif] font-medium text-[16px] text-[#b6b6b6] pl-2" style={{ fontVariationSettings: "'wdth' 100" }}>
+              <label className="font-medium text-[16px] text-[#b6b6b6] pl-2">
                 Your Name
               </label>
               <input
@@ -442,10 +368,9 @@ export default function ProfilePopup(props: ProfilePopupProps) {
                 maxLength={25}
                 placeholder="Enter your name"
                 autoFocus
-                className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-['Roboto:Medium',sans-serif] font-medium text-[17px] text-[#222224] tracking-[0.15px] placeholder:text-[#777]"
-                style={{ fontVariationSettings: "'wdth' 100" }}
+                className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-medium text-[17px] text-[#222224] placeholder:text-[#777]"
               />
-              <p className="font-['Roboto:Regular',sans-serif] text-[12px] text-[#888] pl-2" style={{ fontVariationSettings: "'wdth' 100" }}>
+              <p className="text-[12px] text-[#888] pl-2">
                 Maximum 25 characters
               </p>
             </div>
@@ -456,15 +381,13 @@ export default function ProfilePopup(props: ProfilePopupProps) {
                   setIsEditingName(false);
                   setTemporaryName(profileData.name);
                 }}
-                className="bg-[#ec4545] hover:bg-[#d63939] rounded-[15px] px-6 py-2.5 font-['Roboto:Bold',sans-serif] font-bold text-[18px] text-white transition-all"
-                style={{ fontVariationSettings: "'wdth' 100" }}
+                className="bg-[#ec4545] hover:bg-[#d63939] rounded-[15px] px-6 py-2.5 font-bold text-[18px] text-white transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handleNameSaveClick}
-                className="bg-[#4cb025] hover:bg-[#3d9d1e] rounded-[15px] px-6 py-2.5 font-['Roboto:Bold',sans-serif] font-bold text-[18px] text-white transition-all"
-                style={{ fontVariationSettings: "'wdth' 100" }}
+                className="bg-[#4cb025] hover:bg-[#3d9d1e] rounded-[15px] px-6 py-2.5 font-bold text-[18px] text-white transition-all"
               >
                 Save
               </button>
@@ -477,12 +400,12 @@ export default function ProfilePopup(props: ProfilePopupProps) {
       {isEditingEmail && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-[#2a2a2c] rounded-[20px] p-8 w-full max-w-[500px] max-h-[90%] overflow-y-auto flex flex-col gap-6 shadow-2xl border border-[#3a3a3c]">
-            <h3 className="font-['Roboto:Bold',sans-serif] font-bold text-[30px] text-white text-center" style={{ fontVariationSettings: "'wdth' 100" }}>
+            <h3 className="font-bold text-[30px] text-white text-center">
               Change Email
             </h3>
 
             <div className="flex flex-col gap-2">
-              <label className="font-['Roboto:Medium',sans-serif] font-medium text-[16px] text-[#b6b6b6] pl-2" style={{ fontVariationSettings: "'wdth' 100" }}>
+              <label className="font-medium text-[16px] text-[#b6b6b6] pl-2">
                 New Email
               </label>
               <input
@@ -492,10 +415,9 @@ export default function ProfilePopup(props: ProfilePopupProps) {
                 onKeyDown={(e) => e.key === 'Enter' && handleEmailSaveClick()}
                 placeholder="email@example.com"
                 autoFocus
-                className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-['Roboto:Medium',sans-serif] font-medium text-[17px] text-[#222224] tracking-[0.15px] placeholder:text-[#777]"
-                style={{ fontVariationSettings: "'wdth' 100" }}
+                className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-medium text-[17px] text-[#222224] placeholder:text-[#777]"
               />
-              <p className="font-['Roboto:Regular',sans-serif] text-[12px] text-[#888] pl-2" style={{ fontVariationSettings: "'wdth' 100" }}>
+              <p className="text-[12px] text-[#888] pl-2">
                 Enter a valid email address
               </p>
             </div>
@@ -506,15 +428,13 @@ export default function ProfilePopup(props: ProfilePopupProps) {
                   setIsEditingEmail(false);
                   setTemporaryEmail(profileData.email);
                 }}
-                className="bg-[#ec4545] hover:bg-[#d63939] rounded-[15px] px-6 py-2.5 font-['Roboto:Bold',sans-serif] font-bold text-[18px] text-white transition-all"
-                style={{ fontVariationSettings: "'wdth' 100" }}
+                className="bg-[#ec4545] hover:bg-[#d63939] rounded-[15px] px-6 py-2.5 font-bold text-[18px] text-white transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handleEmailSaveClick}
-                className="bg-[#4cb025] hover:bg-[#3d9d1e] rounded-[15px] px-6 py-2.5 font-['Roboto:Bold',sans-serif] font-bold text-[18px] text-white transition-all"
-                style={{ fontVariationSettings: "'wdth' 100" }}
+                className="bg-[#4cb025] hover:bg-[#3d9d1e] rounded-[15px] px-6 py-2.5 font-bold text-[18px] text-white transition-all"
               >
                 Save
               </button>
@@ -527,13 +447,13 @@ export default function ProfilePopup(props: ProfilePopupProps) {
       {isEditingPassword && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-[#2a2a2c] rounded-[20px] p-8 w-full max-w-[500px] max-h-[90%] overflow-y-auto flex flex-col gap-6 shadow-2xl border border-[#3a3a3c]">
-            <h3 className="font-['Roboto:Bold',sans-serif] font-bold text-[30px] text-white text-center" style={{ fontVariationSettings: "'wdth' 100" }}>
+            <h3 className="font-bold text-[30px] text-white text-center">
               Change Password
             </h3>
 
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <label className="font-['Roboto:Medium',sans-serif] font-medium text-[16px] text-[#b6b6b6] pl-2" style={{ fontVariationSettings: "'wdth' 100" }}>
+                <label className="font-medium text-[16px] text-[#b6b6b6] pl-2">
                   Current Password
                 </label>
                 <input
@@ -542,13 +462,12 @@ export default function ProfilePopup(props: ProfilePopupProps) {
                   onChange={(e) => setCurrentPasswordForChange(e.target.value.replace(/\s/g, ''))}
                   placeholder="Enter current password"
                   autoFocus
-                  className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-['Roboto:Medium',sans-serif] font-medium text-[17px] text-[#222224] tracking-[0.15px] placeholder:text-[#777]"
-                  style={{ fontVariationSettings: "'wdth' 100" }}
+                  className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-medium text-[17px] text-[#222224] placeholder:text-[#777]"
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="font-['Roboto:Medium',sans-serif] font-medium text-[16px] text-[#b6b6b6] pl-2" style={{ fontVariationSettings: "'wdth' 100" }}>
+                <label className="font-medium text-[16px] text-[#b6b6b6] pl-2">
                   New Password
                 </label>
                 <input
@@ -557,10 +476,9 @@ export default function ProfilePopup(props: ProfilePopupProps) {
                   onChange={(e) => setTemporaryPassword(e.target.value.replace(/\s/g, ''))}
                   placeholder="Enter new password"
                   onKeyDown={(e) => e.key === 'Enter' && handlePasswordSaveClick()}
-                  className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-['Roboto:Medium',sans-serif] font-medium text-[17px] text-[#222224] tracking-[0.15px] placeholder:text-[#777]"
-                  style={{ fontVariationSettings: "'wdth' 100" }}
+                  className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-medium text-[17px] text-[#222224] placeholder:text-[#777]"
                 />
-                <p className="font-['Roboto:Regular',sans-serif] text-[12px] text-[#888] pl-2" style={{ fontVariationSettings: "'wdth' 100" }}>
+                <p className="text-[12px] text-[#888] pl-2">
                   Password must be at least 6 characters long
                 </p>
               </div>
@@ -573,15 +491,13 @@ export default function ProfilePopup(props: ProfilePopupProps) {
                   setCurrentPasswordForChange("");
                   setTemporaryPassword("");
                 }}
-                className="bg-[#ec4545] hover:bg-[#d63939] rounded-[15px] px-6 py-2.5 font-['Roboto:Bold',sans-serif] font-bold text-[18px] text-white transition-all"
-                style={{ fontVariationSettings: "'wdth' 100" }}
+                className="bg-[#ec4545] hover:bg-[#d63939] rounded-[15px] px-6 py-2.5 font-bold text-[18px] text-white transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handlePasswordSaveClick}
-                className="bg-[#4cb025] hover:bg-[#3d9d1e] rounded-[15px] px-6 py-2.5 font-['Roboto:Bold',sans-serif] font-bold text-[18px] text-white transition-all"
-                style={{ fontVariationSettings: "'wdth' 100" }}
+                className="bg-[#4cb025] hover:bg-[#3d9d1e] rounded-[15px] px-6 py-2.5 font-bold text-[18px] text-white transition-all"
               >
                 Save
               </button>
