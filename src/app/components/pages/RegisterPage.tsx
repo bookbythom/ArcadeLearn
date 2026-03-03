@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import svgPathsRegister from "@/imports/register_signin_checkmark";
 import { validateEmail, validatePassword, validateName } from "@/app/utils/profileUtils";
@@ -12,93 +12,58 @@ interface RegisterPageProps {
 // Hlavny RegisterPage komponent pre registraciu noveho uzivatela
 export default function RegisterPage(props: RegisterPageProps) {
   const navigate = useNavigate();
-  
-  // State pre formularove polia
+
   const [nameInputValue, setNameInputValue] = useState("");
   const [emailInputValue, setEmailInputValue] = useState("");
   const [passwordInputValue, setPasswordInputValue] = useState("");
 
-  // Funkcia na spracovanie odoslania formulara
-  const handleFormSubmit = () => {
-    // Kontrola ci su vsetky polia vyplnene
-    const nameIsEmpty = nameInputValue === "";
-    const emailIsEmpty = emailInputValue === "";
-    const passwordIsEmpty = passwordInputValue === "";
-    
-    if (nameIsEmpty === true || emailIsEmpty === true || passwordIsEmpty === true) {
+  const handleFormSubmit = (event?: React.FormEvent) => {
+    event?.preventDefault();
+
+    if (nameInputValue.trim() === "" || emailInputValue.trim() === "" || passwordInputValue.trim() === "") {
       alert("Please fill in all required fields");
       return;
     }
 
-    // Validacia mena
-    const nameValidationResult = validateName(nameInputValue);
-    
-    if (nameValidationResult.valid === false) {
+    const nameValue = nameInputValue.trim();
+    const nameValidationResult = validateName(nameValue);
+
+    if (!nameValidationResult.valid) {
       alert(nameValidationResult.error);
       return;
     }
 
-    // Validacia emailu
-    const emailLowercase = emailInputValue.toLowerCase();
+    const emailLowercase = emailInputValue.trim().toLowerCase();
     const emailValidationResult = validateEmail(emailLowercase);
-    
-    if (emailValidationResult.valid === false) {
+
+    if (!emailValidationResult.valid) {
       alert(emailValidationResult.error);
       return;
     }
 
-    // Validacia hesla
     const passwordValidationResult = validatePassword(passwordInputValue);
-    
-    if (passwordValidationResult.valid === false) {
+
+    if (!passwordValidationResult.valid) {
       alert(passwordValidationResult.error);
       return;
     }
 
-    // Zavolame callback funkciu s validnymi datami
-    props.onSubmit(nameInputValue, emailLowercase, passwordInputValue);
+    props.onSubmit(nameValue, emailLowercase, passwordInputValue);
   };
 
-  // Effect pre handling Enter key
-  useEffect(() => {
-    // Funkcia ktora sa zavola pri stlaceni klavesy
-    const handleKeyPressEvent = (keyboardEvent: KeyboardEvent) => {
-      const pressedKey = keyboardEvent.key;
-      
-      if (pressedKey === 'Enter') {
-        handleFormSubmit();
-      }
-    };
-
-    // Pridame listener
-    window.addEventListener('keydown', handleKeyPressEvent);
-    
-    // Cleanup funkcia
-    return () => {
-      window.removeEventListener('keydown', handleKeyPressEvent);
-    };
-  }, [nameInputValue, emailInputValue, passwordInputValue]);
-
-  // Pomocna premenna pre loading state
   const isCurrentlyLoading = props.isLoading === true;
 
   return (
     <div className="min-h-screen bg-[#1c1c1e] flex items-center justify-center p-4">
-      {/* Loading overlay - zobrazuje sa ked je isLoading true */}
       {isCurrentlyLoading && (
-        <div 
-          className="fixed inset-0 bg-[#1c1c1e] z-50 flex items-center justify-center"
-        >
+        <div className="fixed inset-0 bg-[#1c1c1e] z-50 flex items-center justify-center">
           <div className="relative">
-            {/* Zeleny rotujuci kruh */}
-            <svg 
-              className="animate-spin" 
-              width="80" 
-              height="80" 
+            <svg
+              className="animate-spin"
+              width="80"
+              height="80"
               viewBox="0 0 80 80"
-              style={{
-                animation: 'spin 1s linear infinite'
-              }}
+              style={{ animation: 'spin 1s linear infinite' }}
             >
               <circle
                 cx="40"
@@ -116,93 +81,58 @@ export default function RegisterPage(props: RegisterPageProps) {
         </div>
       )}
 
-      {/* Hlavny kontajner formulara */}
-      <div className="bg-[#222224] h-[600px] overflow-clip relative rounded-[40px] w-[90vw] max-w-[500px] mx-auto" data-name="component-profile-popup/register">
-        
-        {/* Name input pole */}
-        <div className="absolute bg-[#d9d9d9] content-stretch flex h-[60px] items-center left-[50%] translate-x-[-50%] px-[20px] py-[19px] rounded-[21px] top-[165px] w-[85%]">
+      <div className="bg-[#222224] rounded-[40px] w-[90vw] max-w-[500px] p-10 mx-auto">
+        <h1 className="text-[56px] leading-none text-center text-white mb-10">Register</h1>
+
+        <form onSubmit={handleFormSubmit} className="flex flex-col gap-5">
           <input
             type="text"
             value={nameInputValue}
-            onChange={(event) => {
-              const newValue = event.target.value;
-              setNameInputValue(newValue);
-            }}
+            onChange={(event) => setNameInputValue(event.target.value)}
             placeholder="name"
-            className="bg-transparent w-full outline-none font-['Roboto:Medium',sans-serif] font-medium text-[18px] text-[#222224] tracking-[0.15px] placeholder:text-[#666]"
-            style={{ fontVariationSettings: "'wdth' 100" }}
+            autoComplete="name"
+            className="h-[60px] w-full rounded-[21px] px-5 bg-[#d9d9d9] text-[#222224] text-[18px] outline-none placeholder:text-[#666]"
           />
-        </div>
-        
-        {/* Email input pole */}
-        <div className="absolute bg-[#d9d9d9] content-stretch flex h-[60px] items-center left-[50%] translate-x-[-50%] px-[20px] py-[19px] rounded-[21px] top-[245px] w-[85%]">
+
           <input
             type="email"
             value={emailInputValue}
-            onChange={(event) => {
-              const newValue = event.target.value;
-              const newValueLowercase = newValue.toLowerCase();
-              setEmailInputValue(newValueLowercase);
-            }}
+            onChange={(event) => setEmailInputValue(event.target.value.toLowerCase())}
             placeholder="email@example.com"
-            className="bg-transparent w-full outline-none font-['Roboto:Medium',sans-serif] font-medium text-[18px] text-[#222224] tracking-[0.15px] placeholder:text-[#666]"
-            style={{ fontVariationSettings: "'wdth' 100" }}
+            autoComplete="email"
+            className="h-[60px] w-full rounded-[21px] px-5 bg-[#d9d9d9] text-[#222224] text-[18px] outline-none placeholder:text-[#666]"
           />
-        </div>
-        
-        {/* Password input pole */}
-        <div className="absolute bg-[#d9d9d9] content-stretch flex h-[60px] items-center left-[50%] translate-x-[-50%] px-[20px] py-[19px] rounded-[21px] top-[325px] w-[85%]">
+
           <input
             type="password"
             value={passwordInputValue}
-            onChange={(event) => {
-              const newValue = event.target.value;
-              // Odstranime vsetky medzery z hesla
-              const newValueNoSpaces = newValue.replace(/\s/g, '');
-              setPasswordInputValue(newValueNoSpaces);
-            }}
+            onChange={(event) => setPasswordInputValue(event.target.value.replace(/\s/g, ''))}
             placeholder="password (min. 8 characters)"
-            className="bg-transparent w-full outline-none font-['Roboto:Medium',sans-serif] font-medium text-[18px] text-[#222224] tracking-[0.15px] placeholder:text-[#666]"
-            style={{ fontVariationSettings: "'wdth' 100" }}
+            autoComplete="new-password"
+            className="h-[60px] w-full rounded-[21px] px-5 bg-[#d9d9d9] text-[#222224] text-[18px] outline-none placeholder:text-[#666]"
           />
-        </div>
-        
-        {/* Link na sign in */}
-        <div className="absolute content-stretch flex gap-[11px] items-center justify-center leading-[0] left-1/2 -translate-x-1/2 text-[16px] text-white top-[495px] tracking-[0.15px]">
-          <div className="css-g0mm18 flex flex-col font-['Roboto:Medium',sans-serif] font-medium justify-center relative shrink-0" style={{ fontVariationSettings: "'wdth' 100" }}>
-            <p className="css-ew64yg leading-[24px]">Already have an account?</p>
-          </div>
-          <button 
-            onClick={() => {
-              navigate('/signin');
-            }}
-            className="css-g0mm18 flex flex-col font-['Roboto:Regular',sans-serif] font-normal justify-center relative shrink-0 hover:text-[#4cb025] transition-colors cursor-pointer" 
-            style={{ fontVariationSettings: "'wdth' 100" }}
+
+          <button
+            type="submit"
+            disabled={isCurrentlyLoading}
+            className="mt-3 h-[50px] w-[160px] self-center rounded-[15px] bg-[#4cb025] hover:bg-[#3d9d1e] text-white text-[24px] font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1"
           >
-            <p className="css-ew64yg decoration-solid leading-[24px] underline">Sign in</p>
-          </button>
-        </div>
-        
-        {/* Nadpis Register */}
-        <div className="absolute flex flex-col font-['Roboto:Medium',sans-serif] font-medium justify-center leading-[0] left-[50%] translate-x-[-50%] text-[56px] text-white top-[85px] tracking-[0.15px]" style={{ fontVariationSettings: "'wdth' 100" }}>
-          <p className="css-4hzbpn leading-[24px]">Register</p>
-        </div>
-        
-        {/* Submit button */}
-        <button 
-          onClick={handleFormSubmit}
-          disabled={isCurrentlyLoading}
-          className="absolute content-stretch flex gap-[6px] h-[50px] items-center justify-center left-[50%] translate-x-[-50%] px-[19px] py-[13px] top-[405px] w-[160px] hover:scale-105 transition-transform cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          data-name="submit-button"
-        >
-          <div className="absolute bg-[#4cb025] hover:bg-[#3d9d1e] inset-0 rounded-[15px] transition-colors" />
-          <p className="css-4hzbpn font-['Inter:Bold',sans-serif] font-bold h-[28px] leading-[normal] not-italic relative shrink-0 text-[24px] text-white w-[90px] z-10">Submit</p>
-          <div className="h-[23.138px] relative shrink-0 w-[28.998px] z-10" data-name="Union">
-            <svg className="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 28.998 23.1377">
+            <span>Submit</span>
+            <svg className="w-[29px] h-[23px]" fill="none" viewBox="0 0 28.998 23.1377">
               <path d={svgPathsRegister.p319dba00} fill="white" />
             </svg>
-          </div>
-        </button>
+          </button>
+        </form>
+
+        <div className="mt-12 text-center text-white text-[16px]">
+          <span>Already have an account? </span>
+          <button
+            onClick={() => navigate('/signin')}
+            className="underline hover:text-[#4cb025] transition-colors"
+          >
+            Sign in
+          </button>
+        </div>
       </div>
     </div>
   );
