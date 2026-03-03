@@ -145,10 +145,11 @@ export function HomePage(props: HomePageProps) {
       const islandElement = (
         <div 
           key={'island-' + themeNumber} 
-          className="absolute -translate-x-1/2 origin-center scale-[0.55] sm:scale-[0.68] md:scale-[0.82] lg:scale-100" 
+          className="absolute origin-center scale-[0.55] sm:scale-[0.68] md:scale-[0.82] lg:scale-100" 
           style={{ 
             left: positionData.left, 
-            top: positionData.top
+            top: positionData.top, 
+            transform: 'translateX(-50%)' 
           }}
         >
           <IslandRenderer 
@@ -180,10 +181,11 @@ export function HomePage(props: HomePageProps) {
     const finalTestElement = (
       <div 
         key="island-final-test" 
-        className="absolute -translate-x-1/2 origin-center scale-[0.55] sm:scale-[0.68] md:scale-[0.82] lg:scale-100" 
+        className="absolute origin-center scale-[0.55] sm:scale-[0.68] md:scale-[0.82] lg:scale-100" 
         style={{ 
           left: finalTestPosition.left, 
-          top: finalTestPosition.top
+          top: finalTestPosition.top, 
+          transform: 'translateX(-50%)' 
         }}
       >
         <IslandRenderer 

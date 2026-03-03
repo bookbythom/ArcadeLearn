@@ -719,7 +719,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
         </div>
       )}
 
-      <div className="w-full flex items-start sm:items-center justify-center overflow-visible px-3 sm:px-6 xl:px-12 2xl:px-16">
+      <div className="w-full flex items-center justify-center overflow-visible px-3 sm:px-6 xl:px-12 2xl:px-16">
         <div className="w-full max-w-[1600px] overflow-visible">
           <div className="bg-[#1c1c1e] rounded-[20px] sm:rounded-[46px] w-full p-4 sm:p-8 xl:p-20 2xl:p-24 overflow-visible">
             <div className="flex flex-col lg:flex-row gap-8 sm:gap-12 xl:gap-32 items-start overflow-visible">
