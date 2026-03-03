@@ -201,11 +201,11 @@ export default function SingleChoiceTextExercise(props: SingleChoiceTextExercise
   // Funkcia pre dynamicku velkost pisma otazky
   const getDynamicQuestionFontSize = () => {
     const totalLength = props.question.length;
-    if (totalLength < 100) return 'text-[47.95px]';
-    if (totalLength < 180) return 'text-[38px]';
-    if (totalLength < 280) return 'text-[32px]';
-    if (totalLength < 400) return 'text-[26px]';
-    return 'text-[22px]';
+    if (totalLength < 100) return 'text-[30px] sm:text-[47.95px]';
+    if (totalLength < 180) return 'text-[26px] sm:text-[38px]';
+    if (totalLength < 280) return 'text-[22px] sm:text-[32px]';
+    if (totalLength < 400) return 'text-[19px] sm:text-[26px]';
+    return 'text-[17px] sm:text-[22px]';
   };
 
   const getDynamicQuestionLineHeight = () => {
@@ -215,10 +215,10 @@ export default function SingleChoiceTextExercise(props: SingleChoiceTextExercise
   return (
     <div className="fixed inset-0 bg-[#1c1c1e] z-[105] flex flex-col">
       {/* Hlavny obsah - vertikalne centrovaný */}
-      <div className="flex-1 flex flex-col items-center justify-center px-12 pb-[110px] pt-4 overflow-y-auto">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-8 lg:px-12 pb-[96px] sm:pb-[110px] pt-4 overflow-y-auto">
         {/* Otazka s pozadim obdlznika - Fixna vyska na desktope */}
-        <div className="w-full max-w-[1208px] mb-[50px] flex-shrink-0">
-          <div className="bg-[#212123] rounded-[38px] px-[80px] py-0 h-[492px] flex items-center justify-center overflow-auto">
+        <div className="w-full max-w-[1208px] mb-8 sm:mb-[50px] flex-shrink-0">
+          <div className="bg-[#212123] rounded-[20px] sm:rounded-[38px] px-4 sm:px-8 lg:px-[80px] py-6 sm:py-0 min-h-[240px] sm:h-[492px] flex items-center justify-center overflow-auto">
             <p className={`font-['Inter:Regular',sans-serif] font-normal ${getDynamicQuestionFontSize()} ${getDynamicQuestionLineHeight()} text-center text-white whitespace-pre-wrap`}>
               {props.question}
             </p>
@@ -226,14 +226,14 @@ export default function SingleChoiceTextExercise(props: SingleChoiceTextExercise
         </div>
 
         {/* Grid s moznostami - Fixna pozicia na desktope */}
-        <div className="w-full max-w-[1294px] grid grid-cols-2 gap-[16px]">
+        <div className="w-full max-w-[1294px] grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-[16px]">
           {shuffledData.shuffledOptions.map((option, index) => {
             return (
               <button
                 key={index}
                 onClick={() => handleOptionClick(index)}
                 disabled={isSubmitted}
-                className="h-[120px] rounded-[18px] flex items-center justify-center transition-all duration-200 hover:opacity-90 px-4 py-2"
+                className="min-h-[90px] sm:h-[120px] rounded-[14px] sm:rounded-[18px] flex items-center justify-center transition-all duration-200 hover:opacity-90 px-4 py-2"
                 style={{
                   backgroundColor: getOptionBackgroundColor(index),
                   boxShadow: getOptionBoxShadow(index),
@@ -254,22 +254,22 @@ export default function SingleChoiceTextExercise(props: SingleChoiceTextExercise
 
       {/* Spodna navigacia */}
       <div className="absolute bottom-0 left-0 right-0 bg-[#1c1c1e] border-t border-[#4e4e57]">
-        <div className="w-full max-w-[1920px] mx-auto px-16">
-          <div className="h-[110px] flex items-center justify-between gap-4">
+        <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-16">
+          <div className="min-h-[88px] sm:h-[110px] py-3 sm:py-0 flex items-center justify-between gap-2 sm:gap-4">
             {/* Tlacidlo Back */}
             {!props.hideBackButton ? (
               <button
                 onClick={props.onBack}
-                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-['Inter:Bold',sans-serif] font-bold text-[20.55px] rounded-[15px] transition-colors px-6 h-[54px] w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
+                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-['Inter:Bold',sans-serif] font-bold text-[13px] sm:text-[20.55px] rounded-[12px] sm:rounded-[15px] transition-colors px-4 sm:px-6 h-[46px] sm:h-[54px] w-[112px] sm:w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
               >
                 ← Back
               </button>
             ) : (
-              <div className="w-[155px] flex-shrink-0" />
+              <div className="w-[112px] sm:w-[155px] flex-shrink-0" />
             )}
 
             {/* Progress bodky */}
-            <div className="flex items-center justify-center gap-[50px] flex-1 overflow-x-auto px-1">
+            <div className="flex items-center justify-center gap-6 sm:gap-[50px] flex-1 overflow-x-auto px-1">
               {Array.from({ length: props.totalSlides }).map((_, index) => (
                 <div key={index} className="flex-shrink-0">
                   <div className="w-[24px] h-[24px]">
@@ -289,14 +289,14 @@ export default function SingleChoiceTextExercise(props: SingleChoiceTextExercise
               <button
                 onClick={handleSubmitButton}
                 disabled={selectedOption === null}
-                className={`h-[54px] w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0 ${
+                className={`h-[46px] sm:h-[54px] w-[112px] sm:w-[155px] rounded-[12px] sm:rounded-[15px] px-4 sm:px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0 ${
                   selectedOption === null ? "bg-gray-400 cursor-not-allowed opacity-50" : "bg-[#4cb025] hover:bg-[#5cc030]"
                 }`}
               >
-                <p className="font-['Inter:Bold',sans-serif] font-bold text-[20.55px] text-center text-white">
+                <p className="font-['Inter:Bold',sans-serif] font-bold text-[13px] sm:text-[20.55px] text-center text-white">
                   Submit
                 </p>
-                <div className="w-[29px] h-[23px]">
+                <div className="w-[22px] h-[18px] sm:w-[29px] sm:h-[23px]">
                   <svg className="block size-full" fill="none" viewBox="0 0 29 23">
                     <path d={svgPaths.pf95e080} fill="white" />
                   </svg>
@@ -305,9 +305,9 @@ export default function SingleChoiceTextExercise(props: SingleChoiceTextExercise
             ) : (
               <button
                 onClick={props.onNext}
-                className="bg-[#4cb025] hover:bg-[#5cc030] h-[54px] w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
+                className="bg-[#4cb025] hover:bg-[#5cc030] h-[46px] sm:h-[54px] w-[112px] sm:w-[155px] rounded-[12px] sm:rounded-[15px] px-4 sm:px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
               >
-                <p className="font-['Inter:Bold',sans-serif] font-bold text-[20.55px] text-center text-white">
+                <p className="font-['Inter:Bold',sans-serif] font-bold text-[13px] sm:text-[20.55px] text-center text-white">
                   {props.isLastExercise ? 'Finish' : 'Next →'}
                 </p>
               </button>

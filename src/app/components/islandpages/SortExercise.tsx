@@ -82,19 +82,19 @@ function DraggableItemComponent(props: {
   // Funkcia pre velkost pisma
   const getFontSize = () => {
     if (props.item.label.length > 40) {
-      return "text-[30px]";
+      return "text-[20px] sm:text-[30px]";
     }
-    return "text-[38px]";
+    return "text-[24px] sm:text-[38px]";
   };
 
   return (
     <div
       ref={(node) => dragRef(dropRef(node))}
       className={`
-        h-[120px] w-full rounded-[34px] transition-all duration-200
+        min-h-[84px] sm:h-[120px] w-full rounded-[18px] sm:rounded-[34px] transition-all duration-200
         ${!props.isSubmitted ? "cursor-move hover:opacity-90" : "cursor-default"}
         ${dragState.isDragging ? "opacity-50" : "opacity-100"}
-        flex items-center justify-center px-[24px] py-[16px]
+        flex items-center justify-center px-4 sm:px-[24px] py-3 sm:py-[16px]
       `}
       style={{
         backgroundColor: getBackgroundColor(),
@@ -210,10 +210,10 @@ function SortExerciseContent(props: SortExerciseProps) {
   return (
     <div className="fixed inset-0 bg-[#1c1c1e] z-[105] flex flex-col">
       {/* Hlavny obsah - vertikalne centrovaný */}
-      <div className="flex-1 flex flex-col items-center justify-center px-12 pb-[110px] pt-4">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-8 lg:px-12 pb-[96px] sm:pb-[110px] pt-4 overflow-y-auto">
         {/* Pozadie otazky */}
-        <div className="relative w-full max-w-[1278px] mb-[66px]">
-          <div className="w-full bg-[#212123] rounded-[38px] px-[32px] py-[35px]">
+        <div className="relative w-full max-w-[1278px] mb-8 sm:mb-[66px]">
+          <div className="w-full bg-[#212123] rounded-[20px] sm:rounded-[38px] px-4 sm:px-[32px] py-5 sm:py-[35px]">
             <p className={`font-['Inter:Regular',sans-serif] font-normal ${getDynamicQuestionFontSize()} ${getDynamicQuestionLineHeight()} text-center text-white`}>
               {props.question}
             </p>
@@ -221,16 +221,16 @@ function SortExerciseContent(props: SortExerciseProps) {
         </div>
 
         {/* Layout s dvoma stlpcami */}
-        <div className="w-full max-w-[1242px] grid grid-cols-2 gap-[64px]">
+        <div className="w-full max-w-[1242px] grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-8 lg:gap-[64px]">
           {/* Lavy stlpec - Staticke kategorie */}
-          <div className="flex flex-col gap-[40px]">
+          <div className="flex flex-col gap-3 sm:gap-6 lg:gap-[40px]">
             {props.categories ? (
               props.categories.map((category, index) => (
                 <div
                   key={`category-${index}`}
-                  className="h-[120px] w-full bg-[#d9d9d9] rounded-[34px] flex items-center justify-center px-[24px]"
+                  className="min-h-[84px] sm:h-[120px] w-full bg-[#d9d9d9] rounded-[18px] sm:rounded-[34px] flex items-center justify-center px-4 sm:px-[24px]"
                 >
-                  <p className="font-['Inter:Bold',sans-serif] font-bold text-[34.25px] leading-[1.3] text-black text-center">
+                  <p className="font-['Inter:Bold',sans-serif] font-bold text-[24px] sm:text-[34.25px] leading-[1.3] text-black text-center">
                     {category}
                   </p>
                 </div>
@@ -242,9 +242,9 @@ function SortExerciseContent(props: SortExerciseProps) {
                 return (
                   <div
                     key={`category-${index}`}
-                    className="h-[120px] w-full bg-[#d9d9d9] rounded-[34px] flex items-center justify-center px-[24px]"
+                    className="min-h-[84px] sm:h-[120px] w-full bg-[#d9d9d9] rounded-[18px] sm:rounded-[34px] flex items-center justify-center px-4 sm:px-[24px]"
                   >
-                    <p className="font-['Inter:Bold',sans-serif] font-bold text-[34.25px] leading-[1.3] text-black text-center">
+                    <p className="font-['Inter:Bold',sans-serif] font-bold text-[24px] sm:text-[34.25px] leading-[1.3] text-black text-center">
                       {leftText}
                     </p>
                   </div>
@@ -254,7 +254,7 @@ function SortExerciseContent(props: SortExerciseProps) {
           </div>
 
           {/* Pravy stlpec - Draggable polozky */}
-          <div className="flex flex-col gap-[40px]">
+          <div className="flex flex-col gap-3 sm:gap-6 lg:gap-[40px]">
             {draggableItems.map((item, index) => (
               <DraggableItemComponent
                 key={item.id}
@@ -272,22 +272,22 @@ function SortExerciseContent(props: SortExerciseProps) {
 
       {/* Spodna navigacia */}
       <div className="absolute bottom-0 left-0 right-0 bg-[#1c1c1e] border-t border-[#4e4e57]">
-        <div className="w-full max-w-[1920px] mx-auto px-16">
-          <div className="h-[110px] flex items-center justify-between gap-4">
+        <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-6 lg:px-16">
+          <div className="min-h-[88px] sm:h-[110px] py-3 sm:py-0 flex items-center justify-between gap-2 sm:gap-4">
             {/* Tlacidlo Back */}
             {!props.hideBackButton ? (
               <button
                 onClick={props.onBack}
-                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-['Inter:Bold',sans-serif] font-bold text-[20.55px] rounded-[15px] transition-colors px-6 h-[54px] w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
+                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-['Inter:Bold',sans-serif] font-bold text-[13px] sm:text-[20.55px] rounded-[12px] sm:rounded-[15px] transition-colors px-4 sm:px-6 h-[46px] sm:h-[54px] w-[112px] sm:w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0"
               >
                 ← Back
               </button>
             ) : (
-              <div className="w-[155px] flex-shrink-0" />
+              <div className="w-[112px] sm:w-[155px] flex-shrink-0" />
             )}
 
             {/* Progress bodky */}
-            <div className="flex items-center justify-center gap-[50px] flex-1 overflow-x-auto px-1">
+            <div className="flex items-center justify-center gap-6 sm:gap-[50px] flex-1 overflow-x-auto px-1">
               {Array.from({ length: props.totalSlides }).map((_, index) => (
                 <div key={index} className="flex-shrink-0">
                   <div className="w-[24px] h-[24px]">
@@ -306,12 +306,12 @@ function SortExerciseContent(props: SortExerciseProps) {
             {!isSubmitted ? (
               <button
                 onClick={handleSubmitButton}
-                className="bg-[#4cb025] hover:bg-[#5cc030] h-[54px] w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
+                className="bg-[#4cb025] hover:bg-[#5cc030] h-[46px] sm:h-[54px] w-[112px] sm:w-[155px] rounded-[12px] sm:rounded-[15px] px-4 sm:px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
               >
-                <p className="font-['Inter:Bold',sans-serif] font-bold text-[20.55px] text-center text-white">
+                <p className="font-['Inter:Bold',sans-serif] font-bold text-[13px] sm:text-[20.55px] text-center text-white">
                   Submit
                 </p>
-                <div className="w-[29px] h-[23px]">
+                <div className="w-[22px] h-[18px] sm:w-[29px] sm:h-[23px]">
                   <svg className="block size-full" fill="none" viewBox="0 0 29 23">
                     <path d={svgPaths.pf95e080} fill="white" />
                   </svg>
@@ -320,9 +320,9 @@ function SortExerciseContent(props: SortExerciseProps) {
             ) : (
               <button
                 onClick={props.onNext}
-                className="bg-[#4cb025] hover:bg-[#5cc030] h-[54px] w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
+                className="bg-[#4cb025] hover:bg-[#5cc030] h-[46px] sm:h-[54px] w-[112px] sm:w-[155px] rounded-[12px] sm:rounded-[15px] px-4 sm:px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
               >
-                <p className="font-['Inter:Bold',sans-serif] font-bold text-[20.55px] text-center text-white">
+                <p className="font-['Inter:Bold',sans-serif] font-bold text-[13px] sm:text-[20.55px] text-center text-white">
                   {props.isLastExercise ? 'Finish' : 'Next →'}
                 </p>
               </button>
