@@ -7,6 +7,7 @@ import {
   type UserProfile
 } from "@/app/utils/profileUtils";
 import { profileAPI } from "@/app/utils/api";
+import { Pencil } from "lucide-react";
 
 // Interface pre properties profile popup komponentu
 interface ProfilePopupProps {
@@ -293,7 +294,7 @@ export default function ProfilePopup(props: ProfilePopupProps) {
             <div className="w-full h-full rounded-full bg-[#D9D9D9]" />
           )}
           <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <span className="text-white font-semibold text-lg">Edit</span>
+            <Pencil className="w-9 h-9 text-white" />
           </div>
         </button>
 
@@ -302,8 +303,9 @@ export default function ProfilePopup(props: ProfilePopupProps) {
           <button
             onClick={handleNameEditClick}
             className="text-[#d9d9d9] hover:text-white transition-colors text-sm font-semibold px-2 py-1 rounded"
+            aria-label="Edit name"
           >
-            Edit
+            <Pencil className="w-4 h-4" />
           </button>
         </div>
 
@@ -313,8 +315,9 @@ export default function ProfilePopup(props: ProfilePopupProps) {
             <button
               onClick={handleEmailEditClick}
               className="text-[#3a3a3c] hover:text-black transition-colors text-sm font-semibold px-2 py-1"
+              aria-label="Edit email"
             >
-              Edit
+              <Pencil className="w-4 h-4" />
             </button>
           </div>
 
@@ -323,8 +326,9 @@ export default function ProfilePopup(props: ProfilePopupProps) {
             <button
               onClick={handlePasswordEditClick}
               className="text-[#3a3a3c] hover:text-black transition-colors text-sm font-semibold px-2 py-1"
+              aria-label="Edit password"
             >
-              Edit
+              <Pencil className="w-4 h-4" />
             </button>
           </div>
         </div>
