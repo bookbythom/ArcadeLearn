@@ -145,7 +145,7 @@ export function HomePage(props: HomePageProps) {
       const islandElement = (
         <div 
           key={'island-' + themeNumber} 
-          className="absolute" 
+          className="absolute origin-center scale-[0.55] sm:scale-[0.68] md:scale-[0.82] lg:scale-100" 
           style={{ 
             left: positionData.left, 
             top: positionData.top, 
@@ -181,7 +181,7 @@ export function HomePage(props: HomePageProps) {
     const finalTestElement = (
       <div 
         key="island-final-test" 
-        className="absolute" 
+        className="absolute origin-center scale-[0.55] sm:scale-[0.68] md:scale-[0.82] lg:scale-100" 
         style={{ 
           left: finalTestPosition.left, 
           top: finalTestPosition.top, 

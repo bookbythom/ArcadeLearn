@@ -559,7 +559,7 @@ function AppContent() {
       </ModalWrapper>
 
       {showLearnPage && (
-        <div className="fixed inset-0 bg-[#1c1c1e] z-50 overflow-auto">
+        <div className="fixed inset-0 bg-[#1c1c1e] z-50 overflow-y-auto overscroll-y-contain touch-pan-y">
           <Suspense fallback={<PageLoader />}>
             <LearnPage 
               level={currentLearnLevel} 
