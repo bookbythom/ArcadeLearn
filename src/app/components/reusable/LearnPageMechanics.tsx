@@ -4,6 +4,20 @@ import { intermediateThemes } from "@/app/data/intermediatethemes";
 import { professionalThemes } from "@/app/data/professionalthemes";
 import { Pencil, Upload } from "lucide-react";
 
+const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
+
+const validateImageFile = (file: File): string | null => {
+  if (!file.type.startsWith("image/")) {
+    return "Please select an image file";
+  }
+
+  if (file.size > MAX_IMAGE_SIZE_BYTES) {
+    return "Image must be smaller than 5MB";
+  }
+
+  return null;
+};
+
 // Funkcia pre preloading obrazku
 const preloadImage = (url: string): Promise<void> => {
   return new Promise((resolve, reject) => {
@@ -33,7 +47,11 @@ interface KeywordPopupProps {
 function KeywordPopup(props: KeywordPopupProps) {
   const [showActionModal, setShowActionModal] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
-  const [adjustedPosition, setAdjustedPosition] = useState({ x: props.position.x, y: props.position.y, transform: 'translate(10px, -50%)' });
+  const [adjustedPosition, setAdjustedPosition] = useState({
+    x: props.position.x,
+    y: props.position.y,
+    transform: "translate(10px, -50%)",
+  });
   
   // Effect pre nastavenie pozicie popupu
   useEffect(() => {
@@ -45,20 +63,20 @@ function KeywordPopup(props: KeywordPopupProps) {
       
       let x = props.position.x;
       let y = props.position.y;
-      let transform = 'translate(10px, -50%)';
+      let transform = "translate(10px, -50%)";
       
       // Kontrola ci popup preleze cez pravu hranu
       if (props.position.x + rect.width + 20 > viewportWidth) {
         // Umiestnime na lavu stranu keywordu
         x = props.position.x;
-        transform = 'translate(calc(-100% - 10px), -50%)';
+        transform = "translate(calc(-100% - 10px), -50%)";
       }
       
       // Kontrola ci popup preleze cez lavu hranu (ked je umiestneny nalavo)
-      if (transform.includes('-100%') && x - rect.width - 10 < 0) {
+      if (transform.includes("-100%") && x - rect.width - 10 < 0) {
         // Vycentrujeme ho horizontalne
         x = viewportWidth / 2;
-        transform = 'translate(-50%, -50%)';
+        transform = "translate(-50%, -50%)";
       }
       
       // Kontrola prelezienia cez hornu hranu
@@ -77,20 +95,16 @@ function KeywordPopup(props: KeywordPopupProps) {
 
   // Funkcia pre pridanie alebo zmenu obrazku
   const handleUploadKeywordImage = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
 
-      if (!file.type.startsWith('image/')) {
-        alert('Please select an image file');
-        return;
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Image must be smaller than 5MB');
+      const validationError = validateImageFile(file);
+      if (validationError) {
+        alert(validationError);
         return;
       }
 
@@ -105,9 +119,9 @@ function KeywordPopup(props: KeywordPopupProps) {
         );
         
         props.onImageUpdate?.();
-        alert('Image uploaded successfully!');
+        alert("Image uploaded successfully!");
       } catch (error: any) {
-        alert(error.message || 'Failed to upload image');
+        alert(error.message || "Failed to upload image");
       }
     };
     input.click();
@@ -117,7 +131,7 @@ function KeywordPopup(props: KeywordPopupProps) {
   const handleRemoveImage = async () => {
     setShowActionModal(false);
     
-    if (!confirm('Are you sure you want to remove this image?')) {
+    if (!confirm("Are you sure you want to remove this image?")) {
       return;
     }
 
@@ -131,9 +145,9 @@ function KeywordPopup(props: KeywordPopupProps) {
       );
       
       props.onImageUpdate?.();
-      alert('Image removed successfully!');
+      alert("Image removed successfully!");
     } catch (error: any) {
-      alert(error.message || 'Failed to remove image');
+      alert(error.message || "Failed to remove image");
     }
   };
   
@@ -188,9 +202,9 @@ function KeywordPopup(props: KeywordPopupProps) {
           </div>
         ) : null}
         
-        <p className="font-['Inter:Bold',sans-serif] font-bold text-white leading-normal" style={{ fontSize: 'clamp(14px, 2vw, 20px)' }}>
+        <p className="text-[clamp(14px,2vw,20px)] font-bold text-white leading-normal">
           <span className="text-white">{props.keyword} - </span>
-          <span className="font-['Inter:Regular',sans-serif] font-normal">{props.explanation}</span>
+          <span className="font-normal">{props.explanation}</span>
         </p>
       </div>
       
@@ -344,25 +358,21 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
   // Funkcia pre kliknutie na obrazok
   const handleImageClick = (imageIndex: number) => {
     if (!props.isAdmin) return;
-    if (!props.accessToken || props.accessToken === 'DEMO_TOKEN') {
+    if (!props.accessToken || props.accessToken === "DEMO_TOKEN") {
       return;
     }
     
     // Vytvor skryty file input a trigger ho
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
 
-      if (!file.type.startsWith('image/')) {
-        alert('Please select an image file');
-        return;
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Image must be smaller than 5MB');
+      const validationError = validateImageFile(file);
+      if (validationError) {
+        alert(validationError);
         return;
       }
 
@@ -378,9 +388,9 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
         
         // Reload obrazky po uspesnom uploade
         reloadCustomImages();
-        alert('Image uploaded successfully!');
+        alert("Image uploaded successfully!");
       } catch (error: any) {
-        alert(error.message || 'Failed to upload image');
+        alert(error.message || "Failed to upload image");
       }
     };
     input.click();
@@ -516,12 +526,13 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
     const file = files[0];
     
     if (!file.type.startsWith('image/')) {
-      alert('Please drop an image file');
+      alert("Please drop an image file");
       return;
     }
     
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Image must be smaller than 5MB');
+    const validationError = validateImageFile(file);
+    if (validationError) {
+      alert(validationError);
       return;
     }
     
@@ -536,9 +547,9 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
       );
       
       await reloadKeywordImages();
-      alert('Image uploaded successfully!');
+      alert("Image uploaded successfully!");
     } catch (error: any) {
-      alert(error.message || 'Failed to upload image');
+      alert(error.message || "Failed to upload image");
     }
   };
   
@@ -582,7 +593,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
             onClick={(event) => handleKeywordClick(keywordData.def, keywordData.index, event)}
             onDrop={(event) => handleKeywordDrop(keywordData.index, event)}
             onDragOver={handleKeywordDragOver}
-            className="text-[#4cb025] underline decoration-solid hover:text-[#3d9d1e] transition-colors cursor-pointer font-['Inter:Regular',sans-serif] font-normal leading-normal"
+            className="text-[#4cb025] underline decoration-solid hover:text-[#3d9d1e] transition-colors cursor-pointer font-normal leading-normal"
             style={{ fontSize: `${descriptionFontSize}px` }}
           >
             {keywordText}
@@ -699,9 +710,6 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
               width="80" 
               height="80" 
               viewBox="0 0 80 80"
-              style={{
-                animation: 'spin 1s linear infinite'
-              }}
             >
               <circle
                 cx="40"
@@ -725,7 +733,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
             <div className="flex flex-col lg:flex-row gap-24 xl:gap-32 items-start overflow-visible">
               <div ref={textContainerRef} className="flex flex-col gap-4 w-full max-w-[640px]">
                 {/* Sekcia s nadpisom */}
-                <h1 className="font-['Inter:Bold',sans-serif] font-bold text-[clamp(16px,2.5vw,32px)] text-white leading-tight">
+                <h1 className="font-bold text-[clamp(16px,2.5vw,32px)] text-white leading-tight">
                   {themeData.title}
                 </h1>
                 
@@ -738,7 +746,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
                 {/* Sekcia s opisom */}
                 <div 
                   ref={descriptionRef}
-                  className="font-['Inter:Regular',sans-serif] font-normal text-white leading-normal"
+                  className="font-normal text-white leading-normal"
                   style={{ fontSize: `${descriptionFontSize}px` }}
                 >
                   {renderTextWithKeywords()}
@@ -755,9 +763,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
                       <div 
                         key={num}
                         className="relative bg-[#d9d9d9] rounded-[24px] flex items-center justify-center group cursor-pointer overflow-hidden"
-                        style={{
-                          aspectRatio: '336/330',
-                        }}
+                        style={{ aspectRatio: "336/330" }}
                         onClick={() => handleImageClick(num - 1)}
                       >
                         {displayImage ? (
