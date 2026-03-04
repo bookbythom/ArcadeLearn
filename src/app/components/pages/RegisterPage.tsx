@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { LoadingSpinner } from "@/app/components/ui/LoadingSpinner";
 import svgPathsRegister from "@/imports/register_signin_checkmark";
 import { validateEmail, validatePassword, validateName } from "@/app/utils/profileUtils";
 
@@ -56,28 +57,7 @@ export default function RegisterPage(props: RegisterPageProps) {
   return (
     <div className="min-h-screen bg-[#1c1c1e] flex items-center justify-center p-4">
       {isCurrentlyLoading && (
-        <div className="fixed inset-0 bg-[#1c1c1e] z-50 flex items-center justify-center">
-          <div className="relative">
-            <svg
-              className="animate-spin"
-              width="80"
-              height="80"
-              viewBox="0 0 80 80"
-            >
-              <circle
-                cx="40"
-                cy="40"
-                r="32"
-                fill="none"
-                stroke="#4cb025"
-                strokeWidth="6"
-                strokeLinecap="round"
-                strokeDasharray="160"
-                strokeDashoffset="40"
-              />
-            </svg>
-          </div>
-        </div>
+        <LoadingSpinner className="z-50" />
       )}
 
       <div className="bg-[#222224] rounded-[40px] w-[90vw] max-w-[500px] p-10 mx-auto">

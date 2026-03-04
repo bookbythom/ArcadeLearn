@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { beginnerThemes, type KeywordDefinition } from "@/app/data/beginnerthemes";
 import { intermediateThemes } from "@/app/data/intermediatethemes";
 import { professionalThemes } from "@/app/data/professionalthemes";
+import { LoadingSpinner } from "@/app/components/ui/LoadingSpinner";
 import { Pencil, Upload } from "lucide-react";
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
@@ -729,29 +730,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
     <>
       {/* Fullscreen loading animacia */}
       {!allImagesLoaded && (
-        <div className="fixed inset-0 z-[200] bg-[#1c1c1e] flex items-center justify-center">
-          <div className="relative">
-            {/* Otacajuci sa kruh */}
-            <svg 
-              className="animate-spin" 
-              width="80" 
-              height="80" 
-              viewBox="0 0 80 80"
-            >
-              <circle
-                cx="40"
-                cy="40"
-                r="32"
-                fill="none"
-                stroke="#4cb025"
-                strokeWidth="6"
-                strokeLinecap="round"
-                strokeDasharray="160"
-                strokeDashoffset="40"
-              />
-            </svg>
-          </div>
-        </div>
+        <LoadingSpinner className="z-[200]" />
       )}
 
       <div className="w-full flex items-center justify-center overflow-visible px-8 xl:px-12 2xl:px-16">

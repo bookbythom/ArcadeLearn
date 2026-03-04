@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-ro
 import { Header } from "@/app/components/layout/Header";
 import { Footer } from "@/app/components/layout/Footer";
 import { ModalWrapper } from "@/app/components/ui/ModalWrapper";
+import { LoadingSpinner } from "@/app/components/ui/LoadingSpinner";
 import { beginnerThemes } from "@/app/data/beginnerthemes";
 import { intermediateThemes } from "@/app/data/intermediatethemes";
 import { professionalThemes } from "@/app/data/professionalthemes";
@@ -29,13 +30,7 @@ const RegisterPage = lazy(() => loadRegisterPage());
 const AdminPanel = lazy(() => loadAdminPanel());
 
 function PageLoader() {
-  return (
-    <div className="w-full min-h-[320px] flex items-center justify-center">
-      <svg className="animate-spin" width="56" height="56" viewBox="0 0 80 80">
-        <circle cx="40" cy="40" r="32" fill="none" stroke="#4cb025" strokeWidth="6" strokeLinecap="round" strokeDasharray="160" strokeDashoffset="40" />
-      </svg>
-    </div>
-  );
+  return <LoadingSpinner />;
 }
 
 // Definicie typov
@@ -477,13 +472,7 @@ function AppContent() {
 
   // Loading screen
   if (isLoadingAuth) {
-    return (
-      <div className="bg-[#1c1c1e] min-h-screen w-full flex items-center justify-center">
-        <svg className="animate-spin" width="80" height="80" viewBox="0 0 80 80">
-          <circle cx="40" cy="40" r="32" fill="none" stroke="#4cb025" strokeWidth="6" strokeLinecap="round" strokeDasharray="160" strokeDashoffset="40" />
-        </svg>
-      </div>
-    );
+    return <LoadingSpinner className="z-[110]" />;
   }
 
   return (
