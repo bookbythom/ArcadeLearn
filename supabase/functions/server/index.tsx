@@ -8,7 +8,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 const app = new Hono();
 const LEGACY_API_PREFIX = Deno.env.get('LEGACY_API_PREFIX');
 const API_PREFIX = '/arcade-server';
-const LEGACY_STORAGE_BUCKET_NAME = Deno.env.get('LEGACY_STORAGE_BUCKET_NAME') || 'make-15e718fc-island-images';
+const LEGACY_STORAGE_BUCKET_NAME = Deno.env.get('LEGACY_STORAGE_BUCKET_NAME');
 const STORAGE_BUCKET_NAME = Deno.env.get('STORAGE_BUCKET_NAME') || 'arcadelearn-island-images';
 const apiRoute = (path: string) => `${API_PREFIX}${path}`;
 
