@@ -27,8 +27,8 @@ Aplikácia má aj admin časť (správa používateľov, obrázkov a reset dát)
 
 ### Backend (Supabase Edge Function)
 - Hono server v Deno runtime
-- Endpointy: [supabase/functions/server/index.tsx](supabase/functions/server/index.tsx)
-- KV vrstva: [supabase/functions/server/kv_store.tsx](supabase/functions/server/kv_store.tsx)
+- Endpointy: [supabase/functions/arcade-server/index.ts](supabase/functions/arcade-server/index.ts)
+- KV vrstva: [supabase/functions/arcade-server/kv_store.tsx](supabase/functions/arcade-server/kv_store.tsx)
 - Frontend API klient: [src/app/utils/api.ts](src/app/utils/api.ts)
 - Konfigurácia projektu a anon key: [supabase/info.tsx](supabase/info.tsx)
 
@@ -175,7 +175,7 @@ Súbor: [src/app/utils/api.ts](src/app/utils/api.ts)
 
 ## 9) Backend endpointy (Supabase function)
 
-Súbor: [supabase/functions/server/index.tsx](supabase/functions/server/index.tsx)
+Súbor: [supabase/functions/arcade-server/index.ts](supabase/functions/arcade-server/index.ts)
 
 ### Health
 - `GET /arcade-server/health`
@@ -233,7 +233,7 @@ Backend používa key-value záznamy. Typické kľúče:
 - `admin:<userId>`
 - image metadáta (`island-image:*`, `content-image:*`, `keyword-image:*`)
 
-KV helper je v [supabase/functions/server/kv_store.tsx](supabase/functions/server/kv_store.tsx).
+KV helper je v [supabase/functions/arcade-server/kv_store.tsx](supabase/functions/arcade-server/kv_store.tsx).
 
 ---
 
