@@ -1,7 +1,8 @@
 import { projectId, publicAnonKey } from 'supabase/info';
 
 // Konfiguracia API URL
-const BASE_URL = 'https://' + projectId + '.supabase.co/functions/v1/make-server-15e718fc';
+const FUNCTION_NAME = (import.meta as any).env?.VITE_FUNCTION_NAME || 'arcade-server';
+const BASE_URL = 'https://' + projectId + '.supabase.co/functions/v1/' + FUNCTION_NAME;
 
 // Vytvorenie error objektu
 const makeAPIError = (response: Response, data: any) => {
@@ -779,6 +780,24 @@ export const adminAPI = {
       throw makeAPIError(response, data);
     }
     
+    return data;
+  },
+
+  migrateStorageToNewBucket: async (accessToken: string) => {
+    const url = BASE_URL + '/admin/migrate-storage-to-new-bucket';
+    const headers = makeHeaders(accessToken);
+
+    const response = await doFetchWithRetry(url, {
+      method: 'POST',
+      headers: headers,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw makeAPIError(response, data);
+    }
+
     return data;
   },
 };

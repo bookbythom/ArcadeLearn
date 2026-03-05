@@ -1,401 +1,176 @@
-# Praktická časť – implementácia aplikácie ArcadeLearn (technický popis)
+## 2	Praktická časť
 
-## 1. Úvod k praktickej časti
+### 2.1	Návrh grafických prvkov pre webovú aplikáciu v Adobe Illustrator
 
-Táto kapitola popisuje samotnú implementáciu aplikácie ArcadeLearn. Na rozdiel od teoretickej časti je zameraná na konkrétne technické riešenia, štruktúru projektu, dátové toky, rozhodnutia počas vývoja, refaktoring a finálnu stabilizáciu systému. Cieľom je ukázať, ako bola aplikácia reálne postavená od vstupného bodu až po nasadený produkčný build.
+V tejto fáze praktickej práce sme sa zamerali na návrh vizuálnych prvkov pre webovú aplikáciu v programe Adobe Illustrator. Všetky prvky boli vytvorené pomocou vektorovej grafiky, ktorá umožňuje zachovať vysokú kvalitu zobrazenia na rôznych zariadeniach a rozlíšeniach obrazovky, a zároveň poskytuje flexibilitu pri úpravách. Navrhli sme hlavné navigačné prvky, doplnkové ilustrácie a ikonografiu.
 
----
+Ako prvé sme navrhli ostrovčeky, ktoré predstavujú hlavné navigačné aj vizuálne prvky aplikácie. Každý ostrovček reprezentuje jednu tému alebo finálny test v rámci konkrétnej úrovne. Vizuál ostrovčekov je inšpirovaný mapou postupu z edukačnej aplikácie Duolingo.
 
-## 2. Projektová štruktúra a rozdelenie zodpovednosti
+Odomknutý ostrovček pre tému sme navrhli ako vizuálne označenie témy, ku ktorej má používateľ prístup, no ešte ju nezačal alebo nedokončil. Tento variant predstavuje základný stav ostrovčeka, ktorý je farebne prispôsobený úrovni náročnosti, v ktorej sa používateľ nachádza. Tým sme zabezpečili vizuálnu konzistentnosť a jednoduchšiu orientáciu v rámci jednotlivých úrovní aplikácie.
 
-Aplikácia je rozdelená na frontend a backend časť:
+Odomknutý ostrovček pre finálny test sme vytvorili ako variant, ktorý reprezentuje dostupnosť záverečného testu danej úrovne. Ostrovček farebne nadväzuje na farebnosť úrovne, v ktorej sa používateľ aktuálne nachádza, čím je zachovaná vizuálna kontinuita. Zároveň je oproti témovému ostrovčeku odlíšený ikonou trofeje, aby bolo zrejmé, že ide o prvok uzatvárajúci úroveň a signalizujúci možnosť overenia získaných vedomostí.
 
-- frontend: React + TypeScript + Vite,
-- backend: Supabase Edge Function (Hono + Deno runtime),
-- perzistencia: key-value vrstva v Supabase.
+Zamknutý ostrovček sme navrhli ako vizuálne označenie tém, ktoré ešte nie sú pre používateľa dostupné. Použili sme tlmené farebné odtiene a výrazný symbol zámku, čím sme jednoznačne vyjadrili neprístupnosť obsahu. Tento variant slúži na jasné rozlíšenie medzi dostupnými a nedostupnými témami bez potreby doplňujúcich textových informácií.
 
-Prakticky sa kód delí na:
+Ostrovček pre tému alebo finálny test dokončený s chybami sme vytvorili ako variant, ktorý zobrazuje stav, keď používateľ tému síce absolvoval, no počas riešenia cvičení urobil chyby. Tento variant sme vizuálne odlíšili od odomknutých ostrovčekov použitím zelených odtieňov, čím informuje o zvládnutí témy, avšak s chybami. Cieľom je motivovať používateľa k opätovnému prejdeniu témy a zlepšeniu výsledkov.
 
-1. **Aplikačný shell** – routing, session, globálne stavy ([src/app/App.tsx](src/app/App.tsx)).
-2. **Prezentačné komponenty** – stránky, modály, cvičenia ([src/app/components](src/app/components)).
-3. **Doménové utility** – progression, mistakes, renderer helpery ([src/app/utils](src/app/utils)).
-4. **API klient** – centralizované volania backendu ([src/app/utils/api.ts](src/app/utils/api.ts)).
-5. **Backend endpointy** – autentifikácia, progress, admin ([supabase/functions/server/index.tsx](supabase/functions/server/index.tsx)).
+Ostrovček pre tému alebo finálny test dokončený bez chýb sme navrhli ako variant v zlatej farbe, ktorá symbolizuje úspech. Tento variant slúži ako vizuálna spätná väzba a podporuje pocit dosiahnutia „perfektného“ výsledku.
 
-Toto rozdelenie bolo kľúčové, aby sa dalo meniť UI bez zásahu do API logiky a naopak.
+Vektorové obrázky pre domovskú stránku sme navrhli ako doplnkové grafické prvky, ktoré dotvárajú vizuálnu identitu jednotlivých úrovní. Každý obrázok bol tematicky navrhnutý a farebne prispôsobený úrovni náročnosti a slúžil na vizuálne zobrazenie charakteru danej úrovne.
 
----
+Ikonu streaku sme vytvorili ako vizuálnu reprezentáciu pravidelnosti používania aplikácie. Tento prvok znázorňuje počet po sebe idúcich dní aktivity používateľa a podporuje budovanie návyku pravidelného učenia prostredníctvom motivačného vizuálneho prvku.
 
-## 3. Inicializácia aplikácie a render stromu
+Pri návrhu komponentov sme navrhli aj podporné komponenty pre progress používateľa. Prvým je progress always-on pop-up na domovskej stránke, ktorý dynamicky zobrazuje progress používateľa v aktuálnej úrovni (XP, podmienky na odomknutie finálneho testu a stav sekcie). Druhým sú čiary okolo ostrovčekov, ktoré vizuálne znázorňujú, koľko cvičení používateľ vyriešil správne v danom ostrovčeku. Pri bežnej téme ide o rozsah 0 až 5 správnych odpovedí, pri finálnom teste o rozsah 0 až 10.
 
-Vstupný bod je v [src/main.tsx](src/main.tsx). Aplikácia sa renderuje cez `ReactDOM.createRoot(...)`.
+### 2.2	Návrh typov cvičení, tém a mechaník
 
-```tsx
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './app/App';
-import '@/styles/index.css';
+V tejto fáze praktickej práce sme sa zamerali na návrh samotného vzdelávacieho obsahu webovej aplikácie. Cieľom bolo vytvoriť logicky usporiadaný obsah, ktorý umožní používateľovi postupné osvojovanie si vedomostí prostredníctvom interaktívnych cvičení. Pri návrhu sme sa inšpirovali typmi úloh používanými v edukačnej aplikácii Kahoot.
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-```
+Ako prvé sme navrhli päť základných typov cvičení, pričom pri niektorých sme pripravili aj textové a obrázkové varianty: Multiple Choice, Single Choice, Sort, Choose the Correct Option a True/False.
 
-Týmto sa spustí celý routing a autentifikačný flow v App komponente.
+Cvičenia typu Multiple Choice sme navrhli ako úlohy, v ktorých si používateľ vyberá jednu alebo viacero správnych odpovedí z ponúknutých možností.
 
----
+Cvičenia typu Single Choice sme navrhli ako úlohy s práve jednou správnou odpoveďou.
 
-## 4. Routing a autentifikačný tok
+Cvičenia typu Sort sme navrhli ako interaktívne úlohy, v ktorých používateľ triedi alebo usporadúva prvky do správneho poradia alebo kategórií.
 
-Routing je definovaný priamo v [src/app/App.tsx](src/app/App.tsx):
+Cvičenia typu Choose the Correct Option sme vytvorili ako úlohy, pri ktorých používateľ dopĺňa správne odpovede do viet alebo výrazov.
 
-- `/signin` → prihlasovanie,
-- `/register` → registrácia,
-- `/*` → hlavná aplikácia.
+Cvičenia typu True/False sme navrhli ako rýchle overovacie úlohy, v ktorých používateľ rozhoduje o pravdivosti tvrdení určením, či ide o pravdu alebo lož.
 
-```tsx
-<BrowserRouter>
-  <Routes>
-    <Route path="/signin" element={<SignInPageWrapper />} />
-    <Route path="/register" element={<RegisterPageWrapper />} />
-    <Route path="/*" element={<AppContent />} />
-  </Routes>
-</BrowserRouter>
-```
+Ďalším krokom bol návrh tematickej štruktúry obsahu aplikácie. Pre každú úroveň náročnosti sme vytvorili 12 tém, ktoré na seba logicky nadväzujú a umožňujú postupné zvyšovanie náročnosti učiva aj cvičení. Ku každej téme sme navrhli päť cvičení, ktoré kombinujú rôzne typy úloh. Tento prístup umožňuje používateľovi precvičiť si danú tému z viacerých uhlov a zvyšuje efektivitu učenia. Dokopy sme pre tematické ostrovčeky navrhli 36 tém a 180 cvičení rozdelených do troch úrovní náročnosti; finálne testy sú v aplikácii riešené samostatne.
 
-### Session check po štarte
-V `AppContent` sa vykoná kontrola tokenu:
+Súčasťou návrhu obsahu bolo aj vyhľadanie vhodných obrázkov pre jednotlivé témy a cvičenia. Obrázky sme vyberali s dôrazom na ich pochopiteľnosť a tematickú relevantnosť.
 
-```tsx
-const token = localStorage.getItem('accessToken');
-if (!token) {
-  setIsLoadingAuth(false);
-  navigate('/signin');
-  return;
-}
-```
+Ako ďalšie sme navrhli mechaniku XP (Experience Points). XP body slúžia ako číselné vyjadrenie úspešnosti používateľa za správne vyriešené cvičenia, dokončené témy a absolvovanie finálnych testov. Prideľovanie XP sme navrhli tak, že za každé správne vyriešené cvičenie používateľ získa 5 XP, čo znamená, že za dokončenie celej témy bez chýb môže používateľ získať najviac 25 XP. Tento systém poskytuje používateľovi zrozumiteľnú spätnú väzbu o jeho výkone.
 
-Ak token existuje, volá sa backend session endpoint cez `authAPI.getSession(token)`. Pri úspechu sa načítajú všetky user dáta, pri chybe sa token odstráni a používateľ sa vracia na signin.
+Mechanika levelov je priamo naviazaná na nazbierané XP body. Po dosiahnutí vopred definovaného počtu XP používateľ postúpi na vyšší level, ktorý reprezentuje jeho celkový pokrok v aplikácii. Vyššie levely zároveň sprístupňujú nové témy alebo odomknutie ďalšej obtiažnosti.
 
----
+Súčasne s mechanikou XP a levelov sme navrhli aj mechaniku streaku, ktorá sleduje počet po sebe nasledujúcich dní, počas ktorých je používateľ aktívny v aplikácii. Streak sa zvýši raz za deň po dokončení ostrovčeka; ak používateľ vynechá kontinuitu (t. j. posledná aktivita nebola včera), pri ďalšej aktivite sa séria začína odznova. Tento mechanizmus zvyšuje pravdepodobnosť, že používateľ bude pokračovať v učení sa pravidelne.
 
-## 5. Lazy loading a optimalizácia načítania
+### 2.3	Návrh používateľského rozhrania vo Figme
 
-Kvôli výkonu sa stránky načítavajú lazy spôsobom:
+V tejto fáze praktickej práce sme sa zamerali na návrh používateľského rozhrania webovej aplikácie v programe Figma. Cieľom bolo navrhnúť prehľadné rozhranie, ktoré pokrýva domovskú stránku, návrhy vyskakovacích okien aj všetky varianty výsledkov po dokončení jednotlivých typov cvičení.
 
-```tsx
-const HomePage = lazy(() => loadHomePage().then((module) => ({ default: module.HomePage })));
-const LearnPage = lazy(() => loadLearnPage());
-const ProfilePopup = lazy(() => loadProfilePopup());
-```
+Ako prvé sme navrhli hlavnú domovskú stránku aplikácie. Stránka bola vizuálne navrhnutá tak, aby pripomínala mapu postupu s kľukatou cestičkou vytvorenou z ostrovčekov, podobne ako v edukačnej aplikácii Duolingo.
 
-Po prihlásení prebieha prefetch počas idle času (`requestIdleCallback` fallback na `setTimeout`). Praktický efekt bol kratší čas čakania pri otvorení LearnPage a profilu.
+Následne sme navrhli podstránku zameranú na chyby používateľa, ktorá slúži na prehľadné zobrazenie chýb, ktoré používateľ urobil počas riešenia cvičení v jednotlivých témach. Prehľadnosť sme zabezpečili rozdelením stránky na sekcie, kde každá obsahuje názov témy a následne zoznam cvičení, v ktorých používateľ urobil chybu.
 
----
+Ďalším krokom bol návrh profilových vyskakovacích okien. Vytvorili sme tri varianty, ktoré zodpovedajú rôznym stavom používateľa. Prvý variant je určený pre prihláseného používateľa a zobrazuje základné informácie o profile a dostupné akcie. Druhý variant sme navrhli ako prihlasovacie vyskakovacie okno, ktoré sa zobrazí pri prvej interakcii používateľa so stránkou. Tretí variant predstavuje registračné vyskakovacie okno určené pre nových používateľov. Pri všetkých variantoch sme dbali na jednotný vizuálny štýl a jednoduché ovládanie.
 
-## 6. API vrstva – centralizované volania backendu
+V ďalšej fáze sme sa zamerali na návrh stránky Learn Page, ktorá sa zobrazí po kliknutí na odomknutý ostrovček témy a predstavuje úvod do danej témy. Skladá sa z názvu témy, popisu s kľúčovými slovami a obrázka alebo obrázkov, ktoré slúžia ako príklady. Navrhli sme štyri varianty tejto stránky, ktoré sa líšia počtom obrázkov k téme, keďže niektoré témy potrebujú viac ukážok na pochopenie rozdielov alebo fungovania.
 
-V [src/app/utils/api.ts](src/app/utils/api.ts) je jedna centralizovaná vrstva, kde sú vyriešené:
+Súčasťou návrhu Learn stránky bol aj príklad vyskakovacieho okna, ktoré sa zobrazí po kliknutí na kľúčové slovo v texte. Toto okno slúži na doplnenie vysvetlenia alebo definície pojmu bez nutnosti opustenia aktuálnej stránky.
 
-- base URL,
-- headers,
-- retry mechanika,
-- jednotný error objekt.
+V závere tejto časti sme navrhli používateľské rozhranie pre všetky typy cvičení. Okrem základných stavov cvičení sme navrhli aj všetky možné varianty výsledkov, ktoré môžu nastať po dokončení cvičenia.
 
-### Base URL
-```ts
-const BASE_URL = 'https://' + projectId + '.supabase.co/functions/v1/make-server-15e718fc';
-```
+Na záver sme navrhli stránku Result Page, ktorá sa zobrazí po dokončení posledného cvičenia a slúži na zobrazenie celkového hodnotenia za všetkých päť cvičení v podobe grafu a zobrazenia počtu XP, ktoré používateľ za vypracovanie daných cvičení získal.
 
-### Headers
-```ts
-const headers: HeadersInit = {
-  'Content-Type': 'application/json',
-  'apikey': publicAnonKey,
-  'Authorization': 'Bearer ' + publicAnonKey,
-};
-```
+### 2.4	Tvorba frontendu
 
-### Retry a timeout
-```ts
-async function doFetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
-  // timeout 15s + retry attempts
-}
-```
+V tejto kapitole sa zameriavame na používateľskú časť aplikácie, teda na to, čo používateľ vidí a s čím priamo pracuje počas učenia. Frontend sme implementovali ako React aplikáciu v TypeScripte, pričom sme pri vývoji priebežne porovnávali výsledok s návrhom vo Figme. Cieľom nebolo iba „funkčné“ zobrazenie stránok, ale aj zachovanie vizuálnej konzistencie, logického toku obrazoviek a intuitívneho ovládania v každom kroku používateľa.
 
-Tým sa výrazne znížili transient chyby pri sieťových výpadkoch.
+Pri implementácii sme kapitolu usporiadali podľa reálneho toku používateľa v aplikácii: vstup cez prihlásenie, orientácia na domovskej stránke, prechod učebným tokom ostrovčekov a následne podporné časti (chyby, profil, admin). Takéto poradie lepšie zodpovedá tomu, ako aplikácia funguje v praxi.
 
----
+#### 2.4.1	Stránky Sign in a Register
 
-## 7. XP systém a progression logika
+Prihlasovacia a registračná stránka tvoria vstupnú bránu do aplikácie. Obe stránky používajú klientsku validáciu vstupov (povinné polia, formát e‑mailu, pravidlá pre heslo a meno) ešte pred odoslaním požiadavky na server.
 
-XP logika je v [src/app/utils/progressionUtils.ts](src/app/utils/progressionUtils.ts). Kľúčové konštanty:
+Pri registrácii sa volá endpoint `auth/signup`; po úspechu je používateľ vyzvaný na prihlásenie. Pri prihlásení sa volá `auth/signin`, prijatý `accessToken` sa uloží do localStorage a aplikácia sa presmeruje na hlavnú trasu, kde sa následne overí session cez `auth/session`.
 
-```ts
-const xpPerLevel = 100;
-const xpCorrect = 5;
-const finalTestXp = 300;
-```
+Pri neplatných údajoch alebo zlyhaní požiadavky aplikácia zobrazuje okamžité chybové hlásenia, takže používateľ dostane priamu spätnú väzbu bez nejasných stavov.
 
-### Výpočet XP
-```ts
-export function calculateXPEarned(_totalExercises: number, correctAnswers: number): number {
-  let earnedXP = 0;
-  for (let i = 0; i < correctAnswers; i++) {
-    earnedXP = earnedXP + xpCorrect;
-  }
-  return earnedXP;
-}
-```
+#### 2.4.2	Domovská stránka
 
-### Dôležité pravidlo implementácie
-V [src/app/App.tsx](src/app/App.tsx) sa XP prideľuje len pri prvom dokončení ostrova (`isFirstCompletion`). To bráni nekonečnému farmeniu XP opakovaním rovnakého ostrova.
+Domovská stránka predstavuje hlavný orientačný bod celej aplikácie. Používateľ na nej vidí tri samostatné sekcie úrovní (beginner, intermediate, professional), mapu ostrovčekov pre každú úroveň a priebežné údaje v hlavičke (level, XP progres, streak). Každá úroveň obsahuje 12 tematických ostrovčekov a jeden finálny test.
+
+Pri implementácii sme presne definovali pravidlá odomykania. Bežné ostrovčeky sa odomykajú postupne podľa dosiahnutého stavu predchádzajúcich tém. Finálny test sa neodomkne automaticky po otvorení úrovne, ale až po splnení dvoch podmienok: používateľ má v danej sekcii aspoň 300 XP a zároveň má dokončených všetkých 12 tém. Ak sú podmienky nesplnené, po kliknutí na zamknutý test aplikácia zobrazí vysvetlenie, čo ešte chýba.
+
+Domovská stránka zároveň rieši orientáciu v dlhom obsahu. Pomocou Intersection Observer sa priebežne určuje aktuálne viditeľná sekcia, aby sa správne aktualizoval XP indikátor pre danú úroveň. Po prihlásení sa pre bežného používateľa vykoná automatické posunutie na prvú odomknutú úroveň, čo skracuje čas hľadania miesta, kde má pokračovať. Pri účte admin sa auto-scroll nevykonáva a všetky ostrovčeky sú dostupné okamžite.
+
+#### 2.4.3	Obsah ostrovčekov
+
+Po otvorení ostrovčeka sa používateľ pri bežnej téme dostane na Learn Page potom samotné cvičenia a nakoniec Result Page. Pri finálnom teste sa používateľ dostane priamo k cvičeniam a končí pri Result Page. Learn Page obsahuje názov témy, vysvetľujúci text, kľúčové slová a obrázky, ktoré slúžia ako vizuálna podpora výkladu.
+
+Pri Learn Page sme riešili aj správanie rozloženia pri rôznych veľkostiach obrazovky, aby text zostal čitateľný a správne zarovnaný voči obrázkom. Pri kľúčových slovách sa po kliknutí zobrazujú vysvetľujúce vyskakovacie okná, takže používateľ nemusí opúšťať aktuálnu stránku.
+
+V režime admin sa práve na Learn Page realizuje aj nahrávanie obrázkov. Admin môže nahrávať a meniť obrázky obsahu (content images) priamo pri kartách témy a rovnako aj obrázky ku kľúčovým slovám vo vyskakovacom okne. Podporené je aj nahrávanie pretiahnutím súboru na kľúčové slovo. Táto funkcionalita je dostupná iba pre prihláseného admina.
+
+Implementácia toku obsahuje aj riadenie postupu používateľa. Pri bežnej téme je prvý slide obsahový a pre neadmin účty je na ňom 30-sekundový časovač pred povolením tlačidla Next. Pri prechode medzi cvičeniami sa zobrazuje informačný popup s typom úlohy, po dokončení sa vypočíta počet správnych odpovedí, uložia sa chyby a zobrazí sa Result Page s možnosťou prejsť nesprávne odpovede v režime review.
+
+#### 2.4.4	Podstránka Mistakes
+
+Podstránka Mistakes slúži na zobrazenie chýb, ktoré používateľ urobil pri riešení cvičení. Dáta sa po načítaní session synchronizujú z backendu do lokálneho úložiska a stránka pracuje s chybami zoskupenými podľa témy. Pri prepnutí na kartu Mistakes sa zobrazenie cielene obnoví, aby používateľ videl aktuálny stav.
+
+V hlavnom zozname sa zobrazujú tematické karty a v nich konkrétne chybné úlohy. Každá položka obsahuje typ cvičenia a otázku, takže používateľ vie rýchlo identifikovať problém. Po kliknutí sa otvorí detail chyby, kde je zobrazená pôvodná otázka, odpoveď používateľa a správna odpoveď; spôsob zobrazenia sa prispôsobuje typu úlohy (výberové úlohy, triedenie, priraďovanie).
+
+Stránka rieši aj oba prázdne stavy. Ak používateľ zatiaľ žiadne chyby neurobil, zobrazí sa motivačné hlásenie „No Mistakes Yet“. Ak chyby v minulosti mal, ale všetky už opravil, zobrazí sa osobitný stav „You Fixed All Your Mistakes“. Takéto rozlíšenie lepšie odzrkadľuje reálny pokrok používateľa než jednoduché „prázdne dáta“.
+
+#### 2.4.5	Profilové vyskakovacie okno
+
+Profilové vyskakovacie okno zobrazuje základné používateľské informácie (profilová fotografia, meno, e‑mail) a samostatný blok s náhodne vybraným tipom. Tip sa vyberá pri otvorení komponentu z vopred definovaného zoznamu.
+
+Úprava profilu je riešená priamo v tomto okne. Používateľ môže meniť meno, e‑mail, heslo aj profilovú fotografiu bez prechodu na inú stránku. Pri zmene hesla aplikácia vyžaduje zadanie aktuálneho hesla; pri zmene e‑mailu server kontroluje, či adresa už nie je obsadená.
+
+Nahratie profilovej fotografie je limitované na podporované formáty obrázkov a veľkosť 5 MB. Obrázok sa konvertuje na Base64 a ukladá sa ako súčasť profilových dát cez profilové API.
+
+#### 2.4.6	Podstránka Admin
+
+Podstránka Admin je určená výhradne používateľovi s rolou admin. Admin na tejto stránke vidí zoznam všetkých používateľov vrátane základných údajov (e‑mail, meno, level, XP, streak, dátum registrácie) a môže vykonávať administrátorské operácie.
+
+Medzi hlavné operácie patrí zmena roly používateľa (user/admin), reset používateľských dát a vymazanie používateľa. Pri resetovaní sa obnoví progres, ostrovčeky, streak a súvisiace údaje; pri vymazaní sa odstránia všetky údaje naviazané na konkrétneho používateľa.
+
+
+### 2.5	Tvorba backendu
+
+Backend je implementovaný pomocou Supabase Edge Functions v prostredí Deno s frameworkom Hono. Táto časť zabezpečuje autentifikáciu, správu dát, administrátorské operácie a prácu so súbormi. Pri návrhu backendu sme sa zamerali na jednoduchosť, prehľadnosť a spoľahlivé prepojenie s frontendovou časťou aplikácie.
+
+#### 2.5.1	Mechaniky využité v aplikácii
+
+Na backendovej strane sme implementovali mechaniky, ktoré sú potrebné pre každodenné fungovanie aplikácie: autentifikáciu, správu session, ukladanie progresu, ostrovčekov, streaku, cvičení a chýb. Súčasťou backendu sú aj administrátorské mechaniky pre správu používateľov (zoznam používateľov, zmena roly, reset dát, vymazanie používateľa).
+
+Mechaniky pre nahrávanie obrázkov sú dostupné cez admin API endpointy, ale v používateľskom rozhraní sa využívajú najmä priamo v Learn Page (content image a keyword image). Backend po nahratí uloží metadata a odkazy tak, aby frontend vedel načítať správny obrázok pre konkrétnu úroveň, tému a index.
+
+#### 2.5.2	Návrh databázy
+
+Pre potreby aplikácie sme zvolili model kľúč‑hodnota. Dáta sú uložené v jednej tabuľke a organizačne rozdelené pomocou prefixov v kľúčoch. Tento prístup bol vhodný najmä pre rýchlu implementáciu a jednoduchú správu používateľských dát bez potreby zložitej databázovej schémy.
+
+Výhodou zvoleného modelu je jednoduché rozšírenie. Pri potrebe nového typu údajov stačí definovať nový prefix a pravidlá jeho spracovania, bez zásahu do štruktúry existujúcich dát.
+
+#### 2.5.3	Prefixy ako „kolekcie“
+
+Jednotlivé typy dát používajú vlastné prefixy, napríklad `user:`, `session:`, `profile:`, `progress:`, `islands:`, `exercise-data:`, `streak:`, `mistakes:` a `admin:`. Pre obrázky sa ukladajú metadáta pod kľúčmi `island-image:`, `content-image:` a `keyword-image:`.
+
+Tento spôsob organizácie sa osvedčil aj pri administrátorských operáciách, keďže je možné rýchlo získať prehľad o konkrétnom type údajov a vykonať hromadné operácie bez zložitého filtrovania.
+
+#### 2.5.4	Ukladanie súborov (Supabase Storage)
+
+Obrázky sa ukladajú do Supabase Storage bucketu `arcadelearn-island-images`. Pri nahrávaní backend vytvorí jedinečný názov súboru, uloží súbor do bucketu, vygeneruje signed URL a do KV vrstvy uloží metadáta (URL, názov súboru, čas nahratia, autor nahratia).
+
+Validácia prebieha na viacerých úrovniach: vo frontendovej časti (najmä pri content/keyword obrázkoch a profilovej fotografii) sa kontroluje, že ide o obrázok a že súbor nepresahuje 5 MB, pričom pri `content-image` backend navyše explicitne kontroluje povolené MIME typy. Veľkosť súboru je zároveň obmedzená nastavením bucketu na 5 MB.
+
+Takýto postup zjednodušuje údržbu aplikácie, keďže multimédiá sú spravované samostatne a frontend pracuje iba s odkazmi a metadátami potrebnými na zobrazenie.
 
 ---
 
-## 8. LearnPage – implementácia učebného flowu
+### 2.6	Prepojenie backendu s frontendom
 
-Súbor [src/app/components/islandpages/LearnPage.tsx](src/app/components/islandpages/LearnPage.tsx) riadi celý učebný cyklus.
+Prepojenie je realizované cez jednotnú API vrstvu. Frontend posiela požiadavky na backendové koncové body a spracúva odpovede v jednotnom formáte. Tento prístup zjednodušuje ošetrenie chýb, prenos session tokenu aj opakované používanie volaní v rôznych častiach aplikácie.
 
-### Stavové premenné
-- aktuálny slide,
-- timer,
-- zoznam výsledkov,
-- review mode,
-- stav každého cvičenia.
-
-### Inicializácia stavov cvičení
-```tsx
-const initialStates = initializeExerciseStates(themeData.exercises, isFinalTest);
-setExerciseStates(initialStates);
-```
-
-### Časovač pre obsahový slide
-Pri bežnej téme je prvý slide teória, kde používateľ čaká 30 sekúnd pred prechodom ďalej (admin má výnimku).
-
-### Render cvičení
-Cvičenia sa dispatchujú podľa typu cez helper [src/app/utils/exerciseRendererUtils.tsx](src/app/utils/exerciseRendererUtils.tsx):
-
-```tsx
-switch (exercise.type) {
-  case 'multiple-choice':
-    return <TextMultipleChoiceExercise ... />;
-  case 'true-false':
-    return <TrueFalseExercise ... />;
-  case 'choose-correct':
-    return <ChooseCorrectOptionExercise ... />;
-  case 'sort':
-    return <SortExercise ... />;
-  case 'single-choice':
-    return <SingleChoiceTextExercise ... />;
-}
-```
-
-Tento prístup odstránil duplicitu a oddelil orchestrace logiku od jednotlivých exercise komponentov.
+V praxi to znamená, že komponenty používateľského rozhrania neriešia technické detaily komunikácie. Každý komponent iba vyžiada požadované údaje a API vrstva zabezpečí správne hlavičky, prenos `X-Session-Token`, časový limit 15 sekúnd a opakované pokusy pri dočasnom zlyhaní siete.
 
 ---
 
-## 9. Výsledky, chyby a review mode
+### 2.7	Nasadenie na web
 
-Po dokončení cvičení LearnPage:
+Nasadenie je v projekte rozdelené na dve časti: frontend a backend. Frontend je pripravený na produkčné zostavenie pomocou Vite (`npm run build`), backend beží ako Supabase Edge Function (`arcade-server`).
 
-1. vypočíta `correctCount`,
-2. vytvorí mistakes z výsledkov,
-3. uloží mistakes,
-4. zavolá completion callback.
-
-```tsx
-const newMistakes = createMistakesFromResults(exerciseResults, exerciseStates, themeData, isFinalTest);
-replaceThemeMistakes(...);
-if (props.onComplete) {
-  props.onComplete(correctCount, numberOfExercises);
-}
-```
-
-### Review mode
-Ak sú chyby, používateľ môže prejsť iba nesprávne otázky. Toto je implementované cez pole indexov `incorrectExerciseIndices`.
+Pre cloudové nasadenie je v dokumentácii uvedený postup cez Cloudflare Pages pre frontend, pričom backend zostáva hostovaný v prostredí Supabase. Takto ostáva oddelená prezentácia aplikácie od API a dátovej vrstvy.
 
 ---
 
-## 10. Mistakes systém – perzistencia a synchronizácia
+### 2.8	Záver
 
-Súbor [src/app/utils/mistakesUtils.ts](src/app/utils/mistakesUtils.ts).
+V implementačnej časti sme sa zamerali na najdôležitejšie kroky potrebné pre vznik funkčnej webovej aplikácie: tvorbu frontendu, tvorbu backendu, prepojenie oboch častí a nasadenie na web. Výsledkom je stabilná aplikácia, ktorá zachováva navrhnutý vzhľad, podporuje vzdelávací tok používateľa a umožňuje ďalšie rozširovanie.
 
-### Lokálne uloženie
-```ts
-const storageKey = 'mistakes_' + userEmail;
-localStorage.setItem(storageKey, JSON.stringify(mistakes));
-```
-
-### Backend sync
-```ts
-await mistakesAPI.addMistake(accessToken, mistakes);
-```
-
-### Fallback stratégia
-Ak backend zlyhá alebo token nie je dostupný, aplikácia používa lokálne dáta. Tým sa zachovala funkčnosť aj mimo ideálnych podmienok.
-
----
-
-## 11. Island renderer – refaktor bez zmeny vizuálu
-
-V [src/app/components/islands/IslandRenderer.tsx](src/app/components/islands/IslandRenderer.tsx) bol pôvodne dlhý `if/else` strom pre mapovanie ostrovov. Refaktor bol urobený na mapovú štruktúru, bez zmeny vzhľadu jednotlivých ostrovov.
-
-```tsx
-const regularIslandsByLevel = {
-  beginner: [BeginnerIsland1, ..., BeginnerIsland12],
-  intermediate: [IntermediateIsland1, ..., IntermediateIsland12],
-  professional: [ProfessionalIsland1, ..., ProfessionalIsland12],
-};
-```
-
-Výhoda:
-- kratší a čitateľnejší kód,
-- menej chýb pri údržbe,
-- žiadny zásah do vizuálu ostrovov.
-
----
-
-## 12. Profile popup – implementácia edit flowu
-
-Súbor [src/app/components/profile/ProfilePopup.tsx](src/app/components/profile/ProfilePopup.tsx).
-
-Funkcie:
-- edit mena,
-- edit emailu,
-- edit hesla,
-- upload profilovej fotky,
-- logout.
-
-Príklad validácie + save flow:
-
-```tsx
-const validation = validateEmail(temporaryEmail.toLowerCase());
-if (!validation.valid) {
-  alert(validation.error);
-  return;
-}
-await profileAPI.changeEmailDirect(accessToken, temporaryEmail.toLowerCase());
-```
-
-V rámci UI úprav boli edit prvky zjednotené na pencil ikony kvôli konzistencii.
-
----
-
-## 13. Backend – implementácia endpointov
-
-Hlavný server je [supabase/functions/server/index.tsx](supabase/functions/server/index.tsx). Je postavený na Hono.
-
-### Príklad endpointu
-```ts
-app.post('/make-server-15e718fc/auth/signin', async (c) => {
-  const { email, password } = await c.req.json();
-  // validácia usera
-  // vytvorenie session tokenu
-  return c.json({ accessToken: tok, user: { id: u.userId, email: u.email } });
-});
-```
-
-### Admin autorizácia
-Admin endpointy používajú helper, ktorý overí session aj admin status.
-
-### Storage inicializácia
-Pri štarte sa kontroluje bucket na obrázky. Ak neexistuje, vytvorí sa automaticky.
-
----
-
-## 14. KV vrstva backendu
-
-Súbor [supabase/functions/server/kv_store.tsx](supabase/functions/server/kv_store.tsx) poskytuje jednoduché operácie:
-- `set`, `get`, `del`,
-- `mset`, `mget`, `mdel`,
-- `getByPrefix`.
-
-Táto vrstva abstrahuje databázový prístup a drží server endpointy čistejšie.
-
----
-
-## 15. Administrátorská časť
-
-Admin panel umožňuje:
-- získať zoznam používateľov,
-- meniť admin status,
-- resetovať používateľské dáta,
-- mazať účty,
-- nahrávať/mazať obrázky pre ostrovy, obsah a keywordy.
-
-Tým sa prakticky oddelila „bežná“ UX vrstva od správy systému.
-
----
-
-## 16. Čistenie kódu a odstránenie nepotrebných súborov
-
-Po implementácii jadra prebehol cleanup:
-
-- odstránenie nepoužívaných asset súborov,
-- odstránenie dev-only pomocných súborov,
-- zjednotenie štýlu v kritických komponentoch,
-- refaktor duplicít v routovaní ostrovov.
-
-Výsledkom je menší a konzistentnejší repozitár.
-
----
-
-## 17. Stabilizácia warningov a environment rozdielov
-
-V `supabase/functions/server` sú použité Deno/JSR importy, ktoré VS Code TypeScript server v Node workspace hlási ako chyby. Aby editor nebol zahltený false-positive diagnostikou, boli použité cielené `@ts-nocheck` direktívy v Deno-only súboroch.
-
-Tým sa zachovala:
-- čistota problémového panelu,
-- funkčnosť build procesu frontendu,
-- runtime kompatibilita backendu.
-
----
-
-## 18. Testovanie a verifikácia
-
-Po každej väčšej zmene boli spúšťané:
-
-- `npm run typecheck`
-- `npm run build`
-
-Okrem toho prebehli manuálne scenáre:
-
-1. signup → signin → session,
-2. prechod témou → výsledok → XP update,
-3. odomykanie ďalšieho ostrova,
-4. vznik a zobrazenie mistakes,
-5. profile edit flow,
-6. admin operácie.
-
-Tento postup bol dôležitý, pretože aplikácia obsahuje viac stavových tokov, ktoré sa najlepšie overia kombináciou statickej aj manuálnej validácie.
-
----
-
-## 19. Nasadenie a výsledný stav
-
-Projekt je nasadený cez GitHub push flow. Po pushi na `main` je nová verzia dostupná online.
-
-Praktický výsledok implementácie:
-- aplikácia je funkčná end-to-end,
-- používateľské dáta sa ukladajú,
-- learning flow je stabilný,
-- admin časť funguje,
-- build a typová kontrola prechádzajú.
-
----
-
-## 20. Záver praktickej časti
-
-Praktická implementácia preukázala, že aplikáciu je možné navrhnúť a realizovať ako plnohodnotný systém, nie iba ako demo prototyp. Projekt pokrýva autentifikáciu, správu stavu, perzistenciu dát, evaluačnú logiku cvičení, gamifikáciu, administráciu a nasadenie.
-
-Najdôležitejšie technické prínosy:
-- oddelená architektúra frontend/backend,
-- centralizovaná API vrstva,
-- jasná progression logika,
-- robustný learning flow,
-- maintainovateľný kód po refaktoringu.
-
-Táto praktická časť teda napĺňa cieľ maturitnej práce: vytvoriť funkčný, technicky konzistentný a obhájiteľný softvérový produkt s jasne popísanou implementáciou.
+Najväčším prínosom implementácie je prepojenie vizuálne prepracovaného rozhrania s funkčným technickým základom. Aplikácia tak spĺňa nielen estetické požiadavky návrhu, ale aj praktické požiadavky na správu obsahu, spoľahlivé ukladanie dát a použiteľnosť pri každodennom učení.

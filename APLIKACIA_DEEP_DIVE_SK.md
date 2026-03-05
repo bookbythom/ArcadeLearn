@@ -178,7 +178,7 @@ Súbor: [src/app/utils/api.ts](src/app/utils/api.ts)
 Súbor: [supabase/functions/server/index.tsx](supabase/functions/server/index.tsx)
 
 ### Health
-- `GET /make-server-15e718fc/health`
+- `GET /arcade-server/health`
 
 ### Auth
 - `POST /auth/signup`
