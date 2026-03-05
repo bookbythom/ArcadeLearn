@@ -76,7 +76,7 @@ export function getThemeData(level: "beginner" | "intermediate" | "professional"
     return themeData;
   }
   
-  // Default fallback
+  // Predvolena nahrada
   return beginnerThemes[0];
 }
 

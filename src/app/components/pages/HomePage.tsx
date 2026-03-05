@@ -11,17 +11,17 @@ import { isFinalTestUnlocked } from "@/app/utils/progressionUtils";
 // Typy pre stav ostrova
 type IslandStatus = "locked" | "unlocked" | "completed-perfect" | "completed-mistakes";
 
-// Interface pre progress ostrovov
+// Rozhranie pre progress ostrovov
 interface IslandProgress {
   [key: string]: IslandStatus;
 }
 
-// Interface pre data o cviceniach
+// Rozhranie pre data o cviceniach
 interface IslandExerciseData {
   [key: string]: number;
 }
 
-// Properties pre HomePage komponent
+// Vlastnosti pre HomePage komponent
 interface HomePageProps {
   userProgress: UserProgress;
   islandProgress: IslandProgress;
@@ -30,6 +30,7 @@ interface HomePageProps {
   accessToken: string;
   isLoggedIn: boolean;
   shouldAutoScroll: boolean;
+  autoScrollTarget: { level: "beginner" | "intermediate" | "professional"; theme: number } | null;
   onVisibleSectionChange: (section: 'beginner' | 'intermediate' | 'professional') => void;
   onIslandClick: (level: "beginner" | "intermediate" | "professional", theme: number, isFinal: boolean) => void;
   onIslandHover?: (level: "beginner" | "intermediate" | "professional", theme: number, isFinal: boolean) => void;
@@ -146,6 +147,7 @@ export function HomePage(props: HomePageProps) {
         <div 
           key={'island-' + themeNumber} 
           className="absolute" 
+          data-island-key={`${levelName}-${themeNumber}`}
           style={{ 
             left: positionData.left, 
             top: positionData.top, 
@@ -182,6 +184,7 @@ export function HomePage(props: HomePageProps) {
       <div 
         key="island-final-test" 
         className="absolute" 
+        data-island-key={`${levelName}-0`}
         style={{ 
           left: finalTestPosition.left, 
           top: finalTestPosition.top, 
@@ -336,26 +339,54 @@ export function HomePage(props: HomePageProps) {
       return null;
     };
     
-    // Najdeme cielovu uroven
+    // Ak mame konkretny target z LearnPage, pouzijeme ho prednostne.
+    const targetIslandKey = props.autoScrollTarget
+      ? `${props.autoScrollTarget.level}-${props.autoScrollTarget.theme}`
+      : null;
+
+    const scrollToSection = (targetLevel: 'beginner' | 'intermediate' | 'professional') => {
+      let sectionRefToScroll = null;
+      if (targetLevel === 'beginner') {
+        sectionRefToScroll = beginnerSectionRef;
+      } else if (targetLevel === 'intermediate') {
+        sectionRefToScroll = intermediateSectionRef;
+      } else if (targetLevel === 'professional') {
+        sectionRefToScroll = professionalSectionRef;
+      }
+
+      if (sectionRefToScroll !== null && sectionRefToScroll.current !== null) {
+        const elementPosition = sectionRefToScroll.current.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - 64 - 100;
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      }
+    };
+
+    const scrollToIsland = (islandKey: string): boolean => {
+      const islandElement = document.querySelector(`[data-island-key="${islandKey}"]`) as HTMLElement | null;
+      if (!islandElement) {
+        return false;
+      }
+
+      const elementPosition = islandElement.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - 64 - 140;
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      return true;
+    };
+
+    // Najdeme cielovu uroven pre fallback spravanie.
     const targetLevel = findFirstUnlockedLevel();
     
     if (targetLevel !== null) {
       // Nastavime timeout pre smooth scroll
       const timeoutId = setTimeout(() => {
-        // Najdeme spravny ref
-        let sectionRefToScroll = null;
-        if (targetLevel === 'beginner') {
-          sectionRefToScroll = beginnerSectionRef;
-        } else if (targetLevel === 'intermediate') {
-          sectionRefToScroll = intermediateSectionRef;
-        } else if (targetLevel === 'professional') {
-          sectionRefToScroll = professionalSectionRef;
+        let scrolledToTargetIsland = false;
+
+        if (targetIslandKey !== null) {
+          scrolledToTargetIsland = scrollToIsland(targetIslandKey);
         }
-        
-        if (sectionRefToScroll !== null && sectionRefToScroll.current !== null) {
-          const elementPosition = sectionRefToScroll.current.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - 64 - 100;
-          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+
+        if (!scrolledToTargetIsland) {
+          scrollToSection(targetLevel);
         }
         
         props.onAutoScrollComplete();
@@ -368,7 +399,7 @@ export function HomePage(props: HomePageProps) {
       // Ak nie je ziadny odomknuty ostrov, hned zavolame callback
       props.onAutoScrollComplete();
     }
-  }, [props.shouldAutoScroll, props.isLoggedIn, props.isAdmin, props.islandProgress, props.onAutoScrollComplete]);
+  }, [props.shouldAutoScroll, props.autoScrollTarget, props.isLoggedIn, props.isAdmin, props.islandProgress, props.onAutoScrollComplete]);
 
   // Render hlavneho contentu
   return (

@@ -1,4 +1,4 @@
-// Properties pre SectionHeader komponent
+// Vlastnosti pre SectionHeader komponent
 interface SectionHeaderProps {
   level: 'beginner' | 'intermediate' | 'professional';
 }

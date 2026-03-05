@@ -9,7 +9,7 @@ import { initializeExerciseStates } from "@/app/utils/exerciseStateUtils";
 import { createMistakesFromResults } from "@/app/utils/mistakeCreationUtils";
 import { renderExerciseByType, renderContentSlide } from "@/app/utils/exerciseRendererUtils";
 
-// Interface pre properties komponentu LearnPage
+// Rozhranie pre vlastnosti komponentu LearnPage
 interface LearnPageProps {
   level: "beginner" | "intermediate" | "professional";
   theme: number;

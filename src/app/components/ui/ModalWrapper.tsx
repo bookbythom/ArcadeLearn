@@ -6,7 +6,7 @@ interface ModalWrapperProps {
   modalType?: "profile" | "auth";
 }
 
-// Modal wrapper komponent
+// Komponent modal obalu
 export function ModalWrapper({ isOpen, onClose, children, canClose = true, modalType = "auth" }: ModalWrapperProps) {
   // Ak nie je otvoreny, nevykresluj nic
   if (!isOpen) {

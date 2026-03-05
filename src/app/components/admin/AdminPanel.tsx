@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { adminAPI } from '@/app/utils/api';
 
-// Interface pre pouzivatela
+// Rozhranie pre pouzivatela
 interface User {
   userId: string;
   email: string;
@@ -13,26 +13,26 @@ interface User {
   createdAt: string;
 }
 
-// Interface pre properties admin panelu
+// Rozhranie pre vlastnosti admin panelu
 interface AdminPanelProps {
   accessToken: string;
   currentUserId: string;
   onSelfReset?: () => void;
 }
 
-// Interface pre status modal
+// Rozhranie pre modal zmeny statusu
 interface StatusModal {
   show: boolean;
   user: User | null;
 }
 
-// Interface pre delete modal
+// Rozhranie pre modal potvrdenia vymazania
 interface DeleteModal {
   show: boolean;
   user: User | null;
 }
 
-// Interface pre reset modal
+// Rozhranie pre modal potvrdenia resetu
 interface ResetModal {
   show: boolean;
   user: User | null;
@@ -111,7 +111,7 @@ export default function AdminPanel(props: AdminPanelProps) {
 
   // ==================== RENDER ====================
 
-  // Zobrazenie loading stavu
+  // Zobrazenie stavu nacitavania
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -224,7 +224,7 @@ export default function AdminPanel(props: AdminPanelProps) {
         )}
       </div>
 
-      {/* Status Change Modal */}
+      {/* Modal zmeny statusu */}
       {statusModal.show && statusModal.user && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
           <div className="bg-[#2a2a2c] rounded-2xl p-8 max-w-md w-full shadow-2xl">
@@ -258,7 +258,7 @@ export default function AdminPanel(props: AdminPanelProps) {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
+      {/* Potvrdzovaci modal vymazania */}
       {deleteModal.show && deleteModal.user && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
           <div className="bg-[#2a2a2c] rounded-2xl p-8 max-w-md w-full shadow-2xl">
@@ -291,7 +291,7 @@ export default function AdminPanel(props: AdminPanelProps) {
         </div>
       )}
 
-      {/* Reset Confirmation Modal */}
+      {/* Potvrdzovaci modal resetu */}
       {resetModal.show && resetModal.user && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
           <div className="bg-[#2a2a2c] rounded-2xl p-8 max-w-md w-full shadow-2xl">

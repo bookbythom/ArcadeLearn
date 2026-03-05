@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import svgPaths from "../../../imports/exercise-elements";
 
-// Interface pre properties komponentu TextMultipleChoiceExercise
+// Rozhranie pre vlastnosti komponentu TextMultipleChoiceExercise
 interface TextMultipleChoiceExerciseProps {
   question: string;
   options: string[];
@@ -18,7 +18,7 @@ interface TextMultipleChoiceExerciseProps {
   hideBackButton?: boolean;
 }
 
-// Komponent pre text multiple choice cvicenie
+// Komponent pre textove cvicenie s viacnasobnym vyberom
 export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExerciseProps) {
   // Pomieshaj moznosti raz pri mount komponente alebo ked sa zmenia moznosti
   const shuffledData = useMemo(() => {
@@ -299,7 +299,7 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
               ))}
             </div>
 
-            {/* Tlacidlo Submit/Next */}
+            {/* Tlacidlo Odoslat/Dalsi */}
             {!isSubmitted ? (
               <button
                 onClick={handleSubmitButton}

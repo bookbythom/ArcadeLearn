@@ -4,7 +4,7 @@ import { LoadingSpinner } from "@/app/components/ui/LoadingSpinner";
 import svgPathsRegister from "@/imports/register_signin_checkmark";
 import { validateEmail, validatePassword, validateName } from "@/app/utils/profileUtils";
 
-// Properties pre RegisterPage komponent
+// Vlastnosti pre RegisterPage komponent
 interface RegisterPageProps {
   onSubmit: (name: string, email: string, password: string) => void;
   isLoading?: boolean;

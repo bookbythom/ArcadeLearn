@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import svgPaths from "../../../imports/exercise-elements";
 
-// Interface pre properties komponentu TrueFalseExercise
+// Rozhranie pre vlastnosti komponentu TrueFalseExercise
 interface TrueFalseExerciseProps {
   question: string;
   options: string[];
@@ -19,7 +19,7 @@ interface TrueFalseExerciseProps {
   hideBackButton?: boolean;
 }
 
-// Komponent pre True/False cvicenie
+// Komponent pre cvicenie Pravda/Nepravda
 export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
   // State premenne
   const [selectedOption, setSelectedOption] = useState<boolean | null>(props.initialSelectedOption || null);
@@ -149,9 +149,9 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
           </div>
         </div>
 
-        {/* Tlacidla True/False */}
+        {/* Tlacidla Pravda/Nepravda */}
         <div className="w-full max-w-[1242px] h-[137px] grid grid-cols-2 gap-[16px]">
-          {/* Tlacidlo True (Vlavo) */}
+          {/* Tlacidlo Pravda (vlavo) */}
           <button
             onClick={() => handleOptionClick(true)}
             disabled={isSubmitted}
@@ -170,7 +170,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
             </p>
           </button>
 
-          {/* Tlacidlo False (Vpravo) */}
+          {/* Tlacidlo Nepravda (vpravo) */}
           <button
             onClick={() => handleOptionClick(false)}
             disabled={isSubmitted}
@@ -223,7 +223,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
               ))}
             </div>
 
-            {/* Tlacidlo Submit/Next */}
+            {/* Tlacidlo Odoslat/Dalsi */}
             {!isSubmitted ? (
               <button
                 onClick={handleSubmitButton}

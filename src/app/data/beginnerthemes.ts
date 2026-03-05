@@ -1,6 +1,6 @@
 export interface KeywordDefinition {
   text: string;
-  displayName?: string; // Optional: the base form to display in popup (defaults to text)
+  displayName?: string;
   explanation: string;
 }
 
@@ -101,7 +101,7 @@ export const beginnerThemes: Theme[] = [
           'Každý bod má svoju presnú pozíciu a farbu',
           'Je vhodná pre tlač vo veľkých formátoch'
         ],
-        correctAnswer: [1, 2] // "Pri zväčšovaní stráca kvalitu" + "Každý bod má svoju presnú pozíciu a farbu"
+        correctAnswer: [1, 2]
       }
     ],
     useTextExercise: true
@@ -154,7 +154,7 @@ export const beginnerThemes: Theme[] = [
           'Využíva matematické vzorce',
           'Má obmedzené rozlíšenie'
         ],
-        correctAnswer: [0, 2] // Vector graphics: maintains quality when scaled + uses mathematical formulas
+        correctAnswer: [0, 2]
       },
       {
         type: 'sort',
@@ -1115,7 +1115,6 @@ export const beginnerThemes: Theme[] = [
 ];
 
 export const beginnerFinalTest: Exercise[] = [
-  // Island 1: Základy rastrovej grafiky
   {
     type: 'multiple-choice',
     question: 'Ktoré z nasledujúcich tvrdení o rastrovej grafike sú pravdivé?',
@@ -1127,63 +1126,54 @@ export const beginnerFinalTest: Exercise[] = [
     ],
     correctAnswer: [1, 2]
   },
-  // Island 2: Úvod do vektorovej grafiky
   {
     type: 'true-false',
     question: 'Vektorová grafika si zachováva dokonalú kvalitu pri akomkoľvek zväčšení.',
     options: ['True', 'False'],
     correctAnswer: true
   },
-  // Island 3: Farebné modely RGB a CMYK
   {
     type: 'single-choice',
     question: 'Ktorý farebný model sa primárne používa pre tlač?',
     options: ['RGB', 'CMYK', 'HSB', 'LAB'],
     correctAnswer: 1
   },
-  // Island 4: Základné formáty grafických súborov
   {
     type: 'multiple-choice',
     question: 'Ktoré formáty podporujú priehľadnosť?',
     options: ['JPEG', 'PNG', 'GIF', 'BMP'],
     correctAnswer: [1, 2]
   },
-  // Island 5: Úvod do Adobe Photoshop
   {
     type: 'choose-correct',
     question: '________ umožňujú skryť alebo zobraziť časti vrstvy bez trvalého vymazania dát.',
     options: ['Masky', 'Filtre'],
     correctAnswer: { 0: 'Masky' }
   },
-  // Island 6: Úvod do Adobe Illustrator
   {
     type: 'single-choice',
     question: 'Ktorý nástroj v Illustrátore umožňuje vyberať a upravovať jednotlivé uzly vektorových ciest?',
     options: ['Selection Tool (V)', 'Direct Selection Tool (A)', 'Pen Tool (P)', 'Magic Wand Tool (Y)'],
     correctAnswer: 1
   },
-  // Island 8: Základy typografie
   {
     type: 'choose-correct',
     question: '________ je proces úpravy horizontálnych medzier medzi konkrétnymi pármi znakov.',
     options: ['Kerning', 'Tracking'],
     correctAnswer: { 0: 'Kerning' }
   },
-  // Island 9: Základy kompozície vo fotografii
   {
     type: 'true-false',
     question: 'Pravidlo tretín odporúča umiestniť hlavný objekt presne do stredu fotografie.',
     options: ['True', 'False'],
     correctAnswer: false
   },
-  // Island 10: Základy kompozície v grafickom dizajne
   {
     type: 'single-choice',
     question: 'Ktorý princíp kompozície sa týka rozloženia vizuálnej váhy prvkov?',
     options: ['Rytmus', 'Rovnováha', 'Jednota', 'Kontrast'],
     correctAnswer: 1
   },
-  // Island 11: Základy farieb a farebnej teórie
   {
     type: 'sort',
     question: 'Priraďte správne typy farieb:',
@@ -1200,5 +1190,4 @@ export const beginnerFinalTest: Exercise[] = [
       'Analogické farby - Ležia vedľa seba na farebnom kolese'
     ]
   }
-  // Vynechané: Island 7 (Základné nástroje výberu), Island 12 (Základy svetla a tieňa)
 ];

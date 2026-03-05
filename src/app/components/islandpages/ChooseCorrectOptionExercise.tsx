@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import svgPaths from "../../../imports/exercise-elements";
 
-// Interface pre props komponentu ChooseCorrectOptionExercise
+// Rozhranie pre props komponentu ChooseCorrectOptionExercise
 interface ChooseCorrectOptionExerciseProps {
   question: string;
   options: string[];
@@ -70,7 +70,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [isSubmitted, selectedOption, props.onNext]);
 
-  // Inicializacia z properties
+  // Inicializacia z props
   useEffect(() => {
     if (props.initialSelectedOptions?.[0]) {
       setSelectedOption(props.initialSelectedOptions[0]);
@@ -259,7 +259,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
               ))}
             </div>
 
-            {/* Tlacidlo Submit/Next */}
+            {/* Tlacidlo Odoslat/Dalsi */}
             {!isSubmitted ? (
               <button
                 onClick={handleSubmitButton}

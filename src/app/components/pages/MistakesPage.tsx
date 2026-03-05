@@ -7,14 +7,14 @@ import {
 } from '@/app/utils/mistakesUtils';
 import MistakeDetailView from '@/app/components/reusable/MistakeDetailView';
 
-// Properties pre MistakesPage komponent
+// Vlastnosti pre MistakesPage komponent
 interface MistakesPageProps {
   userEmail: string;
   onBack?: () => void;
   refreshTrigger?: number; // Trigger pre refresh dat
 }
 
-// Interface pre vybranu chybu
+// Rozhranie pre vybranu chybu
 interface SelectedMistakeData {
   theme: ThemeMistakes;
   mistake: MistakeExercise;

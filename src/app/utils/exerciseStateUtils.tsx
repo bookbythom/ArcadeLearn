@@ -15,7 +15,7 @@ export function initializeExerciseStates(exercises: Exercise[], isFinalTest: boo
       slideNumber = i + 1;
     }
     
-    // Multiple choice cvicenie
+    // Viacnasobny vyber cvicenie
     if (exercise.type === 'multiple-choice') {
       states[slideNumber] = {
         selectedOptions: [],
@@ -23,7 +23,7 @@ export function initializeExerciseStates(exercises: Exercise[], isFinalTest: boo
       };
     }
     
-    // Single choice cvicenie
+    // Jedna moznost cvicenie
     else if (exercise.type === 'single-choice') {
       states[slideNumber] = {
         selectedOption: null,
@@ -31,7 +31,7 @@ export function initializeExerciseStates(exercises: Exercise[], isFinalTest: boo
       };
     }
     
-    // True/False cvicenie
+    // Pravda/Nepravda cvicenie
     else if (exercise.type === 'true-false') {
       states[slideNumber] = {
         selectedOption: null,
@@ -47,7 +47,7 @@ export function initializeExerciseStates(exercises: Exercise[], isFinalTest: boo
       };
     }
     
-    // Sort cvicenie
+    // Zoradovanie cvicenie
     else if (exercise.type === 'sort') {
       const itemsList = [];
       

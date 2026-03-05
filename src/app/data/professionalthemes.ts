@@ -981,7 +981,7 @@ export const professionalThemes: Theme[] = [
       },
       {
         type: 'single-choice',
-        question: 'Kde sa upravujú surface properties 3D objektov?',
+        question: 'Kde sa upravujú surface vlastnosti 3D objektov?',
         options: ['Layers Panel', 'Materials v 3D Panel', 'Adjustments Panel', 'Channels Panel'],
         correctAnswer: 1
       },
@@ -1003,21 +1003,18 @@ export const professionalThemes: Theme[] = [
 ];
 
 export const professionalFinalTest: Exercise[] = [
-  // Island 1: Blend Modes a miešanie vrstiev
   {
     type: 'single-choice',
     question: 'Ktorý blend mode používa farby hornej vrstvy ale jas spodnej?',
     options: ['Hue', 'Color', 'Luminosity', 'Saturation'],
     correctAnswer: 1
   },
-  // Island 2: Compound Paths vo vektorovej grafike
   {
     type: 'true-false',
     question: 'Even-Odd Fill Rule berie do úvahy direction (smer) paths pri určovaní fill oblastí.',
     options: ['True', 'False'],
     correctAnswer: false
   },
-  // Island 3: Select and Mask pre pokročilé výbery
   {
     type: 'multiple-choice',
     question: 'Ktoré nástroje poskytuje Select and Mask pre pokročilé výbery?',
@@ -1029,7 +1026,6 @@ export const professionalFinalTest: Exercise[] = [
     ],
     correctAnswer: [0, 1, 2]
   },
-  // Island 4: Clipping Masks a Vector Masks
   {
     type: 'single-choice',
     question: 'Čo je hlavný rozdiel medzi Clipping Mask a Layer Mask?',
@@ -1041,28 +1037,24 @@ export const professionalFinalTest: Exercise[] = [
     ],
     correctAnswer: 0
   },
-  // Island 5: Character a Paragraph Panels
   {
     type: 'choose-correct',
     question: '________ posúva jednotlivé znaky vertikálne bez zmeny leading.',
     options: ['Baseline Shift', 'Leading'],
     correctAnswer: { 0: 'Baseline Shift' }
   },
-  // Island 6: Neural Filters a AI-powered úpravy
   {
     type: 'true-false',
     question: 'Neural Filters využívajú umelú inteligenciu na automatické úpravy fotografií.',
     options: ['True', 'False'],
     correctAnswer: true
   },
-  // Island 8: Liquify Tool a úprava tela
   {
     type: 'single-choice',
     question: 'Ktorý nástroj v Liquify automaticky detekuje tvár a umožňuje úpravu sliderom?',
     options: ['Forward Warp Tool', 'Face-Aware Liquify', 'Pucker Tool', 'Reconstruct Tool'],
     correctAnswer: 1
   },
-  // Island 9: Content-Aware nástroje a inteligentná retuš
   {
     type: 'multiple-choice',
     question: 'Ktoré Content-Aware nástroje sú dostupné vo Photoshope?',
@@ -1074,7 +1066,6 @@ export const professionalFinalTest: Exercise[] = [
     ],
     correctAnswer: [0, 1, 2]
   },
-  // Island 10: Layer Styles a pokročilé efekty
   {
     type: 'sort',
     question: 'Priraďte Layer Styles k ich použitiu:',
@@ -1091,12 +1082,10 @@ export const professionalFinalTest: Exercise[] = [
       'Stroke - Obrysy a okraje'
     ]
   },
-  // Island 11: Camera Raw Filter a RAW spracovanie
   {
     type: 'choose-correct',
     question: '________ panel obsahuje Sharpening a Noise Reduction nástroje.',
     options: ['Detail', 'Basic'],
     correctAnswer: { 0: 'Detail' }
   }
-  // Vynechané: Island 7 (Image Trace a vektorizácia), Island 12 (3D priestor vo Photoshope)
 ];

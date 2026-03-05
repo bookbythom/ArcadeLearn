@@ -3,7 +3,7 @@ import { beginnerThemes } from '@/app/data/beginnerthemes';
 import { intermediateThemes } from '@/app/data/intermediatethemes';
 import { professionalThemes } from '@/app/data/professionalthemes';
 
-// Interface pre properties mistake detail view komponentu
+// Rozhranie pre vlastnosti mistake detail view komponentu
 interface MistakeDetailViewProps {
   mistake: MistakeExercise;
   level: 'beginner' | 'intermediate' | 'professional';
@@ -85,7 +85,7 @@ export default function MistakeDetailView(props: MistakeDetailViewProps) {
     );
   };
 
-  // Funkcia pre renderovanie sorting otazky
+  // Funkcia pre renderovanie otazky zoradovania
   const renderSortingQuestion = () => {
     return (
       <div className="space-y-6">

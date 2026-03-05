@@ -19,7 +19,7 @@ const validateImageFile = (file: File): string | null => {
   return null;
 };
 
-// Funkcia pre preloading obrazku
+// Funkcia pre prednacitanie obrazku
 const preloadImage = (url: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -29,7 +29,7 @@ const preloadImage = (url: string): Promise<void> => {
   });
 };
 
-// Interface pre keyword popup properties
+// Rozhranie pre vlastnosti popupu pre keyword
 interface KeywordPopupProps {
   keyword: string;
   explanation: string;
@@ -209,7 +209,7 @@ function KeywordPopup(props: KeywordPopupProps) {
         </p>
       </div>
       
-      {/* Action Modal - Remove alebo Change Image */}
+      {/* Akcny modal - Vymazat alebo zmenit obrazok */}
       {showActionModal && (
         <div
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[150] flex items-center justify-center p-4"
@@ -255,7 +255,7 @@ function KeywordPopup(props: KeywordPopupProps) {
   );
 }
 
-// Interface pre properties learn page mechanics komponentu
+// Rozhranie pre vlastnosti komponentu learn page mechanics
 interface LearnPageMechanicsProps {
   level: "beginner" | "intermediate" | "professional";
   theme: number;
@@ -728,7 +728,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
 
   return (
     <>
-      {/* Fullscreen loading animacia */}
+      {/* Celoobrazovkova animacia nacitavania */}
       {!allImagesLoaded && (
         <LoadingSpinner className="z-[200]" />
       )}
@@ -774,7 +774,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
                       >
                         {displayImage ? (
                           <>
-                            {/* Loading skeleton - zobrazuje sa kym sa nacitava obrazok */}
+                            {/* Nacitavaci skeleton - zobrazuje sa, kym sa nacitava obrazok */}
                             {!isLoaded && (
                               <div className="absolute inset-0">
                                 <div 

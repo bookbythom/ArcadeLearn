@@ -1,4 +1,4 @@
-// Interface pre user progress
+// Rozhranie pre user progress
 export interface UserProgress {
   totalXP: number;
   level: number;

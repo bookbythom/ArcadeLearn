@@ -9,7 +9,7 @@ import {
 import { profileAPI } from "@/app/utils/api";
 import { Pencil } from "lucide-react";
 
-// Interface pre properties profile popup komponentu
+// Rozhranie pre vlastnosti profile popup komponentu
 interface ProfilePopupProps {
   onLogout: () => void;
   profile: UserProfile;

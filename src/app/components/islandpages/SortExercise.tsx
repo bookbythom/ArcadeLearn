@@ -3,7 +3,7 @@ import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import svgPaths from "../../../imports/exercise-elements";
 
-// Interface pre properties komponentu SortExercise
+// Rozhranie pre vlastnosti komponentu SortExercise
 interface SortExerciseProps {
   question: string;
   options: string[];
@@ -22,7 +22,7 @@ interface SortExerciseProps {
   hideBackButton?: boolean;
 }
 
-// Interface pre draggable polozku
+// Rozhranie pre draggable polozku
 interface DraggableItem {
   id: string;
   label: string;
@@ -112,7 +112,7 @@ function DraggableItemComponent(props: {
   );
 }
 
-// Hlavny komponent sort cvicenia
+// Hlavny komponent cvicenia zoradovania
 function SortExerciseContent(props: SortExerciseProps) {
   // Inicializacia draggable poloziek
   const [draggableItems, setDraggableItems] = useState<DraggableItem[]>(() => {
@@ -302,7 +302,7 @@ function SortExerciseContent(props: SortExerciseProps) {
               ))}
             </div>
 
-            {/* Tlacidlo Submit/Next */}
+            {/* Tlacidlo Odoslat/Dalsi */}
             {!isSubmitted ? (
               <button
                 onClick={handleSubmitButton}
@@ -334,7 +334,7 @@ function SortExerciseContent(props: SortExerciseProps) {
   );
 }
 
-// Export komponentu so wrapper pre DnD
+// Export komponentu s obalom pre DnD
 export default function SortExercise(props: SortExerciseProps) {
   return (
     <DndProvider backend={HTML5Backend}>

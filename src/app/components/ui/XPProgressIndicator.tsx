@@ -160,7 +160,7 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
         top: 'calc(4rem + env(safe-area-inset-top) + 1rem)',
       }}
     >
-      {/* XP Display */}
+      {/* Zobrazenie XP */}
       <div className="mb-3">
         <div className="flex items-baseline justify-between mb-3">
           <span className="text-5xl font-bold text-white transition-all duration-300">
@@ -171,7 +171,7 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
           </span>
         </div>
 
-        {/* Progress bar */}
+        {/* Priebehova lista */}
         <div className="relative w-full h-2.5 bg-[#2c2c2e] rounded-full overflow-hidden">
           <div 
             className="absolute inset-0 rounded-full transition-all duration-500 ease-out"
@@ -184,7 +184,7 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
         </div>
       </div>
 
-      {/* Status sprava */}
+      {/* Stavova sprava */}
       {finalTestUnlocked ? (
         <div className="flex items-center gap-2 text-green-400 text-sm transition-all duration-300">
           <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">

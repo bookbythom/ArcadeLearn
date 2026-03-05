@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-// Properties pre ExerciseTypePopup komponent
+// Vlastnosti pre ExerciseTypePopup komponent
 interface ExerciseTypePopupProps {
   exerciseType: string;
   onClose: () => void;

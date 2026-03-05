@@ -1,6 +1,6 @@
 import svgPaths from "../../../imports/result_page_graph";
 
-// Interface pre properties komponentu ResultPage
+// Rozhranie pre vlastnosti komponentu ResultPage
 interface ResultPageProps {
   correctAnswers: number;
   totalExercises: number;
@@ -31,7 +31,7 @@ export default function ResultPage(props: ResultPageProps) {
           {/* Kruhovy indikator progresu */}
           <div className="flex justify-center mb-12">
             <div className="relative w-[296px] h-[296px]">
-              {/* SVG kruhovy progres */}
+              {/* Kruhovy progres v SVG */}
               <div className="absolute inset-0 -rotate-90">
                 <svg className="block size-full" fill="none" viewBox="0 0 296 296">
                   {/* Pozadie sedy kruh */}

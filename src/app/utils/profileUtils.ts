@@ -1,4 +1,4 @@
-// User profile interface
+// Rozhranie profilu pouzivatela
 export interface UserProfile {
   name: string;
   email: string;

@@ -1,4 +1,4 @@
-// Loading spinner komponent
+// Komponent nacitavacieho spinnera
 interface LoadingSpinnerProps {
   className?: string;
 }

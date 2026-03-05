@@ -1,4 +1,4 @@
-// Interface pre properties komponentu Dot
+// Rozhranie pre vlastnosti komponentu Dot
 interface DotProps {
   isActive?: boolean;
 }

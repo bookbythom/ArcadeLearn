@@ -47,7 +47,7 @@ export function createMistakesFromResults(
 
       let mistakeData: Omit<MistakeExercise, 'timestamp'> | null = null;
 
-      // Multiple choice
+      // Viacnasobny vyber
       if (exercise.type === 'multiple-choice') {
         const userSelectedOptions = state.selectedOptions;
         const userAnswers = [];
@@ -75,7 +75,7 @@ export function createMistakesFromResults(
         };
       }
 
-      // True/False
+      // Pravda/Nepravda
       else if (exercise.type === 'true-false') {
         let userAnswerText = '';
         if (state.selectedOption === true) {
@@ -109,7 +109,7 @@ export function createMistakesFromResults(
         };
       }
 
-      // Sort
+      // Zoradovanie
       else if (exercise.type === 'sort') {
         const itemsCopy: { label: string; position: number }[] = [];
         for (let m = 0; m < state.itemOrder.length; m++) {
@@ -178,7 +178,7 @@ export function createMistakesFromResults(
         };
       }
 
-      // Single choice
+      // Jedna moznost
       else if (exercise.type === 'single-choice') {
         let userAnswerText = 'No answer';
         

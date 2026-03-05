@@ -1174,14 +1174,12 @@ export const intermediateThemes: Theme[] = [
 ];
 
 export const intermediateFinalTest: Exercise[] = [
-  // Island 1: Layers Panel a organizácia vrstiev
   {
     type: 'true-false',
     question: 'Fill ovplyvňuje aj Layer Styles aplikované na vrstvu.',
     options: ['True', 'False'],
     correctAnswer: false
   },
-  // Island 2: Pen Tool a úprava uzlov
   {
     type: 'single-choice',
     question: 'Ako vytvoríte smooth point pomocou Pen Tool?',
@@ -1193,7 +1191,6 @@ export const intermediateFinalTest: Exercise[] = [
     ],
     correctAnswer: 1
   },
-  // Island 3: Rozšírené výberové nástroje
   {
     type: 'multiple-choice',
     question: 'Ktoré nástroje používajú inteligentnú detekciu hraníc?',
@@ -1205,35 +1202,30 @@ export const intermediateFinalTest: Exercise[] = [
     ],
     correctAnswer: [0, 1]
   },
-  // Island 4: Masky a ich aplikácia
   {
     type: 'choose-correct',
     question: 'Farba ________ v layer mask úplne skrýva obsah vrstvy.',
     options: ['čierna', 'biela'],
     correctAnswer: { 0: 'čierna' }
   },
-  // Island 5: Kerning a tracking v typografii
   {
     type: 'single-choice',
     question: 'Ktorý typ kerningu využíva zabudované páry od dizajnéra fontu?',
     options: ['Optical Kerning', 'Metrics Kerning', 'Manual Kerning', 'Auto Kerning'],
     correctAnswer: 1
   },
-  // Island 6: Filtre vo Photoshope
   {
     type: 'single-choice',
     question: 'Ktorý filter vytvára efekt smerového pohybu?',
     options: ['Gaussian Blur', 'Motion Blur', 'Radial Blur', 'Lens Blur'],
     correctAnswer: 1
   },
-  // Island 7: Úprava Hue, Saturation a Brightness
   {
     type: 'true-false',
     question: 'Saturation slider nastavený na -100 vytvorí čiernobiely obraz.',
     options: ['True', 'False'],
     correctAnswer: true
   },
-  // Island 9: Konverzia farebných modelov
   {
     type: 'sort',
     question: 'Priraďte Rendering Intents k ich použitiu:',
@@ -1250,7 +1242,6 @@ export const intermediateFinalTest: Exercise[] = [
       'Absolute Colorimetric - Proofing'
     ]
   },
-  // Island 10: Kombinácia výberov a feathering
   {
     type: 'multiple-choice',
     question: 'Ktoré Selection Modes existujú vo Photoshope?',
@@ -1262,12 +1253,10 @@ export const intermediateFinalTest: Exercise[] = [
     ],
     correctAnswer: [0, 1, 2]
   },
-  // Island 11: Grids a Guides v dizajne
   {
     type: 'choose-correct',
     question: '________ sa automaticky zobrazujú pri posúvaní objektov na detekciu zarovnaní a vzdialeností.',
     options: ['Smart Guides', 'Grid'],
     correctAnswer: { 0: 'Smart Guides' }
   }
-  // Vynechané: Island 8 (Expozícia: Clona, čas uzávierky a ISO), Island 12 (White Balance a farebná teplota)
 ];
