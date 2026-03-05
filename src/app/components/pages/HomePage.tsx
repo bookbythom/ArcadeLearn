@@ -298,9 +298,8 @@ export function HomePage(props: HomePageProps) {
     // Skontrolujeme podmienky pre auto scroll
     const shouldPerformAutoScroll = props.shouldAutoScroll === true;
     const userIsLoggedIn = props.isLoggedIn === true;
-    const userIsAdmin = props.isAdmin === true;
     
-    if (!shouldPerformAutoScroll || !userIsLoggedIn || userIsAdmin) {
+    if (!shouldPerformAutoScroll || !userIsLoggedIn) {
       return;
     }
     
