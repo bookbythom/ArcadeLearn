@@ -795,7 +795,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
                             <img
                               src={displayImage}
                               alt={`Obrázok ${num}`}
-                              className={`w-full h-full object-cover transition-opacity duration-300 ${
+                              className={`w-full h-full object-cover transition-transform transition-opacity duration-300 ease-out group-hover:scale-[1.04] ${
                                 isLoaded ? 'opacity-100' : 'opacity-0'
                               }`}
                               loading="eager"
