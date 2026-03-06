@@ -293,7 +293,7 @@ export default function LearnPage(props: LearnPageProps) {
     const slideNumber = reviewModeActive ? incorrectExerciseIndices.indexOf(currentSlideIndex) : currentSlideIndex;
     const totalSlidesCountDisplay = reviewModeActive ? incorrectExerciseIndices.length : totalSlidesCount;
     const isFirstExercise = isFinalTest ? currentSlideIndex === 0 : currentSlideIndex === 1;
-    const shouldHideBack = isFirstExercise && !props.isAdmin && !state.isSubmitted;
+    const shouldHideBack = isFirstExercise && !props.isAdmin;
 
     return (
       <>
