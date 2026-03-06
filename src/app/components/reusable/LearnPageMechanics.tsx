@@ -768,7 +768,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
                     return (
                       <div 
                         key={num}
-                        className="relative bg-[#d9d9d9] rounded-[24px] flex items-center justify-center group cursor-pointer overflow-hidden"
+                        className="relative bg-[#d9d9d9] rounded-[24px] flex items-center justify-center group cursor-pointer overflow-hidden transition-transform duration-300 ease-out hover:scale-[1.03]"
                         style={{ aspectRatio: "336/330" }}
                         onClick={() => handleImageClick(num - 1)}
                       >
@@ -795,7 +795,7 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
                             <img
                               src={displayImage}
                               alt={`Obrázok ${num}`}
-                              className={`w-full h-full object-cover transition-transform transition-opacity duration-300 ease-out group-hover:scale-[1.04] ${
+                              className={`w-full h-full object-cover transition-opacity duration-300 ${
                                 isLoaded ? 'opacity-100' : 'opacity-0'
                               }`}
                               loading="eager"
