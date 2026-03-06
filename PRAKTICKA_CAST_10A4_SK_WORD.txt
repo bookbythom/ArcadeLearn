@@ -1,6 +1,6 @@
-## 2	Praktická časť
+2	Praktická časť
 
-### 2.1	Návrh grafických prvkov pre webovú aplikáciu v Adobe Illustrator
+2.1	Návrh grafických prvkov pre webovú aplikáciu v Adobe Illustrator
 
 V tejto fáze praktickej práce sme sa zamerali na návrh vizuálnych prvkov pre webovú aplikáciu v programe Adobe Illustrator. Všetky prvky boli vytvorené pomocou vektorovej grafiky, ktorá umožňuje zachovať vysokú kvalitu zobrazenia na rôznych zariadeniach a rozlíšeniach obrazovky, a zároveň poskytuje flexibilitu pri úpravách. Navrhli sme hlavné navigačné prvky, doplnkové ilustrácie a ikonografiu.
 
@@ -22,7 +22,7 @@ Ikonu streaku sme vytvorili ako vizuálnu reprezentáciu pravidelnosti používa
 
 Pri návrhu komponentov sme navrhli aj podporné komponenty pre progress používateľa. Prvým je progress always-on pop-up na domovskej stránke, ktorý dynamicky zobrazuje progress používateľa v aktuálnej úrovni (XP, podmienky na odomknutie finálneho testu a stav sekcie). Druhým sú čiary okolo ostrovčekov, ktoré vizuálne znázorňujú, koľko cvičení používateľ vyriešil správne v danom ostrovčeku. Pri bežnej téme ide o rozsah 0 až 5 správnych odpovedí, pri finálnom teste o rozsah 0 až 10.
 
-### 2.2	Návrh typov cvičení, tém a mechaník
+2.2	Návrh typov cvičení, tém a mechaník
 
 V tejto fáze praktickej práce sme sa zamerali na návrh samotného vzdelávacieho obsahu webovej aplikácie. Cieľom bolo vytvoriť logicky usporiadaný obsah, ktorý umožní používateľovi postupné osvojovanie si vedomostí prostredníctvom interaktívnych cvičení. Pri návrhu sme sa inšpirovali typmi úloh používanými v edukačnej aplikácii Kahoot.
 
@@ -42,13 +42,15 @@ Cvičenia typu True/False sme navrhli ako rýchle overovacie úlohy, v ktorých 
 
 Súčasťou návrhu obsahu bolo aj vyhľadanie vhodných obrázkov pre jednotlivé témy a cvičenia. Obrázky sme vyberali s dôrazom na ich pochopiteľnosť a tematickú relevantnosť.
 
-Ako ďalšie sme navrhli mechaniku XP (Experience Points). XP body slúžia ako číselné vyjadrenie úspešnosti používateľa za správne vyriešené cvičenia, dokončené témy a absolvovanie finálnych testov. Prideľovanie XP sme navrhli tak, že za každé správne vyriešené cvičenie používateľ získa 5 XP, čo znamená, že za dokončenie celej témy bez chýb môže používateľ získať najviac 25 XP. Tento systém poskytuje používateľovi zrozumiteľnú spätnú väzbu o jeho výkone.
+Ako ďalšie sme navrhli mechaniku XP (Experience Points). XP body slúžia ako číselné vyjadrenie úspešnosti používateľa za správne vyriešené cvičenia, dokončené témy a absolvovanie finálnych testov. V návrhu sme definovali, že za každé správne vyriešené cvičenie používateľ získa 5 XP, čo znamená, že za dokončenie celej témy bez chýb môže získať najviac 25 XP. Tento systém poskytuje používateľovi zrozumiteľnú spätnú väzbu o jeho výkone.
 
-Mechanika levelov je priamo naviazaná na nazbierané XP body. Po dosiahnutí vopred definovaného počtu XP používateľ postúpi na vyšší level, ktorý reprezentuje jeho celkový pokrok v aplikácii. Vyššie levely zároveň sprístupňujú nové témy alebo odomknutie ďalšej obtiažnosti.
+Mechaniku levelov sme navrhli ako priamo naviazanú na nazbierané XP body. Po dosiahnutí vopred definovaného počtu XP používateľ postúpi na vyšší level, ktorý reprezentuje jeho celkový pokrok v aplikácii. Vyššie levely zároveň sprístupňujú ďalší obsah a náročnejšie časti aplikácie.
 
-Súčasne s mechanikou XP a levelov sme navrhli aj mechaniku streaku, ktorá sleduje počet po sebe nasledujúcich dní, počas ktorých je používateľ aktívny v aplikácii. Streak sa zvýši raz za deň po dokončení ostrovčeka; ak používateľ vynechá kontinuitu (t. j. posledná aktivita nebola včera), pri ďalšej aktivite sa séria začína odznova. Tento mechanizmus zvyšuje pravdepodobnosť, že používateľ bude pokračovať v učení sa pravidelne.
+Súčasne s mechanikou XP a levelov sme navrhli aj mechaniku streaku, ktorá sleduje počet po sebe nasledujúcich dní aktivity používateľa. Cieľom streaku je podporiť pravidelnosť učenia a motivovať používateľa k dlhodobej práci s aplikáciou.
 
-### 2.3	Návrh používateľského rozhrania vo Figme
+Konkrétna implementácia týchto mechaník je podrobne opísaná v kapitolách 2.4.7 a 2.5.1.
+
+2.3	Návrh používateľského rozhrania vo Figme
 
 V tejto fáze praktickej práce sme sa zamerali na návrh používateľského rozhrania webovej aplikácie v programe Figma. Cieľom bolo navrhnúť prehľadné rozhranie, ktoré pokrýva domovskú stránku, návrhy vyskakovacích okien aj všetky varianty výsledkov po dokončení jednotlivých typov cvičení.
 
@@ -66,21 +68,21 @@ V závere tejto časti sme navrhli používateľské rozhranie pre všetky typy 
 
 Na záver sme navrhli stránku Result Page, ktorá sa zobrazí po dokončení posledného cvičenia a slúži na zobrazenie celkového hodnotenia za všetkých päť cvičení v podobe grafu a zobrazenia počtu XP, ktoré používateľ za vypracovanie daných cvičení získal.
 
-### 2.4	Tvorba frontendu
+2.4	Tvorba frontendu
 V tejto kapitole sa zameriavame na používateľskú časť aplikácie, teda na to, čo používateľ vidí a s čím priamo pracuje počas učenia. Frontend sme implementovali ako React aplikáciu v TypeScripte, pričom sme pri vývoji priebežne porovnávali výsledok s návrhom vo Figme. Cieľom nebolo iba „funkčné“ zobrazenie stránok, ale aj zachovanie vizuálnej konzistencie, logického toku obrazoviek a intuitívneho ovládania v každom kroku používateľa.
 
-#### 2.4.1	Stránky Sign in a Register
+2.4.1	Stránky Sign in a Register
 Prihlasovacia a registračná stránka tvoria vstupnú bránu do aplikácie. Obe stránky používajú klientsku validáciu vstupov (povinné polia, formát e‑mailu, pravidlá pre heslo a meno) ešte pred odoslaním požiadavky na server.
 
-Pri registrácii sa volá endpoint `auth/signup`; po úspechu je používateľ vyzvaný na prihlásenie. Pri prihlásení sa volá `auth/signin`, prijatý `accessToken` sa uloží do localStorage a aplikácia sa presmeruje na hlavnú trasu, kde sa následne overí session cez `auth/session`.
+Pri registrácii sa volá endpoint auth/signup; po úspechu je používateľ vyzvaný na prihlásenie. Pri prihlásení sa volá auth/signin, prijatý accessToken sa uloží do localStorage a aplikácia sa presmeruje na hlavnú trasu, kde sa následne overí session cez auth/session.
 
 Pri neplatných údajoch alebo zlyhaní požiadavky aplikácia zobrazuje okamžité chybové hlásenia, takže používateľ dostane priamu spätnú väzbu bez nejasných stavov.
 
-#### 2.4.2	Domovská stránka
+2.4.2	Domovská stránka
 
 Domovská stránka predstavuje hlavný orientačný bod celej aplikácie. Pozostáva z troch sekcií (beginner, intermediate, professional), mapy s ostrovčekmi pre každú úroveň a dynamicky zobrazenými údajmi v hlavičke (level, streak). XP progres je zobrazený v always-on popupe pre aktuálnu sekciu. Každá úroveň zároveň obsahuje 12 tematických ostrovčekov a jeden finálny test.
 
-#### 2.4.3	Obsah ostrovčekov
+2.4.3	Obsah ostrovčekov
 
 Po otvorení ostrovčeka sa používateľ pri bežnej téme dostane na samostatnú Learn Page, následne na cvičenia a nakoniec na Result Page. Pri finálnom teste sa používateľ dostane priamo k cvičeniam a končí pri Result Page. Learn Page obsahuje názov témy, vysvetľujúci text, kľúčové slová a obrázky, ktoré slúžia ako vizuálna podpora výkladu.
 
@@ -90,7 +92,7 @@ V režime admin sa priamo na Learn Page realizuje aj nahrávanie obrázkov. Admi
 
 Tok je navrhnutý tak, aby používateľa viedol krok za krokom. Pri bežnej téme je prvý slide obsahový (poučka, kľúčové slová + vysvetlenie, obrázky na lepšiu vizuálnu predstavu) a pri neadmin účtoch sa tlačidlo Next aktivuje až po 30 sekundách, aby mal používateľ čas na naštudovanie témy. Pri prechode na ďalšie cvičenie sa zobrazí informačný popup s typom úlohy. Po dokončení sa vyhodnotí počet správnych odpovedí, uložia sa chyby a zobrazí sa Result Page. Na nej používateľ vidí počet získaných XP; ak urobil chyby, môže prejsť do režimu Check Mistakes, inak sa môže vrátiť späť na domovskú stránku.
 
-#### 2.4.4	Podstránka Mistakes
+2.4.4	Podstránka Mistakes
 
 Podstránka Mistakes slúži na zobrazenie chýb, ktoré používateľ urobil pri riešení cvičení. Dáta sa po načítaní session synchronizujú z backendu do lokálneho úložiska a stránka pracuje s chybami zoskupenými podľa témy. Pri prepnutí na kartu Mistakes sa zobrazenie cielene obnoví, aby používateľ videl aktuálny stav.
 
@@ -98,7 +100,7 @@ V hlavnom zozname sa zobrazujú tematické karty a v nich konkrétne chybné úl
 
 Stránka rieši aj oba prázdne stavy. Ak používateľ zatiaľ žiadne chyby neurobil, zobrazí sa motivačné hlásenie „No Mistakes Yet“. Ak chyby v minulosti mal, ale všetky už opravil, zobrazí sa osobitný stav „You Fixed All Your Mistakes“. Takéto rozlíšenie lepšie odzrkadľuje reálny pokrok používateľa než jednoduché „prázdne dáta“.
 
-#### 2.4.5	Profilové vyskakovacie okno
+2.4.5	Profilové vyskakovacie okno
 
 Profilové vyskakovacie okno zobrazuje základné používateľské informácie (profilová fotografia, meno, e‑mail, heslo) a samostatný blok s náhodne vybraným fun factom. Fun fact sa automaticky vyberá pri otvorení komponentu z vopred definovaného zoznamu fun factov.
 
@@ -106,11 +108,11 @@ Profilové vyskakovacie okno zobrazuje základné používateľské informácie 
 
 Nahratie profilovej fotografie je limitované na podporované formáty obrázkov a veľkosť 5 MB. Obrázok sa konvertuje na Base64 a ukladá sa ako súčasť profilových dát cez profilové API.
 
-#### 2.4.6	Podstránka Admin
+2.4.6	Podstránka Admin
 
 Podstránka Admin je určená výhradne používateľovi s rolou admin. Zobrazuje zoznam všetkých používateľov so základnými údajmi (e‑mail, meno, level, XP, streak, dátum registrácie) a umožňuje vykonávať kľúčové administrátorské operácie: zmenu roly (user/admin), reset používateľských dát a vymazanie používateľa.
 
-#### 2.4.7	Front-endové mechaniky
+2.4.7	Front-endové mechaniky
 
 Pri implementácii sme presne definovali pravidlá odomykania. Bežné ostrovčeky sa odomykajú postupne podľa dosiahnutého stavu predchádzajúcich tém. Finálny test sa neodomkne automaticky po otvorení úrovne, ale až po splnení dvoch podmienok: používateľ má v danej sekcii 300 XP a zároveň má dokončených všetkých 12 tém. Ak sú podmienky nesplnené, po kliknutí na zamknutý test aplikácia zobrazí vysvetlenie, čo ešte chýba.
 
@@ -118,7 +120,7 @@ Domovská stránka zároveň rieši orientáciu v dlhom obsahu. Pomocou Intersec
 
 Mechaniky postupu sú naviazané aj na Learn Page. Pri bežnej téme je prvý slide obsahový a pre neadmin účty je na ňom 30-sekundový časovač pred povolením tlačidla Next. Po dokončení cvičení sa vyhodnotí počet správnych odpovedí, aktualizuje sa stav ostrovčeka, pridelí sa XP a v prípade chybných odpovedí sa uloží záznam do sekcie Mistakes.
 
-Dôležitou front-endovou mechanikou je aj samotné trasovanie toku učenia. Learn flow je implementovaný ako samostatná route (`/learn/:level/:theme`), čo zjednodušuje navigáciu, obnovenie stavu po refreshi a návrat používateľa na mapu. Po prihlásení frontend zároveň využíva lazy loading a prefetch najpoužívanejších stránok v idle čase, aby sa skrátilo vnímané čakanie pri prvých prechodoch.
+Dôležitou front-endovou mechanikou je aj samotné trasovanie toku učenia. Learn flow je implementovaný ako samostatná route (/learn/:level/:theme), čo zjednodušuje navigáciu, obnovenie stavu po refreshi a návrat používateľa na mapu. Po prihlásení frontend zároveň využíva lazy loading a prefetch najpoužívanejších stránok v idle čase, aby sa skrátilo vnímané čakanie pri prvých prechodoch.
 
 V postupe medzi Learn Page a cvičeniami je implementované aj rolovo odlíšené správanie. Ak je používateľ admin, po prechode na cvičenia sa môže cez tlačidlo Back vrátiť späť na Learn Page. Pri bežnom používateľovi sa na prvom cvičení tlačidlo Back nezobrazuje, takže po začatí cvičení sa už na Learn Page nevracia. Cieľom tejto mechaniky je, aby používateľ riešil úlohy podľa toho, čo si z výkladu skutočne zapamätal.
 
@@ -129,11 +131,11 @@ Súčasťou front-endových mechaník je aj streak indikátor v hlavičke a rež
 Sekcia Mistakes je riešená kombináciou lokálnej a serverovej vrstvy. Po načítaní session sa chyby synchronizujú z backendu do lokálneho stavu a pri prepnutí na kartu Mistakes sa zobrazenie cielene obnoví, aby používateľ videl aktuálne dáta bez manuálneho reloadu stránky.
 
 
-### 2.5	Tvorba backendu
+2.5	Tvorba backendu
 
 Backend je implementovaný pomocou Supabase Edge Functions v prostredí Deno s frameworkom Hono. Táto časť zabezpečuje autentifikáciu, správu dát, administrátorské operácie a prácu so súbormi. Pri návrhu backendu sme sa zamerali na jednoduchosť, prehľadnosť a spoľahlivé prepojenie s frontendovou časťou aplikácie.
 
-#### 2.5.1	Backendové mechaniky
+2.5.1	Backendové mechaniky
 
 Backendové mechaniky zabezpečujú autentifikáciu používateľa, správu session a trvalé ukladanie dát. Na serverovej strane sa ukladajú a načítavajú profil, progres, stav ostrovčekov, údaje o správnych odpovediach, streak a záznamy chýb (Mistakes).
 
@@ -141,53 +143,49 @@ Súčasťou backendu sú aj administrátorské mechaniky: kontrola roly admin, z
 
 Pre prácu s obrázkami sú implementované samostatné mechaniky nahrávania, čítania a mazania island, content a keyword obrázkov cez Supabase Storage. Backend po nahraní generuje signed URL a ukladá metadáta tak, aby frontend vedel načítať správny obrázok pre konkrétnu úroveň, tému a index.
 
-Súčasťou backendových mechaník je aj odolnosť API komunikácie. Endpointy sú navrhnuté tak, aby bezpečne spracovali session token (`X-Session-Token`) a spolupracovali s klientskou vrstvou, ktorá používa timeout a opakované pokusy pri dočasných sieťových zlyhaniach.
+Súčasťou backendových mechaník je aj odolnosť API komunikácie. Endpointy sú navrhnuté tak, aby bezpečne spracovali session token (X-Session-Token) a spolupracovali s klientskou vrstvou, ktorá používa timeout a opakované pokusy pri dočasných sieťových zlyhaniach.
 
-#### 2.5.2	Návrh databázy
+2.5.2	Návrh databázy
 
 Pre potreby aplikácie sme zvolili model kľúč‑hodnota. Dáta sú uložené v jednej tabuľke a organizačne rozdelené pomocou prefixov v kľúčoch. Tento prístup bol vhodný najmä pre rýchlu implementáciu a jednoduchú správu používateľských dát bez potreby zložitej databázovej schémy.
 
-Jednotlivé typy dát používajú vlastné prefixy, napríklad `user:`, `session:`, `profile:`, `progress:`, `islands:`, `exercise-data:`, `streak:`, `mistakes:` a `admin:`. Pre obrázky sa ukladajú metadáta pod kľúčmi `island-image:`, `content-image:` a `keyword-image:`.
+Jednotlivé typy dát používajú vlastné prefixy, napríklad user:, session:, profile:, progress:, islands:, exercise-data:, streak:, mistakes: a admin:. Pre obrázky sa ukladajú metadáta pod kľúčmi island-image:, content-image: a keyword-image:.
 
 Tento spôsob organizácie sa osvedčil aj pri administrátorských operáciách, keďže je možné rýchlo získať prehľad o konkrétnom type údajov a vykonať hromadné operácie bez zložitého filtrovania.
 
 Výhodou zvoleného modelu je jednoduché rozšírenie. Pri potrebe nového typu údajov stačí definovať nový prefix a pravidlá jeho spracovania, bez zásahu do štruktúry existujúcich dát.
 
-#### 2.5.3	Ukladanie súborov (Supabase Storage)
+2.5.3	Ukladanie súborov (Supabase Storage)
 
-Obrázky sa ukladajú do Supabase Storage bucketu `arcadelearn-island-images`. Pri nahrávaní backend vytvorí jedinečný názov súboru, uloží súbor do bucketu, vygeneruje signed URL a do KV vrstvy uloží metadáta (URL, názov súboru, čas nahratia, autor nahratia).
+Obrázky sa ukladajú do Supabase Storage bucketu arcadelearn-island-images. Pri nahrávaní backend vytvorí jedinečný názov súboru, uloží súbor do bucketu, vygeneruje signed URL a do KV vrstvy uloží metadáta (URL, názov súboru, čas nahratia, autor nahratia).
 
-Validácia prebieha na viacerých úrovniach: vo frontendovej časti (najmä pri content/keyword obrázkoch a profilovej fotografii) sa kontroluje, že ide o obrázok a že súbor nepresahuje 5 MB, pričom pri `content-image` backend navyše explicitne kontroluje povolené MIME typy. Veľkosť súboru je zároveň obmedzená nastavením bucketu na 5 MB.
+Validácia prebieha na viacerých úrovniach: vo frontendovej časti (najmä pri content/keyword obrázkoch a profilovej fotografii) sa kontroluje, že ide o obrázok a že súbor nepresahuje 5 MB, pričom pri content-image backend navyše explicitne kontroluje povolené MIME typy. Veľkosť súboru je zároveň obmedzená nastavením bucketu na 5 MB.
 
 Takýto postup zjednodušuje údržbu aplikácie, keďže multimédiá sú spravované samostatne a frontend pracuje iba s odkazmi a metadátami potrebnými na zobrazenie.
 
----
 
-### 2.6	Prepojenie backendu s frontendom
+2.6	Prepojenie backendu s frontendom
 
 Prepojenie je realizované cez jednotnú API vrstvu. Frontend posiela požiadavky na backendové koncové body a spracúva odpovede v jednotnom formáte. Tento prístup zjednodušuje ošetrenie chýb, prenos session tokenu aj opakované používanie volaní v rôznych častiach aplikácie.
 
-V praxi to znamená, že komponenty používateľského rozhrania neriešia technické detaily komunikácie. Každý komponent iba vyžiada požadované údaje a API vrstva zabezpečí správne hlavičky, prenos `X-Session-Token`, časový limit 15 sekúnd a opakované pokusy pri dočasnom zlyhaní siete.
+V praxi to znamená, že komponenty používateľského rozhrania neriešia technické detaily komunikácie. Každý komponent iba vyžiada požadované údaje a API vrstva zabezpečí správne hlavičky, prenos X-Session-Token, časový limit 15 sekúnd a opakované pokusy pri dočasnom zlyhaní siete.
 
----
 
-### 2.7	Nasadenie na web
+2.7	Nasadenie na web
 
-Nasadenie je v projekte rozdelené na dve časti: frontend a backend. Frontend je pripravený na produkčné zostavenie pomocou Vite (`npm run build`), backend beží ako Supabase Edge Function (`arcade-server`).
+Nasadenie je v projekte rozdelené na dve časti: frontend a backend. Frontend je pripravený na produkčné zostavenie pomocou Vite (npm run build), backend beží ako Supabase Edge Function (arcade-server).
 
 Pre cloudové nasadenie je v dokumentácii uvedený postup cez Cloudflare Pages pre frontend, pričom backend zostáva hostovaný v prostredí Supabase. Takto ostáva oddelená prezentácia aplikácie od API a dátovej vrstvy.
 
----
 
-### 2.8	Záver
+2.8	Záver
 
 V implementačnej časti sme sa zamerali na najdôležitejšie kroky potrebné pre vznik funkčnej webovej aplikácie: tvorbu frontendu, tvorbu backendu, prepojenie oboch častí a nasadenie na web. Výsledkom je stabilná aplikácia, ktorá zachováva navrhnutý vzhľad, podporuje vzdelávací tok používateľa a umožňuje ďalšie rozširovanie.
 
 Najväčším prínosom implementácie je prepojenie vizuálne prepracovaného rozhrania s funkčným technickým základom. Aplikácia tak spĺňa nielen estetické požiadavky návrhu, ale aj praktické požiadavky na správu obsahu, spoľahlivé ukladanie dát a použiteľnosť pri každodennom učení.
 
----
 
-### 2.9	Testovanie a overenie funkčnosti
+2.9	Testovanie a overenie funkčnosti
 
 Po implementácii sme vykonali priebežné funkčné testovanie hlavných používateľských tokov. Overovali sme najmä stabilitu prihlasovania a registrácie, načítanie session po obnovení stránky, správne odomykanie ostrovčekov, prechod cez Learn Page, cvičenia a Result Page, ako aj zápis progresu a streaku do backendu.
 
@@ -195,11 +193,10 @@ V prípade domovskej stránky sme testovali správanie mapy pri dlhom scrollovan
 
 Pri podstránke Mistakes sme validovali všetky režimy zobrazenia: stav bez chýb, stav po opravení chýb aj zobrazenie detailu konkrétnej chyby. Pri profile sme testovali úpravu mena, e-mailu, hesla a nahrávanie profilovej fotografie s kontrolou limitov.
 
-Na technickej úrovni sme priebežne kontrolovali typovú správnosť aplikácie pomocou TypeScript kompilácie bez emisie (`tsc --noEmit`) a validovali konzistentnosť API odpovedí medzi frontendom a backendom.
+Na technickej úrovni sme priebežne kontrolovali typovú správnosť aplikácie pomocou TypeScript kompilácie bez emisie (tsc --noEmit) a validovali konzistentnosť API odpovedí medzi frontendom a backendom.
 
----
 
-### 2.10	Výkonnostné a používateľské aspekty
+2.10	Výkonnostné a používateľské aspekty
 
 Pri vývoji sme priebežne riešili aj výkon a plynulosť používateľského rozhrania. Najpoužívanejšie obrazovky sú načítavané lazy-loadingom a po prihlásení sa prefetchujú v idle čase, čím sa skracuje vnímané čakanie pri prechode medzi hlavnými časťami aplikácie.
 
@@ -207,9 +204,8 @@ Pri práci s mapou ostrovčekov sme sa zamerali na plynulé scrollovanie a stabi
 
 Z pohľadu používateľskej skúsenosti sa osvedčilo rozdelenie obsahu do krátkych krokov: výklad v Learn Page, okamžité cvičenie, vyhodnotenie a následný návrat na mapu. Takýto cyklus znižuje kognitívne zaťaženie a podporuje pravidelné učenie.
 
----
 
-### 2.11	Možnosti ďalšieho rozvoja
+2.11	Možnosti ďalšieho rozvoja
 
 Aplikácia je navrhnutá modulárne, preto je pripravená na ďalšie rozširovanie. V ďalšom rozvoji odporúčame zamerať sa na tri smery: obsah, analytiku a automatizáciu testovania.
 

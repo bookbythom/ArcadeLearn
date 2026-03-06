@@ -7,7 +7,7 @@ import { LoadingSpinner } from "@/app/components/ui/LoadingSpinner";
 import { beginnerThemes } from "@/app/data/beginnerthemes";
 import { intermediateThemes } from "@/app/data/intermediatethemes";
 import { professionalThemes } from "@/app/data/professionalthemes";
-import { calculateXPEarned, addXP, isFinalTestUnlocked, type UserProgress } from "@/app/utils/progressionUtils";
+import { addXP, isFinalTestUnlocked, type UserProgress } from "@/app/utils/progressionUtils";
 import { type UserProfile } from "@/app/utils/profileUtils";
 import { authAPI, progressAPI, adminAPI } from "@/app/utils/api";
 import { loadUserData as loadUserDataHelper } from "@/app/utils/loadUserData";
@@ -359,13 +359,13 @@ export default function AppContent() {
     if (!currentLearnLevel || currentLearnTheme === null || currentLearnTheme === undefined) return;
 
     const currentKey = `${currentLearnLevel}-${currentLearnTheme}`;
-    const previousStatus = islandProgress[currentKey];
-    const isFirstCompletion = !previousStatus || previousStatus === "unlocked";
+    const previousBest = islandExerciseData[currentKey] || 0;
+    const improvedBy = Math.max(0, correctAnswers - previousBest);
+    const xpToAward = improvedBy * 5;
 
     let newProgress = userProgress;
-    if (isFirstCompletion) {
-      const xpEarned = calculateXPEarned(totalExercises, correctAnswers);
-      newProgress = addXP(userProgress, xpEarned, currentLearnLevel);
+    if (xpToAward > 0) {
+      newProgress = addXP(userProgress, xpToAward, currentLearnLevel);
       setUserProgress(newProgress);
     }
 
@@ -445,6 +445,8 @@ export default function AppContent() {
 
   const learnRoute = parseLearnRoute(location.pathname);
   const isLearnRoute = Boolean(learnRoute);
+  const learnIslandKey = learnRoute ? `${learnRoute.level}-${learnRoute.theme}` : null;
+  const previousBestCorrectAnswers = learnIslandKey ? (islandExerciseData[learnIslandKey] || 0) : 0;
 
   return (
     <>
@@ -481,6 +483,7 @@ export default function AppContent() {
                 themeName={getThemeName(learnRoute.level, learnRoute.theme)}
                 isAdmin={isAdmin}
                 accessToken={accessToken}
+                previousBestCorrectAnswers={previousBestCorrectAnswers}
               />
             </Suspense>
           )}

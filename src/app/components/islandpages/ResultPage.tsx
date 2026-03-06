@@ -4,15 +4,13 @@ import svgPaths from "../../../imports/result_page_graph";
 interface ResultPageProps {
   correctAnswers: number;
   totalExercises: number;
+  xpEarned: number;
   onCheckMistakes: () => void;
   onFinish: () => void;
 }
 
 // Komponent pre zobrazenie vysledkov
 export default function ResultPage(props: ResultPageProps) {
-  // Vypocet ziskanych XP bodov
-  const xpEarned = props.correctAnswers * 5;
-  
   // Vypocet percentualneho uspesnosti
   const percentageScore = (props.correctAnswers / props.totalExercises) * 100;
   
@@ -76,7 +74,7 @@ export default function ResultPage(props: ResultPageProps) {
               disabled
             >
               <p className="font-bold text-[#c99e00] text-[clamp(18px,3vw,32px)] leading-[1.5]">
-                +{xpEarned}xp
+                +{props.xpEarned}xp
               </p>
             </button>
 

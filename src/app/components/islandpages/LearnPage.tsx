@@ -19,6 +19,7 @@ interface LearnPageProps {
   themeName: string;
   isAdmin?: boolean;
   accessToken?: string;
+  previousBestCorrectAnswers?: number;
 }
 
 // Hlavny komponent pre ucenie sa a cvicenia na ostrove
@@ -313,10 +314,14 @@ export default function LearnPage(props: LearnPageProps) {
   // Ak sa zobrazuju vysledky
   if (showResultsPage) {
     const correctCount = exerciseResults.filter(result => result === true).length;
+    const previousBest = props.previousBestCorrectAnswers || 0;
+    const improvedBy = Math.max(0, correctCount - previousBest);
+    const xpEarned = improvedBy * 5;
     return (
       <ResultPage
         correctAnswers={correctCount}
         totalExercises={numberOfExercises}
+        xpEarned={xpEarned}
         onCheckMistakes={handleCheckMistakesButton}
         onFinish={handleFinishButton}
       />
