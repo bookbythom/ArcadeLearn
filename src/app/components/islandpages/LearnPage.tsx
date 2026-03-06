@@ -44,6 +44,12 @@ export default function LearnPage(props: LearnPageProps) {
   const [visitedSlides, setVisitedSlides] = useState<Set<number>>(new Set([0]));
   const [exerciseStates, setExerciseStates] = useState<{ [key: number]: any }>({});
   const [isInitialized, setIsInitialized] = useState(false);
+  const [initialBestCorrectAnswers, setInitialBestCorrectAnswers] = useState(props.previousBestCorrectAnswers || 0);
+
+  // Zapamataj si best score iba pri vstupe na iny ostrovcek, aby sa po dokonceni neprepisal.
+  useEffect(() => {
+    setInitialBestCorrectAnswers(props.previousBestCorrectAnswers || 0);
+  }, [props.level, props.theme]);
 
   // Inicializacia stavov pre cvicenia
   useEffect(() => {
@@ -314,7 +320,7 @@ export default function LearnPage(props: LearnPageProps) {
   // Ak sa zobrazuju vysledky
   if (showResultsPage) {
     const correctCount = exerciseResults.filter(result => result === true).length;
-    const previousBest = props.previousBestCorrectAnswers || 0;
+    const previousBest = initialBestCorrectAnswers;
     const improvedBy = Math.max(0, correctCount - previousBest);
     const xpEarned = improvedBy * 5;
     return (
