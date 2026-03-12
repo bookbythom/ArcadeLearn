@@ -14,7 +14,6 @@ interface LoadUserDataCallbacks {
   setStreakCount: (streak: number) => void;
   setStreakActiveToday?: (active: boolean) => void;
   setIsInitialLoad: (loading: boolean) => void;
-  handleAPIError: (error: unknown) => Promise<void>;
 }
 
 type LoadUserDataResult = {

@@ -112,7 +112,7 @@ export default function AppContent() {
   const [islandExerciseData, setIslandExerciseData] = useState<IslandExerciseData>({});
   const [streakCount, setStreakCount] = useState(0);
   const [streakActiveToday, setStreakActiveToday] = useState(false);
-  const [, setVisibleSection] = useState<"beginner" | "intermediate" | "professional">("beginner");
+  const [, setVisibleSection] = useState<LearnLevel>("beginner");
   const [shouldAutoScroll, setShouldAutoScroll] = useState(false);
   const [autoScrollTarget, setAutoScrollTarget] = useState<AutoScrollTarget | null>(null);
 
@@ -214,6 +214,7 @@ export default function AppContent() {
         await authAPI.signOut(tokenToRevoke);
       }
     } catch {
+      // Odhlasenie je best-effort, lokalny reset spravime vzdy vo finally.
     } finally {
       // Hard reset lokalneho stavu po odhlaseni
       setAuthSessionState(INITIAL_AUTH_SESSION_STATE);
@@ -277,8 +278,7 @@ export default function AppContent() {
       setIslandExerciseData: setIslandExerciseData,
       setStreakCount: setStreakCount,
       setStreakActiveToday: setStreakActiveToday,
-      setIsInitialLoad: (value: boolean) => updateAuthSessionState({ isInitialLoad: value }),
-      handleAPIError: handleApiError
+      setIsInitialLoad: (value: boolean) => updateAuthSessionState({ isInitialLoad: value })
     });
 
     if (result.had401) {
@@ -290,7 +290,9 @@ export default function AppContent() {
     try {
       // Mistakes drzim v sync s backendom hned po nacitani session
       await loadMistakesFromBackend(token, email || currentUserEmail);
-    } catch {}
+    } catch {
+      // Ak sync zlyha, app stale funguje a data sa dosynchronizuju neskor.
+    }
 
     try {
       // Podla role admin upravime pristupy k ostrovcekom
@@ -479,7 +481,9 @@ export default function AppContent() {
       const streakData = await progressAPI.incrementStreak(accessToken);
       setStreakCount(streakData.count);
       setStreakActiveToday(streakData.activeToday);
-    } catch {}
+    } catch {
+      // Zlyhanie streak requestu nemoze blokovat dokoncenu lekciu.
+    }
   };
 
   const handleTabChange = (tab: AppTab) => {
