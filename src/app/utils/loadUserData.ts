@@ -1,21 +1,39 @@
 import { profileAPI, progressAPI } from './api';
+import type { UserProfile } from './profileUtils';
+import type { UserProgress } from './progressionUtils';
+
+type IslandStatus = "locked" | "unlocked" | "completed-perfect" | "completed-mistakes";
+type IslandProgress = Record<string, IslandStatus>;
+type IslandExerciseData = Record<string, number>;
+
+interface LoadUserDataCallbacks {
+  setUserProfile: (profile: UserProfile) => void;
+  setUserProgress: (progress: UserProgress) => void;
+  setIslandProgress: (islands: IslandProgress) => void;
+  setIslandExerciseData?: (exerciseData: IslandExerciseData) => void;
+  setStreakCount: (streak: number) => void;
+  setStreakActiveToday?: (active: boolean) => void;
+  setIsInitialLoad: (loading: boolean) => void;
+  handleAPIError: (error: unknown) => Promise<void>;
+}
+
+type LoadUserDataResult = {
+  success: boolean;
+  had401: boolean;
+  islandProgress?: IslandProgress;
+};
+
+const hasStatus401 = (error: unknown): boolean => {
+  return typeof error === 'object' && error !== null && 'status' in error && (error as { status?: number }).status === 401;
+};
 
 // Funkcia na nacitanie user dat z backendu
 export async function loadUserData(
   token: string,
   currentUserEmail: string,
-  callbacks: {
-    setUserProfile: (profile: any) => void;
-    setUserProgress: (progress: any) => void;
-    setIslandProgress: (islands: any) => void;
-    setIslandExerciseData?: (exerciseData: any) => void;
-    setStreakCount: (streak: number) => void;
-    setStreakActiveToday?: (active: boolean) => void;
-    setIsInitialLoad: (loading: boolean) => void;
-    handleAPIError: (error: any, context: string) => Promise<void>;
-  }
-): Promise<{ success: boolean; had401: boolean; islandProgress?: any }> {
-  let islandsData: any = null;
+  callbacks: LoadUserDataCallbacks
+): Promise<LoadUserDataResult> {
+  let islandsData: IslandProgress | null = null;
   
   // Nacitanie profilu
   try {
@@ -29,8 +47,8 @@ export async function loadUserData(
     };
     
     callbacks.setUserProfile(userProfile);
-  } catch (error: any) {
-    if (error?.status === 401) {
+  } catch (error: unknown) {
+    if (hasStatus401(error)) {
       return { success: false, had401: true };
     }
     
@@ -52,8 +70,8 @@ export async function loadUserData(
   try {
     const progressData = await progressAPI.getProgress(token);
     callbacks.setUserProgress(progressData);
-  } catch (error: any) {
-    if (error?.status === 401) {
+  } catch (error: unknown) {
+    if (hasStatus401(error)) {
       return { success: false, had401: true };
     }
     
@@ -74,15 +92,16 @@ export async function loadUserData(
   // Nacitanie island progressu
   try {
     const islands = await progressAPI.getIslands(token);
-    islandsData = islands;
-    callbacks.setIslandProgress(islands);
-  } catch (error: any) {
-    if (error?.status === 401) {
+    const typedIslands = islands as IslandProgress;
+    islandsData = typedIslands;
+    callbacks.setIslandProgress(typedIslands);
+  } catch (error: unknown) {
+    if (hasStatus401(error)) {
       return { success: false, had401: true };
     }
     
     // Defaultne odomknuty prvy island
-    const defaultIslands = { "beginner-1": "unlocked" };
+    const defaultIslands: IslandProgress = { "beginner-1": "unlocked" };
     islandsData = defaultIslands;
     callbacks.setIslandProgress(defaultIslands);
   }
@@ -105,8 +124,8 @@ export async function loadUserData(
       }
       callbacks.setStreakActiveToday(isActive);
     }
-  } catch (error: any) {
-    if (error?.status === 401) {
+  } catch (error: unknown) {
+    if (hasStatus401(error)) {
       return { success: false, had401: true };
     }
     
@@ -120,8 +139,8 @@ export async function loadUserData(
     if (callbacks.setIslandExerciseData) {
       callbacks.setIslandExerciseData(exerciseData);
     }
-  } catch (error: any) {
-    if (error?.status === 401) {
+  } catch (error: unknown) {
+    if (hasStatus401(error)) {
       return { success: false, had401: true };
     }
     
@@ -138,6 +157,6 @@ export async function loadUserData(
   return {
     success: true,
     had401: false,
-    islandProgress: islandsData
+    islandProgress: islandsData || undefined
   };
 }

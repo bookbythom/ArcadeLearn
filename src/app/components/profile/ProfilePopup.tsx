@@ -16,6 +16,17 @@ interface ProfilePopupProps {
   onProfileUpdate: (profile: UserProfile) => void;
 }
 
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+  return fallback;
+};
+
+const hasStatusCode = (error: unknown, status: number) => {
+  return typeof error === 'object' && error !== null && 'status' in error && (error as { status?: number }).status === status;
+};
+
 // Hlavny komponent pre profile popup
 export default function ProfilePopup(props: ProfilePopupProps) {
   // State premenne pre profil
@@ -140,8 +151,8 @@ export default function ProfilePopup(props: ProfilePopupProps) {
       props.onProfileUpdate(newProfile);
       setIsEditingName(false);
       alert("Name changed successfully!");
-    } catch (error: any) {
-      alert(error.message || 'Failed to update name');
+    } catch (error: unknown) {
+      alert(getErrorMessage(error, 'Failed to update name'));
     }
   };
 
@@ -179,11 +190,11 @@ export default function ProfilePopup(props: ProfilePopupProps) {
       
       alert(`Email changed successfully to ${temporaryEmail.toLowerCase()}!`);
       setIsEditingEmail(false);
-    } catch (error: any) {
-      if (error.status === 409) {
+    } catch (error: unknown) {
+      if (hasStatusCode(error, 409)) {
         alert("This email address is already in use");
       } else {
-        alert(error.message || 'Failed to change email');
+        alert(getErrorMessage(error, 'Failed to change email'));
       }
     }
   };
@@ -223,11 +234,11 @@ export default function ProfilePopup(props: ProfilePopupProps) {
       setIsEditingPassword(false);
       setCurrentPasswordForChange("");
       setTemporaryPassword("");
-    } catch (error: any) {
-      if (error.status === 401) {
+    } catch (error: unknown) {
+      if (hasStatusCode(error, 401)) {
         alert("Current password is incorrect");
       } else {
-        alert(error.message || 'Failed to change password');
+        alert(getErrorMessage(error, 'Failed to change password'));
       }
     }
   };

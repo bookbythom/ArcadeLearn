@@ -7,7 +7,7 @@ import svgPaths from "../../../imports/exercise-elements";
 interface SortExerciseProps {
   question: string;
   options: string[];
-  correctAnswer: any; // Moze byt pole stringov alebo pole indexov
+  correctAnswer: string[] | number[]; // Moze byt pole stringov alebo pole indexov
   categories?: string[]; // Volitelne kategorie na lavej strane
   onNext: () => void;
   onBack: () => void;
@@ -262,7 +262,7 @@ function SortExerciseContent(props: SortExerciseProps) {
                 index={index}
                 moveItem={moveItem}
                 isSubmitted={isSubmitted}
-                correctIndex={Array.isArray(props.correctAnswer) && typeof props.correctAnswer[0] === 'number' ? props.correctAnswer[index] : index}
+                correctIndex={Array.isArray(props.correctAnswer) && typeof props.correctAnswer[0] === 'number' ? Number(props.correctAnswer[index]) : index}
                 categories={props.categories}
               />
             ))}

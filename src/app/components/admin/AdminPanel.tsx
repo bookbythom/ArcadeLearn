@@ -38,6 +38,13 @@ interface ResetModal {
   user: User | null;
 }
 
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+  return fallback;
+};
+
 // Komponent pre admin panel
 export default function AdminPanel(props: AdminPanelProps) {
   // State premenne
@@ -62,9 +69,8 @@ export default function AdminPanel(props: AdminPanelProps) {
       const usersData = await adminAPI.getAllUsers(props.accessToken);
       setUsersList(usersData);
       setErrorMessage('');
-    } catch (err: any) {
-      console.error('Failed to load users:', err);
-      setErrorMessage(err.message || 'Failed to load users');
+    } catch (error: unknown) {
+      setErrorMessage(getErrorMessage(error, 'Failed to load users'));
     } finally {
       setIsLoading(false);
     }
@@ -76,9 +82,8 @@ export default function AdminPanel(props: AdminPanelProps) {
       await adminAPI.setAdminStatus(props.accessToken, userId, !currentStatus);
       setStatusModal({ show: false, user: null });
       await loadUsersFromServer();
-    } catch (err: any) {
-      console.error('Failed to toggle admin status:', err);
-      alert(err.message || 'Failed to update admin status');
+    } catch (error: unknown) {
+      alert(getErrorMessage(error, 'Failed to update admin status'));
     }
   };
 
@@ -88,9 +93,8 @@ export default function AdminPanel(props: AdminPanelProps) {
       await adminAPI.deleteUser(props.accessToken, userId);
       setDeleteModal({ show: false, user: null });
       await loadUsersFromServer();
-    } catch (err: any) {
-      console.error('Failed to delete user:', err);
-      alert(err.message || 'Failed to delete user');
+    } catch (error: unknown) {
+      alert(getErrorMessage(error, 'Failed to delete user'));
     }
   };
 
@@ -103,9 +107,8 @@ export default function AdminPanel(props: AdminPanelProps) {
       if (userId === props.currentUserId && props.onSelfReset) {
         props.onSelfReset();
       }
-    } catch (err: any) {
-      console.error('Failed to reset user:', err);
-      alert(err.message || 'Failed to reset user');
+    } catch (error: unknown) {
+      alert(getErrorMessage(error, 'Failed to reset user'));
     }
   };
 

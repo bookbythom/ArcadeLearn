@@ -5,9 +5,10 @@ import ResultPage from './ResultPage';
 import ExerciseTypePopup from '@/app/components/reusable/ExerciseTypePopup';
 import { LoadingSpinner } from '@/app/components/ui/LoadingSpinner';
 import { getThemeData, getExerciseTypeName } from "@/app/utils/learnPageUtils";
-import { initializeExerciseStates } from "@/app/utils/exerciseStateUtils";
+import { initializeExerciseStates, type ExerciseState } from "@/app/utils/exerciseStateUtils";
 import { createMistakesFromResults } from "@/app/utils/mistakeCreationUtils";
 import { renderExerciseByType, renderContentSlide } from "@/app/utils/exerciseRendererUtils";
+import type { Theme } from "@/app/data/beginnerthemes";
 
 // Rozhranie pre vlastnosti komponentu LearnPage
 interface LearnPageProps {
@@ -22,6 +23,113 @@ interface LearnPageProps {
   previousBestCorrectAnswers?: number;
 }
 
+type ExerciseStateMap = Record<number, ExerciseState>;
+
+interface ReviewState {
+  active: boolean;
+  incorrectExerciseIndices: number[];
+}
+
+interface ExerciseTypePopupState {
+  visible: boolean;
+  exerciseTypeName: string;
+}
+
+interface UseExerciseTypePopupParams {
+  currentSlideIndex: number;
+  isFinalTest: boolean;
+  numberOfExercises: number;
+  exercises: Theme['exercises'];
+}
+
+const useExerciseTypePopup = ({
+  currentSlideIndex,
+  isFinalTest,
+  numberOfExercises,
+  exercises
+}: UseExerciseTypePopupParams) => {
+  const [popupState, setPopupState] = useState<ExerciseTypePopupState>({
+    visible: false,
+    exerciseTypeName: ""
+  });
+  const [visitedSlides, setVisitedSlides] = useState<Set<number>>(new Set([0]));
+
+  useEffect(() => {
+    const maxExerciseSlideIndex = isFinalTest ? numberOfExercises - 1 : numberOfExercises;
+    const isExerciseSlide = isFinalTest
+      ? (currentSlideIndex >= 0 && currentSlideIndex <= maxExerciseSlideIndex)
+      : (currentSlideIndex >= 1 && currentSlideIndex <= maxExerciseSlideIndex);
+
+    if (isExerciseSlide && !visitedSlides.has(currentSlideIndex)) {
+      const exerciseType = getExerciseTypeName(currentSlideIndex, isFinalTest, exercises.length, exercises);
+      setPopupState({ visible: true, exerciseTypeName: exerciseType });
+      setVisitedSlides((previousSet) => new Set([...previousSet, currentSlideIndex]));
+    }
+  }, [currentSlideIndex, visitedSlides, isFinalTest, numberOfExercises, exercises]);
+
+  const closePopup = () => {
+    setPopupState((previousState) => ({ ...previousState, visible: false }));
+  };
+
+  return { popupState, closePopup };
+};
+
+const useReviewMode = () => {
+  const [reviewState, setReviewState] = useState<ReviewState>({ active: false, incorrectExerciseIndices: [] });
+
+  const startReview = (incorrectExerciseIndices: number[]) => {
+    setReviewState({ active: true, incorrectExerciseIndices });
+  };
+
+  const stopReview = () => {
+    setReviewState({ active: false, incorrectExerciseIndices: [] });
+  };
+
+  return {
+    reviewModeActive: reviewState.active,
+    incorrectExerciseIndices: reviewState.incorrectExerciseIndices,
+    startReview,
+    stopReview
+  };
+};
+
+interface UseContentSlideTimerParams {
+  currentSlideIndex: number;
+  isFinalTest: boolean;
+  isAdmin?: boolean;
+}
+
+const useContentSlideTimer = ({ currentSlideIndex, isFinalTest, isAdmin }: UseContentSlideTimerParams) => {
+  const [timerSeconds, setTimerSeconds] = useState(30);
+  const [canUserProceed, setCanUserProceed] = useState(false);
+
+  useEffect(() => {
+    const isContentSlide = !isFinalTest && currentSlideIndex === 0;
+    if (!isContentSlide || isAdmin) {
+      setCanUserProceed(true);
+      return;
+    }
+
+    setTimerSeconds(30);
+    setCanUserProceed(false);
+
+    const intervalId = setInterval(() => {
+      setTimerSeconds((previousValue) => {
+        if (previousValue <= 1) {
+          setCanUserProceed(true);
+          clearInterval(intervalId);
+          return 0;
+        }
+        return previousValue - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [currentSlideIndex, isAdmin, isFinalTest]);
+
+  return { timerSeconds, canUserProceed };
+};
+
 // Hlavny komponent pre ucenie sa a cvicenia na ostrove
 export default function LearnPage(props: LearnPageProps) {
   // Ziskanie dat pre aktualne temu
@@ -32,19 +140,30 @@ export default function LearnPage(props: LearnPageProps) {
 
   // State premenne
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [timerSeconds, setTimerSeconds] = useState(30);
-  const [canUserProceed, setCanUserProceed] = useState(false);
   const [showResultsPage, setShowResultsPage] = useState(false);
   const [exerciseResults, setExerciseResults] = useState<boolean[]>([]);
-  const [reviewModeActive, setReviewModeActive] = useState(false);
-  const [incorrectExerciseIndices, setIncorrectExerciseIndices] = useState<number[]>([]);
   const [hasCalledCompleteCallback, setHasCalledCompleteCallback] = useState(false);
-  const [showExerciseTypePopup, setShowExerciseTypePopup] = useState(false);
-  const [currentExerciseTypeName, setCurrentExerciseTypeName] = useState("");
-  const [visitedSlides, setVisitedSlides] = useState<Set<number>>(new Set([0]));
-  const [exerciseStates, setExerciseStates] = useState<{ [key: number]: any }>({});
+  const [exerciseStates, setExerciseStates] = useState<ExerciseStateMap>({});
   const [isInitialized, setIsInitialized] = useState(false);
   const [initialBestCorrectAnswers, setInitialBestCorrectAnswers] = useState(props.previousBestCorrectAnswers || 0);
+
+  const { timerSeconds, canUserProceed } = useContentSlideTimer({
+    currentSlideIndex,
+    isFinalTest,
+    isAdmin: props.isAdmin
+  });
+  const {
+    reviewModeActive,
+    incorrectExerciseIndices,
+    startReview,
+    stopReview
+  } = useReviewMode();
+  const { popupState: exerciseTypePopupState, closePopup } = useExerciseTypePopup({
+    currentSlideIndex,
+    isFinalTest,
+    numberOfExercises,
+    exercises: themeData.exercises
+  });
 
   // Zapamataj si best score iba pri vstupe na iny ostrovcek, aby sa po dokonceni neprepisal.
   useEffect(() => {
@@ -57,21 +176,6 @@ export default function LearnPage(props: LearnPageProps) {
     setExerciseStates(initialStates);
     setIsInitialized(true);
   }, [props.theme, props.level, isFinalTest]);
-
-  // Zobrazenie popup okna s typom cvicenia pre nove slidy
-  useEffect(() => {
-    const maxExerciseSlideIndex = isFinalTest ? numberOfExercises - 1 : numberOfExercises;
-    const isExerciseSlide = isFinalTest 
-      ? (currentSlideIndex >= 0 && currentSlideIndex <= maxExerciseSlideIndex) 
-      : (currentSlideIndex >= 1 && currentSlideIndex <= maxExerciseSlideIndex);
-    
-    if (isExerciseSlide && !visitedSlides.has(currentSlideIndex)) {
-      const exerciseType = getExerciseTypeName(currentSlideIndex, isFinalTest, themeData.exercises.length, themeData.exercises);
-      setCurrentExerciseTypeName(exerciseType);
-      setShowExerciseTypePopup(true);
-      setVisitedSlides(previousSet => new Set([...previousSet, currentSlideIndex]));
-    }
-  }, [currentSlideIndex, visitedSlides, isFinalTest, numberOfExercises]);
 
   // Spracovanie dokoncenia a ulozenie chyb
   useEffect(() => {
@@ -95,31 +199,6 @@ export default function LearnPage(props: LearnPageProps) {
     }
   }, [showResultsPage, hasCalledCompleteCallback, exerciseResults, exerciseStates, props.userEmail, props.level, props.theme, props.themeName, props.accessToken, isFinalTest, themeData, numberOfExercises, props.onComplete]);
 
-  // Casovac pre content slide
-  useEffect(() => {
-    const isContentSlide = !isFinalTest && currentSlideIndex === 0;
-    if (!isContentSlide || props.isAdmin) {
-      setCanUserProceed(true);
-      return;
-    }
-
-    setTimerSeconds(30);
-    setCanUserProceed(false);
-
-    const intervalId = setInterval(() => {
-      setTimerSeconds((previousValue) => {
-        if (previousValue <= 1) {
-          setCanUserProceed(true);
-          clearInterval(intervalId);
-          return 0;
-        }
-        return previousValue - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(intervalId);
-  }, [currentSlideIndex, props.isAdmin, isFinalTest]);
-
   // Funkcia pre prechod na dalsi slide
   const handleNextButton = () => {
     if (reviewModeActive) {
@@ -128,7 +207,7 @@ export default function LearnPage(props: LearnPageProps) {
         setCurrentSlideIndex(incorrectExerciseIndices[currentIndex + 1]);
       } else {
         setShowResultsPage(true);
-        setReviewModeActive(false);
+        stopReview();
       }
     } else {
       if (currentSlideIndex < totalSlidesCount - 1) {
@@ -147,7 +226,7 @@ export default function LearnPage(props: LearnPageProps) {
         setCurrentSlideIndex(incorrectExerciseIndices[currentIndex - 1]);
       } else {
         setShowResultsPage(true);
-        setReviewModeActive(false);
+        stopReview();
       }
     } else {
       if (currentSlideIndex > 0) {
@@ -189,10 +268,9 @@ export default function LearnPage(props: LearnPageProps) {
       .filter(index => index !== -1);
     
     if (incorrectIndices.length > 0) {
-      setIncorrectExerciseIndices(incorrectIndices);
+      startReview(incorrectIndices);
       setCurrentSlideIndex(incorrectIndices[0]);
       setShowResultsPage(false);
-      setReviewModeActive(true);
     }
   };
 
@@ -343,10 +421,10 @@ export default function LearnPage(props: LearnPageProps) {
   return (
     <>
       {renderExercise()}
-      {showExerciseTypePopup && (
+      {exerciseTypePopupState.visible && (
         <ExerciseTypePopup
-          exerciseType={currentExerciseTypeName}
-          onClose={() => setShowExerciseTypePopup(false)}
+          exerciseType={exerciseTypePopupState.exerciseTypeName}
+          onClose={closePopup}
         />
       )}
     </>

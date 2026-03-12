@@ -7,6 +7,13 @@ import { Pencil, Upload } from "lucide-react";
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+  return fallback;
+};
+
 const validateImageFile = (file: File): string | null => {
   if (!file.type.startsWith("image/")) {
     return "Please select an image file";
@@ -121,8 +128,8 @@ function KeywordPopup(props: KeywordPopupProps) {
         
         props.onImageUpdate?.();
         alert("Image uploaded successfully!");
-      } catch (error: any) {
-        alert(error.message || "Failed to upload image");
+      } catch (error: unknown) {
+        alert(getErrorMessage(error, "Failed to upload image"));
       }
     };
     input.click();
@@ -147,8 +154,8 @@ function KeywordPopup(props: KeywordPopupProps) {
       
       props.onImageUpdate?.();
       alert("Image removed successfully!");
-    } catch (error: any) {
-      alert(error.message || "Failed to remove image");
+    } catch (error: unknown) {
+      alert(getErrorMessage(error, "Failed to remove image"));
     }
   };
   
@@ -392,8 +399,8 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
         // Reload obrazky po uspesnom uploade
         reloadCustomImages();
         alert("Image uploaded successfully!");
-      } catch (error: any) {
-        alert(error.message || "Failed to upload image");
+      } catch (error: unknown) {
+        alert(getErrorMessage(error, "Failed to upload image"));
       }
     };
     input.click();
@@ -576,8 +583,8 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
       
       await reloadKeywordImages();
       alert("Image uploaded successfully!");
-    } catch (error: any) {
-      alert(error.message || "Failed to upload image");
+    } catch (error: unknown) {
+      alert(getErrorMessage(error, "Failed to upload image"));
     }
   };
   

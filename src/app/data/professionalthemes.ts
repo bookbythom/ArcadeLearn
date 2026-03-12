@@ -8,7 +8,7 @@ export interface Exercise {
   type: 'multiple-choice' | 'true-false' | 'choose-correct' | 'sort' | 'single-choice';
   question: string;
   options: string[];
-  correctAnswer: any;
+  correctAnswer: number | boolean | number[] | string[] | Record<string, string>;
   categories?: string[];
 }
 

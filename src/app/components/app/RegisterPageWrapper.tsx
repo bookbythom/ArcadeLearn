@@ -5,6 +5,13 @@ import { PageLoader } from "@/app/components/app/PageLoader";
 
 const RegisterPage = lazy(() => import("@/app/components/pages/RegisterPage"));
 
+const getErrorMessage = (error: unknown) => {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+  return "Failed to create account. Please try again.";
+};
+
 export default function RegisterPageWrapper() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -15,8 +22,8 @@ export default function RegisterPageWrapper() {
       await authAPI.signUp({ email, password, name });
       alert("Account created successfully! Please sign in with your credentials.");
       navigate("/signin");
-    } catch (error: any) {
-      alert(error.message || "Failed to create account. Please try again.");
+    } catch (error: unknown) {
+      alert(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }

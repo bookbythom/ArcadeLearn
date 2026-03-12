@@ -7,8 +7,8 @@ import { professionalThemes } from '@/app/data/professionalthemes';
 export interface MistakeExercise {
   type: 'single-choice' | 'multiple-choice' | 'sorting' | 'matching' | 'true-false';
   question: string;
-  userAnswer: any;
-  correctAnswer: any;
+  userAnswer: unknown;
+  correctAnswer: unknown;
   timestamp: number;
   categories?: string[];
 }
@@ -123,7 +123,7 @@ export async function loadMistakesFromBackend(accessToken: string, userEmail: st
       const values = Object.values(cleaned);
       
       for (let i = 0; i < values.length; i++) {
-        const theme: any = values[i];
+        const theme = values[i] as ThemeMistakes;
         if (theme.mistakes) {
           totalCount = totalCount + theme.mistakes.length;
         }

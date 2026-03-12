@@ -1,9 +1,9 @@
-// @ts-nocheck
 import { Hono } from "npm:hono";
+import type { Context } from "npm:hono";
 import { cors } from "npm:hono/cors";
 import { logger } from "npm:hono/logger";
 import * as kv from "./kv_store.tsx";
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2';
 
 const app = new Hono();
 const LEGACY_API_PREFIX = Deno.env.get('LEGACY_API_PREFIX');
@@ -11,6 +11,20 @@ const API_PREFIX = '/arcade-server';
 const LEGACY_STORAGE_BUCKET_NAME = Deno.env.get('LEGACY_STORAGE_BUCKET_NAME');
 const STORAGE_BUCKET_NAME = Deno.env.get('STORAGE_BUCKET_NAME') || 'arcadelearn-island-images';
 const apiRoute = (path: string) => `${API_PREFIX}${path}`;
+
+type MetadataRecord = {
+  fileName?: string;
+  imageUrl?: string;
+  bucketName?: string;
+  [key: string]: unknown;
+};
+
+const getErrorMessage = (error: unknown) => {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+  return 'Unknown error';
+};
 
 const extractBucketFromSignedUrl = (url?: string) => {
   if (!url) return null;
@@ -29,7 +43,7 @@ const resolveBucketName = (metadata: { bucketName?: string; imageUrl?: string })
 
 const listImageMetadataEntries = async () => {
   const prefixes = ['island-image:', 'content-image:', 'keyword-image:'];
-  const entries: Array<{ key: string; metadata: any }> = [];
+  const entries: Array<{ key: string; metadata: MetadataRecord }> = [];
 
   for (const prefix of prefixes) {
     const rows = await kv.getEntriesByPrefix(prefix);
@@ -57,7 +71,7 @@ const findMetadataByKey = async (key: string) => {
   }
 };
 
-const migrateSingleImageMetadata = async (sb: any, key: string, metadata: any) => {
+const migrateSingleImageMetadata = async (sb: SupabaseClient, key: string, metadata: MetadataRecord) => {
   const fileName = metadata?.fileName;
   if (!fileName) return { migrated: false, reason: 'missing-file-name' };
 
@@ -103,7 +117,7 @@ const hash = async (plainText: string) => {
     .join('');
 };
 
-const getTok = (context: any) =>
+const getTok = (context: Context) =>
   context.req.header('X-Session-Token') ||
   context.req.header('Authorization')?.split(' ')[1];
 
@@ -126,7 +140,7 @@ const isAdm = async (userId: string) => {
 
 const day = (date: Date) => date.toISOString().split('T')[0];
 
-const auth = async (context: any) => {
+const auth = async (context: Context) => {
   const token = getTok(context);
   if (!token) {
     return null;
@@ -135,7 +149,7 @@ const auth = async (context: any) => {
   return await valSess(token);
 };
 
-const admAuth = async (context: any) => {
+const admAuth = async (context: Context) => {
   const session = await auth(context);
 
   if (!session) {
@@ -155,7 +169,6 @@ const initStorage = async () => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     if (!supabaseUrl || !serviceRoleKey) {
-      console.log('[STORAGE] Skipping bucket initialization - missing credentials');
       return;
     }
     
@@ -167,27 +180,21 @@ const initStorage = async () => {
     const bucketExists = buckets?.some(bucket => bucket.name === bucketName);
     
     if (!bucketExists) {
-      console.log('[STORAGE] Creating bucket:', bucketName);
       const { error } = await storageClient.storage.createBucket(bucketName, {
         public: false,
         fileSizeLimit: 5242880 // 5MB limit
       });
-      
+
       if (error) {
-        console.error('[STORAGE] Failed to create bucket:', error.message);
-      } else {
-        console.log('[STORAGE] Bucket created successfully');
+        return;
       }
-    } else {
-      console.log('[STORAGE] Bucket already exists');
     }
-  } catch (error) {
-    console.error('[STORAGE] Error during storage initialization:', error);
+  } catch {
   }
 };
 
 // Spustime inicializaciu storage (non-blocking)
-initStorage().catch((error) => console.error('[STORAGE] Init failed:', error));
+initStorage().catch(() => undefined);
 
 if (LEGACY_API_PREFIX) {
   app.use(`${LEGACY_API_PREFIX}/*`, async (c) => {
@@ -200,7 +207,6 @@ if (LEGACY_API_PREFIX) {
 app.use('*', cors({ origin: '*', allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], allowHeaders: ['Content-Type', 'Authorization', 'apikey', 'X-Session-Token'], credentials: true }));
 app.use('*', logger());
 app.onError((err, c) => {
-  console.error('[ERROR]', err?.message || 'Unknown error', err?.stack);
   return c.json({ error: err?.message || 'Internal server error' }, 500);
 });
 app.options('*', (c) => c.text('', 204));
@@ -443,15 +449,13 @@ app.get(apiRoute('/admin/users'), async (c) => {
           isAdmin: await isAdm(u.userId), 
           createdAt: u.createdAt 
         });
-      } catch (e) {
-        console.error('Error processing user:', e);
+      } catch {
       }
     }
     
     return c.json({ users });
   } catch (error) {
-    console.error('Error fetching users:', error);
-    return c.json({ error: 'Failed to fetch users', details: error.message }, 500);
+    return c.json({ error: 'Failed to fetch users', details: getErrorMessage(error) }, 500);
   }
 });
 
@@ -652,9 +656,12 @@ app.post(apiRoute('/admin/migrate-storage-to-new-bucket'), async (c) => {
   const { err } = await admAuth(c);
   if (err) return err;
 
-  let body: any = {};
+  let body: Record<string, unknown> = {};
   try {
-    body = await c.req.json();
+    const parsedBody = await c.req.json();
+    if (typeof parsedBody === 'object' && parsedBody !== null) {
+      body = parsedBody as Record<string, unknown>;
+    }
   } catch {
     body = {};
   }
@@ -717,9 +724,8 @@ Deno.serve({
     try {
       return await app.fetch(req);
     } catch (error) {
-      console.error('[SERVER ERROR]', error);
       return new Response(
-        JSON.stringify({ error: 'Server error', message: error.message }),
+        JSON.stringify({ error: 'Server error', message: getErrorMessage(error) }),
         { 
           status: 500, 
           headers: { 'Content-Type': 'application/json' } 
@@ -727,8 +733,7 @@ Deno.serve({
       );
     }
   },
-  onError: (error) => {
-    console.error('[DENO SERVE ERROR]', error);
+  onError: () => {
     return new Response(
       JSON.stringify({ error: 'Server error' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }

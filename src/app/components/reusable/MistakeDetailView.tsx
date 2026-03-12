@@ -13,6 +13,24 @@ interface MistakeDetailViewProps {
 
 // Komponent pre detailny pohlad na chybu
 export default function MistakeDetailView(props: MistakeDetailViewProps) {
+  const toRenderableText = (value: unknown) => {
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+      return String(value);
+    }
+    return JSON.stringify(value);
+  };
+
+  const toRecord = (value: unknown): Record<string, unknown> => {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      return value as Record<string, unknown>;
+    }
+    return {};
+  };
+
+  const toArray = (value: unknown): unknown[] => {
+    return Array.isArray(value) ? value : [];
+  };
+
   // Funkcia pre ziskanie nazvu temy
   const getThemeName = (): string => {
     if (props.theme === 0) {
@@ -87,6 +105,9 @@ export default function MistakeDetailView(props: MistakeDetailViewProps) {
 
   // Funkcia pre renderovanie otazky zoradovania
   const renderSortingQuestion = () => {
+    const userAnswerList = toArray(props.mistake.userAnswer);
+    const correctAnswerList = toArray(props.mistake.correctAnswer);
+
     return (
       <div className="space-y-6">
         {/* Zobraz kategorie (lavy panel) ak su dostupne */}
@@ -108,26 +129,26 @@ export default function MistakeDetailView(props: MistakeDetailViewProps) {
 
         <h3 className="text-2xl font-medium text-white mb-6">Your Order:</h3>
         <div className="space-y-3">
-          {props.mistake.userAnswer.map((item: any, index: number) => (
+          {userAnswerList.map((item: unknown, index: number) => (
             <div
               key={index}
               className="bg-[#ff4444] bg-opacity-20 border-2 border-[#ff4444] rounded-2xl px-6 py-4 flex items-center gap-4"
             >
               <span className="text-white font-bold text-xl">{index + 1}.</span>
-              <p className="text-lg text-white">{item}</p>
+              <p className="text-lg text-white">{toRenderableText(item)}</p>
             </div>
           ))}
         </div>
 
         <h3 className="text-2xl font-medium text-white mt-8 mb-6">Correct Order:</h3>
         <div className="space-y-3">
-          {props.mistake.correctAnswer.map((item: any, index: number) => (
+          {correctAnswerList.map((item: unknown, index: number) => (
             <div
               key={index}
               className="bg-[#4cb025] bg-opacity-20 border-2 border-[#4cb025] rounded-2xl px-6 py-4 flex items-center gap-4"
             >
               <span className="text-white font-bold text-xl">{index + 1}.</span>
-              <p className="text-lg text-white">{item}</p>
+              <p className="text-lg text-white">{toRenderableText(item)}</p>
             </div>
           ))}
         </div>
@@ -137,14 +158,14 @@ export default function MistakeDetailView(props: MistakeDetailViewProps) {
 
   // Funkcia pre renderovanie matching otazky
   const renderMatchingQuestion = () => {
-    const userPairs = props.mistake.userAnswer;
-    const correctPairs = props.mistake.correctAnswer;
+    const userPairs = toRecord(props.mistake.userAnswer);
+    const correctPairs = toRecord(props.mistake.correctAnswer);
 
     return (
       <div className="space-y-6">
         <h3 className="text-2xl font-medium text-white mb-6">Your Choice:</h3>
         <div className="space-y-3">
-          {Object.entries(userPairs).map(([left, right]: [string, any], index: number) => {
+          {Object.entries(userPairs).map(([left, right]: [string, unknown], index: number) => {
             const isCorrect = correctPairs[left] === right;
             return (
               <div
@@ -155,7 +176,7 @@ export default function MistakeDetailView(props: MistakeDetailViewProps) {
                     : 'bg-[#ff4444] border-[#ff4444]'
                 } bg-opacity-20 border-2 rounded-2xl px-6 py-4`}
               >
-                <p className="text-lg text-white font-medium text-center">{right}</p>
+                <p className="text-lg text-white font-medium text-center">{toRenderableText(right)}</p>
               </div>
             );
           })}
@@ -163,12 +184,12 @@ export default function MistakeDetailView(props: MistakeDetailViewProps) {
 
         <h3 className="text-2xl font-medium text-white mt-8 mb-6">Correct Choice:</h3>
         <div className="space-y-3">
-          {Object.entries(correctPairs).map(([, right]: [string, any], index: number) => (
+          {Object.entries(correctPairs).map(([, right]: [string, unknown], index: number) => (
             <div
               key={index}
               className="bg-[#4cb025] bg-opacity-20 border-2 border-[#4cb025] rounded-2xl px-6 py-4"
             >
-              <p className="text-lg text-white font-medium text-center">{right}</p>
+              <p className="text-lg text-white font-medium text-center">{toRenderableText(right)}</p>
             </div>
           ))}
         </div>

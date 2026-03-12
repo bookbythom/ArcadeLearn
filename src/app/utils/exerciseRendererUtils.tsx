@@ -7,9 +7,16 @@ import TextMultipleChoiceExercise from '@/app/components/islandpages/TextMultipl
 import LearnPageMechanics from '@/app/components/reusable/LearnPageMechanics';
 import type { Exercise } from "@/app/data/beginnerthemes";
 
+type ExerciseRenderState = {
+  selectedOptions?: number[] | Record<string, string>;
+  selectedOption?: number | boolean | null;
+  itemOrder?: Array<{ id: string; label: string; position: number }>;
+  isSubmitted?: boolean;
+};
+
 interface ExerciseRendererProps {
   exercise: Exercise;
-  state: any;
+  state: ExerciseRenderState;
   currentSlide: number;
   slideNumber: number;
   totalSlidesCount: number;
@@ -18,7 +25,7 @@ interface ExerciseRendererProps {
   shouldHideBack: boolean;
   onNext: () => void;
   onPrevious: () => void;
-  onStateChange: (state: any) => void;
+  onStateChange: (state: ExerciseRenderState) => void;
   onAnswerSubmit: (isCorrect: boolean) => void;
 }
 
@@ -48,8 +55,8 @@ export function renderExerciseByType({
           onBack={onPrevious}
           currentSlide={slideNumber}
           totalSlides={totalSlidesCount}
-          initialSelectedOptions={state.selectedOptions}
-          initialIsSubmitted={state.isSubmitted}
+          initialSelectedOptions={Array.isArray(state.selectedOptions) ? state.selectedOptions : undefined}
+          initialIsSubmitted={Boolean(state.isSubmitted)}
           onStateChange={(selectedOptions, isSubmitted) => {
             onStateChange({ selectedOptions, isSubmitted });
           }}
@@ -70,8 +77,8 @@ export function renderExerciseByType({
           onBack={onPrevious}
           currentSlide={slideNumber}
           totalSlides={totalSlidesCount}
-          initialSelectedOption={state.selectedOption}
-          initialIsSubmitted={state.isSubmitted}
+          initialSelectedOption={typeof state.selectedOption === 'boolean' || state.selectedOption === null ? state.selectedOption : undefined}
+          initialIsSubmitted={Boolean(state.isSubmitted)}
           onStateChange={(selectedOption, isSubmitted) => {
             onStateChange({ selectedOption, isSubmitted });
           }}
@@ -88,13 +95,13 @@ export function renderExerciseByType({
           key={currentSlide}
           question={exercise.question}
           options={exercise.options}
-          correctAnswer={exercise.correctAnswer}
+          correctAnswer={exercise.correctAnswer as { [key: number]: string }}
           onNext={onNext}
           onBack={onPrevious}
           currentSlide={slideNumber}
           totalSlides={totalSlidesCount}
-          initialSelectedOptions={state.selectedOptions}
-          initialIsSubmitted={state.isSubmitted}
+          initialSelectedOptions={!Array.isArray(state.selectedOptions) ? state.selectedOptions as { [key: number]: string } : undefined}
+          initialIsSubmitted={Boolean(state.isSubmitted)}
           onStateChange={(selectedOptions, isSubmitted) => {
             onStateChange({ selectedOptions, isSubmitted });
           }}
@@ -111,14 +118,14 @@ export function renderExerciseByType({
           key={currentSlide}
           question={exercise.question}
           options={exercise.options}
-          correctAnswer={exercise.correctAnswer}
+          correctAnswer={exercise.correctAnswer as string[] | number[]}
           categories={exercise.categories}
           onNext={onNext}
           onBack={onPrevious}
           currentSlide={slideNumber}
           totalSlides={totalSlidesCount}
           initialItemOrder={state.itemOrder}
-          initialIsSubmitted={state.isSubmitted}
+          initialIsSubmitted={Boolean(state.isSubmitted)}
           onStateChange={(itemOrder, isSubmitted) => {
             onStateChange({ itemOrder, isSubmitted });
           }}
@@ -140,8 +147,8 @@ export function renderExerciseByType({
           onBack={onPrevious}
           currentSlide={slideNumber}
           totalSlides={totalSlidesCount}
-          initialSelectedOption={state.selectedOption}
-          initialIsSubmitted={state.isSubmitted}
+          initialSelectedOption={typeof state.selectedOption === 'number' || state.selectedOption === null ? state.selectedOption : undefined}
+          initialIsSubmitted={Boolean(state.isSubmitted)}
           onStateChange={(selectedOption, isSubmitted) => {
             onStateChange({ selectedOption, isSubmitted });
           }}

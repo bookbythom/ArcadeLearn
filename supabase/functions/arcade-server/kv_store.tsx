@@ -1,12 +1,24 @@
-// @ts-nocheck
 import { createClient } from "jsr:@supabase/supabase-js@2.49.8";
 
 const TABLE_NAME = "kv_store_15e718fc";
 
+type KVRow = {
+  key: string;
+  value: unknown;
+};
+
+const getRequiredEnv = (key: string): string => {
+  const value = Deno.env.get(key);
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+  return value;
+};
+
 const client = () =>
   createClient(
-    Deno.env.get("SUPABASE_URL"),
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
+    getRequiredEnv("SUPABASE_URL"),
+    getRequiredEnv("SUPABASE_SERVICE_ROLE_KEY"),
   );
 
 export const set = async (key: string, value: unknown): Promise<void> => {
@@ -60,7 +72,7 @@ export const mget = async (keys: string[]): Promise<unknown[]> => {
   if (error) {
     throw new Error(error.message);
   }
-  return data?.map((entry) => entry.value) ?? [];
+  return (data as Array<{ value: unknown }> | null)?.map((entry) => entry.value) ?? [];
 };
 
 export const mdel = async (keys: string[]): Promise<void> => {
@@ -80,7 +92,7 @@ export const getByPrefix = async (prefix: string): Promise<unknown[]> => {
   if (error) {
     throw new Error(error.message);
   }
-  return data?.map((entry) => entry.value) ?? [];
+  return (data as KVRow[] | null)?.map((entry) => entry.value) ?? [];
 };
 
 export const getEntriesByPrefix = async (
@@ -94,5 +106,5 @@ export const getEntriesByPrefix = async (
   if (error) {
     throw new Error(error.message);
   }
-  return data ?? [];
+  return (data as KVRow[] | null) ?? [];
 };

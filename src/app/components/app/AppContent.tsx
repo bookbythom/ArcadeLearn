@@ -32,6 +32,42 @@ interface IslandProgress { [key: string]: IslandStatus; }
 interface IslandExerciseData { [key: string]: number; }
 type LearnLevel = "beginner" | "intermediate" | "professional";
 type AutoScrollTarget = { level: LearnLevel; theme: number };
+type AppTab = "home" | "mistakes" | "admin";
+
+interface AuthSessionState {
+  isLoggedIn: boolean;
+  currentUserEmail: string;
+  isLoadingAuth: boolean;
+  accessToken: string;
+  userId: string;
+  isInitialLoad: boolean;
+  isAdmin: boolean;
+}
+
+const INITIAL_USER_PROGRESS: UserProgress = {
+  level: 0,
+  totalXP: 0,
+  sectionXP: { beginner: 0, intermediate: 0, professional: 0 }
+};
+
+const INITIAL_USER_PROFILE: UserProfile = {
+  name: "Guest",
+  email: "",
+  password: "",
+  profilePicture: ""
+};
+
+const INITIAL_AUTH_SESSION_STATE: AuthSessionState = {
+  isLoggedIn: false,
+  currentUserEmail: "",
+  isLoadingAuth: true,
+  accessToken: "",
+  userId: "",
+  isInitialLoad: true,
+  isAdmin: false
+};
+
+const EMPTY_ERROR_HANDLER = async (_error: unknown) => {};
 
 function parseLearnRoute(pathname: string): { level: LearnLevel; theme: number } | null {
   const match = pathname.match(/^\/learn\/(beginner|intermediate|professional)\/(\d+)$/);
@@ -58,36 +94,35 @@ export default function AppContent() {
     document.title = "ArcadeLearn";
   }, []);
 
-  const [activeTab, setActiveTab] = useState<"home" | "mistakes" | "admin">("home");
+  const [activeTab, setActiveTab] = useState<AppTab>("home");
   const [modalState, setModalState] = useState<ModalState>("none");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUserEmail, setCurrentUserEmail] = useState("");
-  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
-  const [accessToken, setAccessToken] = useState("");
-  const [userId, setUserId] = useState("");
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [authSessionState, setAuthSessionState] = useState<AuthSessionState>(INITIAL_AUTH_SESSION_STATE);
   const [mistakesRefreshTrigger, setMistakesRefreshTrigger] = useState(0);
   const [currentLearnLevel, setCurrentLearnLevel] = useState<LearnLevel>("beginner");
   const [currentLearnTheme, setCurrentLearnTheme] = useState(1);
-  const [userProgress, setUserProgress] = useState<UserProgress>({
-    level: 0,
-    totalXP: 0,
-    sectionXP: { beginner: 0, intermediate: 0, professional: 0 }
-  });
-  const [userProfile, setUserProfile] = useState<UserProfile>({
-    name: "Guest",
-    email: "",
-    password: "",
-    profilePicture: ""
-  });
+  const [userProgress, setUserProgress] = useState<UserProgress>(INITIAL_USER_PROGRESS);
+  const [userProfile, setUserProfile] = useState<UserProfile>(INITIAL_USER_PROFILE);
   const [islandProgress, setIslandProgress] = useState<IslandProgress>({ "beginner-1": "unlocked" });
   const [islandExerciseData, setIslandExerciseData] = useState<IslandExerciseData>({});
   const [streakCount, setStreakCount] = useState(0);
   const [streakActiveToday, setStreakActiveToday] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [, setVisibleSection] = useState<"beginner" | "intermediate" | "professional">("beginner");
   const [shouldAutoScroll, setShouldAutoScroll] = useState(false);
   const [autoScrollTarget, setAutoScrollTarget] = useState<AutoScrollTarget | null>(null);
+
+  const {
+    isLoggedIn,
+    currentUserEmail,
+    isLoadingAuth,
+    accessToken,
+    userId,
+    isInitialLoad,
+    isAdmin
+  } = authSessionState;
+
+  const updateAuthSessionState = (patch: Partial<AuthSessionState>) => {
+    setAuthSessionState((previousState) => ({ ...previousState, ...patch }));
+  };
 
   useEffect(() => {
     if (location.pathname === "/") {
@@ -115,7 +150,10 @@ export default function AppContent() {
       void loadProfilePopup();
     };
 
-    const win = window as any;
+    const win = window as Window & {
+      requestIdleCallback?: (callback: () => void, options?: { timeout?: number }) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
     let idleId: number | undefined;
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
@@ -135,7 +173,7 @@ export default function AppContent() {
     };
   }, [isLoggedIn, isLoadingAuth]);
 
-  const handleTabHoverPrefetch = (tab: "home" | "mistakes" | "admin") => {
+  const handleTabHoverPrefetch = (tab: AppTab) => {
     if (!isLoggedIn) return;
     if (tab === "home") {
       void loadHomePage();
@@ -161,32 +199,27 @@ export default function AppContent() {
       if (tokenToRevoke) {
         await authAPI.signOut(tokenToRevoke);
       }
-    } catch (error) {
-      console.error("Logout error:", error);
+    } catch {
     } finally {
-      setIsLoggedIn(false);
-      setUserId("");
-      setAccessToken("");
-      setCurrentUserEmail("");
-      setUserProfile({ name: "Guest", email: "", password: "", profilePicture: "" });
-      setUserProgress({ level: 0, totalXP: 0, sectionXP: { beginner: 0, intermediate: 0, professional: 0 } });
+      setAuthSessionState(INITIAL_AUTH_SESSION_STATE);
+      setUserProfile(INITIAL_USER_PROFILE);
+      setUserProgress(INITIAL_USER_PROGRESS);
       setIslandProgress({ "beginner-1": "unlocked" });
       setIslandExerciseData({});
       setStreakCount(0);
       setStreakActiveToday(false);
-      setIsAdmin(false);
       localStorage.clear();
       navigate("/signin");
     }
   };
 
-  const handleApiError = async (_error: any) => {};
+  const handleApiError = EMPTY_ERROR_HANDLER;
 
   useEffect(() => {
     const checkSession = async () => {
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        setIsLoadingAuth(false);
+        updateAuthSessionState({ isLoadingAuth: false });
         navigate("/signin");
         return;
       }
@@ -194,22 +227,24 @@ export default function AppContent() {
       try {
         const sessionData = await authAPI.getSession(token);
         if (sessionData.session?.user) {
-          setIsInitialLoad(true);
-          setAccessToken(token);
-          setUserId(sessionData.session.user.id);
-          setCurrentUserEmail(sessionData.session.user.email);
-          setIsLoggedIn(true);
+          updateAuthSessionState({
+            isInitialLoad: true,
+            accessToken: token,
+            userId: sessionData.session.user.id,
+            currentUserEmail: sessionData.session.user.email,
+            isLoggedIn: true
+          });
           await loadUserData(token);
           setShouldAutoScroll(true);
-          setIsLoadingAuth(false);
+          updateAuthSessionState({ isLoadingAuth: false });
         } else {
           localStorage.removeItem("accessToken");
-          setIsLoadingAuth(false);
+          updateAuthSessionState({ isLoadingAuth: false });
           navigate("/signin");
         }
-      } catch (error) {
+      } catch {
         localStorage.removeItem("accessToken");
-        setIsLoadingAuth(false);
+        updateAuthSessionState({ isLoadingAuth: false });
         navigate("/signin");
       }
     };
@@ -225,7 +260,7 @@ export default function AppContent() {
       setIslandExerciseData: setIslandExerciseData,
       setStreakCount: setStreakCount,
       setStreakActiveToday: setStreakActiveToday,
-      setIsInitialLoad: setIsInitialLoad,
+      setIsInitialLoad: (value: boolean) => updateAuthSessionState({ isInitialLoad: value }),
       handleAPIError: handleApiError
     });
 
@@ -236,11 +271,11 @@ export default function AppContent() {
 
     try {
       await loadMistakesFromBackend(token, email || currentUserEmail);
-    } catch (error) {}
+    } catch {}
 
     try {
       const adminStatus = await adminAPI.checkAdmin(token);
-      setIsAdmin(adminStatus);
+      updateAuthSessionState({ isAdmin: adminStatus });
 
       if (adminStatus) {
         const allIslands: IslandProgress = {};
@@ -285,20 +320,20 @@ export default function AppContent() {
 
         setIslandProgress(correctedProgress);
       }
-    } catch (error) {
-      setIsAdmin(false);
+    } catch {
+      updateAuthSessionState({ isAdmin: false });
     }
 
     return result;
   };
 
-  const saveToBackend = (data: any, saveFunction: (token: string, data: any) => Promise<any>) => {
+  const saveToBackend = <T,>(data: T, saveFunction: (token: string, data: T) => Promise<unknown>) => {
     if (!accessToken || !isLoggedIn || isInitialLoad) return;
     const timeoutId = setTimeout(async () => {
       try {
         await saveFunction(accessToken, data);
-      } catch (error: any) {
-        if (error?.status === 401) {
+      } catch (error: unknown) {
+        if (typeof error === "object" && error !== null && "status" in error && (error as { status?: number }).status === 401) {
           handleApiError(error);
         }
       }
@@ -416,10 +451,10 @@ export default function AppContent() {
       const streakData = await progressAPI.incrementStreak(accessToken);
       setStreakCount(streakData.count);
       setStreakActiveToday(streakData.activeToday);
-    } catch (error) {}
+    } catch {}
   };
 
-  const handleTabChange = (tab: "home" | "mistakes" | "admin") => {
+  const handleTabChange = (tab: AppTab) => {
     setActiveTab(tab);
     if (tab === "mistakes") {
       setMistakesRefreshTrigger((prev) => prev + 1);

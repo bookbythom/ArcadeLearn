@@ -81,7 +81,7 @@ export function getThemeData(level: "beginner" | "intermediate" | "professional"
 }
 
 // Ziskanie nazvu typu cvicenia
-export function getExerciseTypeName(slideIndex: number, isFinalTest: boolean, exercisesLength: number, exercises: any[]): string {
+export function getExerciseTypeName(slideIndex: number, isFinalTest: boolean, exercisesLength: number, exercises: Theme['exercises']): string {
   let exerciseIndex = 0;
   
   if (isFinalTest) {

@@ -1,10 +1,31 @@
 import type { Theme } from "@/app/data/beginnerthemes";
 import type { MistakeExercise } from "@/app/utils/mistakesUtils";
 
+type ExerciseStateEntry = {
+  selectedOptions?: number[] | Record<string, string>;
+  selectedOption?: number | boolean | null;
+  itemOrder?: Array<{ label: string; position: number }>;
+  isSubmitted?: boolean;
+};
+
+const toNumberArray = (value: unknown): number[] => {
+  return Array.isArray(value) && value.every((item) => typeof item === 'number') ? value : [];
+};
+
+const toItemOrderArray = (value: unknown): Array<{ label: string; position: number }> => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value.filter((item): item is { label: string; position: number } => {
+    return typeof item === 'object' && item !== null && 'label' in item && 'position' in item;
+  });
+};
+
 // Vytvorenie mistakes zo zle zodpovedanych cviceni
 export function createMistakesFromResults(
   exerciseResults: boolean[],
-  exerciseStates: { [key: number]: any },
+  exerciseStates: Record<number, ExerciseStateEntry>,
   themeData: Theme,
   isFinalTest: boolean
 ): Omit<MistakeExercise, 'timestamp'>[] {
@@ -49,7 +70,7 @@ export function createMistakesFromResults(
 
       // Viacnasobny vyber
       if (exercise.type === 'multiple-choice') {
-        const userSelectedOptions = state.selectedOptions;
+        const userSelectedOptions = toNumberArray(state.selectedOptions);
         const userAnswers = [];
         
         for (let j = 0; j < userSelectedOptions.length; j++) {
@@ -60,8 +81,9 @@ export function createMistakesFromResults(
         
         let correctAnswers = [];
         if (Array.isArray(exercise.correctAnswer)) {
-          for (let k = 0; k < exercise.correctAnswer.length; k++) {
-            const correctIndex = exercise.correctAnswer[k];
+          const correctIndices = toNumberArray(exercise.correctAnswer);
+          for (let k = 0; k < correctIndices.length; k++) {
+            const correctIndex = correctIndices[k];
             const correctText = exercise.options[correctIndex];
             correctAnswers.push(correctText);
           }
@@ -104,16 +126,17 @@ export function createMistakesFromResults(
         mistakeData = {
           type: 'matching',
           question: exercise.question,
-          userAnswer: state.selectedOptions,
+          userAnswer: state.selectedOptions || {},
           correctAnswer: exercise.correctAnswer
         };
       }
 
       // Zoradovanie
       else if (exercise.type === 'sort') {
+        const stateItemOrder = toItemOrderArray(state.itemOrder);
         const itemsCopy: { label: string; position: number }[] = [];
-        for (let m = 0; m < state.itemOrder.length; m++) {
-          itemsCopy.push(state.itemOrder[m]);
+        for (let m = 0; m < stateItemOrder.length; m++) {
+          itemsCopy.push(stateItemOrder[m]);
         }
         
         // Zorad podla pozicie
@@ -142,7 +165,7 @@ export function createMistakesFromResults(
           if (typeof firstElement === 'number') {
             for (let r = 0; r < exercise.correctAnswer.length; r++) {
               const idx = exercise.correctAnswer[r];
-              const optText = exercise.options[idx];
+              const optText = exercise.options[idx as number];
               if (optText) {
                 correctOrderLabels.push(optText);
               } else {
@@ -153,7 +176,7 @@ export function createMistakesFromResults(
           // Ak su to stringy
           else {
             for (let s = 0; s < exercise.correctAnswer.length; s++) {
-              let str = exercise.correctAnswer[s];
+              let str = String(exercise.correctAnswer[s]);
               
               if (!exercise.categories) {
                 if (str.includes(' - ')) {
@@ -166,7 +189,7 @@ export function createMistakesFromResults(
             }
           }
         } else {
-          correctOrderLabels = exercise.correctAnswer;
+          correctOrderLabels = [String(exercise.correctAnswer)];
         }
         
         mistakeData = {
@@ -182,7 +205,7 @@ export function createMistakesFromResults(
       else if (exercise.type === 'single-choice') {
         let userAnswerText = 'No answer';
         
-        if (state.selectedOption !== null) {
+        if (typeof state.selectedOption === 'number') {
           userAnswerText = exercise.options[state.selectedOption];
         }
         

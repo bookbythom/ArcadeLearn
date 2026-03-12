@@ -159,11 +159,6 @@ export function imageToBase64(file: File): Promise<string> {
         // Konverzia na base64
         const base64String = canvas.toDataURL('image/jpeg', quality);
         
-        // Upozornenie ak je stale velky
-        if (base64String.length > 200000) {
-          console.warn('[WARNING] Compressed image is still large:', Math.round(base64String.length / 1024), 'KB');
-        }
-        
         resolve(base64String);
       };
       

@@ -5,6 +5,19 @@ import { PageLoader } from "@/app/components/app/PageLoader";
 
 const SignInPage = lazy(() => import("@/app/components/pages/SignInPage"));
 
+const getErrorMessage = (error: unknown) => {
+  if (typeof error === "object" && error !== null) {
+    const maybeDataError = (error as { data?: { error?: string } }).data?.error;
+    if (maybeDataError) {
+      return maybeDataError;
+    }
+    if ("message" in error && typeof (error as { message?: unknown }).message === "string") {
+      return (error as { message: string }).message;
+    }
+  }
+  return "Please check your credentials.";
+};
+
 export default function SignInPageWrapper() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -20,9 +33,9 @@ export default function SignInPageWrapper() {
       localStorage.setItem("accessToken", response.accessToken);
       navigate("/");
       window.location.reload();
-    } catch (error: any) {
+    } catch (error: unknown) {
       let errorMessage = "Sign-in failed.\n\n";
-      errorMessage += error.data?.error || error.message || "Please check your credentials.";
+      errorMessage += getErrorMessage(error);
       alert(errorMessage);
     } finally {
       setIsLoading(false);

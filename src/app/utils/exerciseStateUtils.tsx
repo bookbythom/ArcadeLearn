@@ -1,8 +1,15 @@
 import type { Exercise } from "@/app/data/beginnerthemes";
 
+export interface ExerciseState {
+  selectedOptions?: number[] | Record<string, string>;
+  selectedOption?: number | boolean | null;
+  itemOrder?: Array<{ id: string; label: string; position: number }>;
+  isSubmitted?: boolean;
+}
+
 // Inicializacia stavov pre cvicenia
-export function initializeExerciseStates(exercises: Exercise[], isFinalTest: boolean) {
-  const states: { [key: number]: any } = {};
+export function initializeExerciseStates(exercises: Exercise[], isFinalTest: boolean): Record<number, ExerciseState> {
+  const states: Record<number, ExerciseState> = {};
   
   // Prejdi cez vsetky cvicenia
   for (let i = 0; i < exercises.length; i++) {

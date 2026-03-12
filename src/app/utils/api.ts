@@ -1,20 +1,35 @@
 import { projectId, publicAnonKey } from 'supabase/info';
 
 // Konfiguracia API URL
-const FUNCTION_NAME = (import.meta as any).env?.VITE_FUNCTION_NAME || 'arcade-server';
+const FUNCTION_NAME = (import.meta as { env?: { VITE_FUNCTION_NAME?: string } }).env?.VITE_FUNCTION_NAME || 'arcade-server';
 const BASE_URL = 'https://' + projectId + '.supabase.co/functions/v1/' + FUNCTION_NAME;
 
-// Vytvorenie error objektu
-const makeAPIError = (response: Response, data: any) => {
-  let errorMessage = 'API request failed';
-  
-  if (data.error) {
-    errorMessage = data.error;
-  } else if (data.message) {
-    errorMessage = data.message;
+export interface APIError extends Error {
+  status: number;
+  data: unknown;
+}
+
+const getErrorMessage = (error: unknown, fallback = 'Unknown error') => {
+  if (error instanceof Error && error.message) {
+    return error.message;
   }
-  
-  const error = new Error(errorMessage) as any;
+  return fallback;
+};
+
+// Vytvorenie error objektu
+const makeAPIError = (response: Response, data: unknown): APIError => {
+  let errorMessage = 'API request failed';
+
+  if (typeof data === 'object' && data !== null) {
+    const parsedData = data as { error?: string; message?: string };
+    if (parsedData.error) {
+      errorMessage = parsedData.error;
+    } else if (parsedData.message) {
+      errorMessage = parsedData.message;
+    }
+  }
+
+  const error = new Error(errorMessage) as APIError;
   error.status = response.status;
   error.data = data;
   return error;
@@ -30,10 +45,8 @@ const makeHeaders = (accessToken?: string, skipWarning = false) => {
   
   if (accessToken) {
     headers['X-Session-Token'] = accessToken;
-  } else {
-    if (!skipWarning) {
-      console.warn('[WARNING] API call made without access token');
-    }
+  } else if (!skipWarning) {
+    // Intentional no-op: unauthenticated endpoints are valid for sign-in/sign-up.
   }
   
   return headers;
@@ -61,33 +74,28 @@ async function doFetchWithRetry(url: string, options: RequestInit, maxRetries = 
       
       clearTimeout(timeout);
       return resp;
-    } catch (err: any) {
+    } catch (error: unknown) {
       let isTimeout = false;
-      
-      if (err.name === 'AbortError') {
+
+      if (error instanceof DOMException && error.name === 'AbortError') {
         isTimeout = true;
       }
-      
-      if (err.message && err.message.includes('aborted')) {
+
+      const errorMessage = getErrorMessage(error);
+      if (errorMessage.includes('aborted')) {
         isTimeout = true;
       }
-      
-      let errMsg = err.message;
+
+      let errMsg = errorMessage;
       if (isTimeout) {
         errMsg = 'Request timeout (15s)';
       }
-      
-      if (attemptNumber < maxRetries - 1) {
-        // Retry pokus pre request
-      } else {
-        console.error('[ERROR] Request failed after ' + maxRetries + ' attempts for ' + url + ':', errMsg);
-      }
-      
+
       if (attemptNumber === maxRetries - 1) {
         if (isTimeout) {
           throw new Error('Request timeout - Server did not respond within 15 seconds. The backend might be slow or unavailable.');
         }
-        throw new Error('Network error: ' + (err.message || 'Failed to connect to server'));
+        throw new Error('Network error: ' + (errMsg || 'Failed to connect to server'));
       }
       
       // Delay pred dalsim pokusom
@@ -207,7 +215,7 @@ export const profileAPI = {
     return data.profile;
   },
 
-  updateProfile: async (accessToken: string, updates: any) => {
+  updateProfile: async (accessToken: string, updates: unknown) => {
     const url = BASE_URL + '/profile';
     const headers = makeHeaders(accessToken);
     const body = JSON.stringify(updates);
@@ -291,7 +299,7 @@ export const progressAPI = {
     return data.progress;
   },
 
-  updateProgress: async (accessToken: string, progress: any) => {
+  updateProgress: async (accessToken: string, progress: unknown) => {
     const url = BASE_URL + '/progress';
     const headers = makeHeaders(accessToken);
     const body = JSON.stringify(progress);
@@ -329,7 +337,7 @@ export const progressAPI = {
     return data.islands;
   },
 
-  updateIslands: async (accessToken: string, islands: any) => {
+  updateIslands: async (accessToken: string, islands: unknown) => {
     const url = BASE_URL + '/islands';
     const headers = makeHeaders(accessToken);
     const body = JSON.stringify(islands);
@@ -372,7 +380,7 @@ export const progressAPI = {
     return exerciseData;
   },
 
-  updateExerciseData: async (accessToken: string, exerciseData: any) => {
+  updateExerciseData: async (accessToken: string, exerciseData: unknown) => {
     const url = BASE_URL + '/exercise-data';
     const headers = makeHeaders(accessToken);
     const body = JSON.stringify(exerciseData);
@@ -455,7 +463,7 @@ export const mistakesAPI = {
     return data.mistakes;
   },
 
-  addMistake: async (accessToken: string, mistake: any) => {
+  addMistake: async (accessToken: string, mistake: unknown) => {
     const url = BASE_URL + '/mistakes';
     const headers = makeHeaders(accessToken);
     const body = JSON.stringify({ mistakes: mistake });
