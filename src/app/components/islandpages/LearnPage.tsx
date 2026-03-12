@@ -42,6 +42,7 @@ interface UseExerciseTypePopupParams {
   exercises: Theme['exercises'];
 }
 
+// Hook pre popup s nazvom typu cvicenia pri prvom vstupe na slide
 const useExerciseTypePopup = ({
   currentSlideIndex,
   isFinalTest,
@@ -74,6 +75,7 @@ const useExerciseTypePopup = ({
   return { popupState, closePopup };
 };
 
+// Hook pre review mode (prechod iba cez nespravne odpovede)
 const useReviewMode = () => {
   const [reviewState, setReviewState] = useState<ReviewState>({ active: false, incorrectExerciseIndices: [] });
 
@@ -99,6 +101,7 @@ interface UseContentSlideTimerParams {
   isAdmin?: boolean;
 }
 
+// Hook pre 30s timer na content slide pri beznom userovi
 const useContentSlideTimer = ({ currentSlideIndex, isFinalTest, isAdmin }: UseContentSlideTimerParams) => {
   const [timerSeconds, setTimerSeconds] = useState(30);
   const [canUserProceed, setCanUserProceed] = useState(false);
@@ -147,6 +150,7 @@ export default function LearnPage(props: LearnPageProps) {
   const [isInitialized, setIsInitialized] = useState(false);
   const [initialBestCorrectAnswers, setInitialBestCorrectAnswers] = useState(props.previousBestCorrectAnswers || 0);
 
+  // Lokalna logika je rozdelena do malych hookov kvoli citatelnosti
   const { timerSeconds, canUserProceed } = useContentSlideTimer({
     currentSlideIndex,
     isFinalTest,
@@ -180,6 +184,7 @@ export default function LearnPage(props: LearnPageProps) {
   // Spracovanie dokoncenia a ulozenie chyb
   useEffect(() => {
     if (showResultsPage && !hasCalledCompleteCallback) {
+      // Po dokonceni vytvorime mistakes a ulozime vysledok ostrovceka
       const correctCount = exerciseResults.filter(result => result === true).length;
       const newMistakes = createMistakesFromResults(exerciseResults, exerciseStates, themeData, isFinalTest);
       

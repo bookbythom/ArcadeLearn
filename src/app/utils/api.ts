@@ -9,6 +9,7 @@ export interface APIError extends Error {
   data: unknown;
 }
 
+// Pomocna funkcia: z neznamej chyby vytiahne bezpecny text
 const getErrorMessage = (error: unknown, fallback = 'Unknown error') => {
   if (error instanceof Error && error.message) {
     return error.message;
@@ -46,7 +47,7 @@ const makeHeaders = (accessToken?: string, skipWarning = false) => {
   if (accessToken) {
     headers['X-Session-Token'] = accessToken;
   } else if (!skipWarning) {
-    // Intentional no-op: unauthenticated endpoints are valid for sign-in/sign-up.
+    // Pri sign-in/sign-up je normalne, ze token este neexistuje
   }
   
   return headers;
@@ -54,6 +55,7 @@ const makeHeaders = (accessToken?: string, skipWarning = false) => {
 
 // Fetch s retry mechanikou
 async function doFetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
+  // Simple retry cyklus: timeout + exponential-ish delay
   let attemptNumber = 0;
   
   while (attemptNumber < maxRetries) {

@@ -26,6 +26,7 @@ const ProfilePopup = lazy(() => loadProfilePopup());
 const MistakesPage = lazy(() => loadMistakesPage());
 const AdminPanel = lazy(() => loadAdminPanel());
 
+// Zakladne typy pre stav aplikacie
 type ModalState = "none" | "profile";
 type IslandStatus = "locked" | "unlocked" | "completed-perfect" | "completed-mistakes";
 interface IslandProgress { [key: string]: IslandStatus; }
@@ -44,6 +45,7 @@ interface AuthSessionState {
   isAdmin: boolean;
 }
 
+// Predvolene hodnoty pre reset po odhlaseni
 const INITIAL_USER_PROGRESS: UserProgress = {
   level: 0,
   totalXP: 0,
@@ -67,8 +69,10 @@ const INITIAL_AUTH_SESSION_STATE: AuthSessionState = {
   isAdmin: false
 };
 
+// Pomocna funkcia pre API chyby
 const EMPTY_ERROR_HANDLER = async (_error: unknown) => {};
 
+// Z URL zistime ci sme v learn route a aku temu mame otvorenu
 function parseLearnRoute(pathname: string): { level: LearnLevel; theme: number } | null {
   const match = pathname.match(/^\/learn\/(beginner|intermediate|professional)\/(\d+)$/);
   if (!match) return null;
@@ -90,10 +94,12 @@ export default function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Nastavime title tab-u v prehliadaci
   useEffect(() => {
     document.title = "ArcadeLearn";
   }, []);
 
+  // Hlavne stavy celej aplikacie
   const [activeTab, setActiveTab] = useState<AppTab>("home");
   const [modalState, setModalState] = useState<ModalState>("none");
   const [authSessionState, setAuthSessionState] = useState<AuthSessionState>(INITIAL_AUTH_SESSION_STATE);
@@ -110,6 +116,7 @@ export default function AppContent() {
   const [shouldAutoScroll, setShouldAutoScroll] = useState(false);
   const [autoScrollTarget, setAutoScrollTarget] = useState<AutoScrollTarget | null>(null);
 
+  // Prehladne vytiahnutie hodnot zo session objektu
   const {
     isLoggedIn,
     currentUserEmail,
@@ -120,10 +127,12 @@ export default function AppContent() {
     isAdmin
   } = authSessionState;
 
+  // Pomocny updater, aby sme nemenili cely session state rucne na viac miestach
   const updateAuthSessionState = (patch: Partial<AuthSessionState>) => {
     setAuthSessionState((previousState) => ({ ...previousState, ...patch }));
   };
 
+  // Synchronizacia aktivnej karty podla aktualnej URL
   useEffect(() => {
     if (location.pathname === "/") {
       setActiveTab("home");
@@ -135,6 +144,7 @@ export default function AppContent() {
   }, [location.pathname]);
 
   useEffect(() => {
+    // Ak sme v learn route, nastavime aktualny level a temu
     const learnRoute = parseLearnRoute(location.pathname);
     if (!learnRoute) return;
     setCurrentLearnLevel(learnRoute.level);
@@ -144,6 +154,7 @@ export default function AppContent() {
   useEffect(() => {
     if (!isLoggedIn || isLoadingAuth) return;
 
+    // Jemny prefetch po prihlaseni, aby boli prve prechody rychlejsie
     const prefetch = () => {
       void loadHomePage();
       void loadLearnPage();
@@ -174,6 +185,7 @@ export default function AppContent() {
   }, [isLoggedIn, isLoadingAuth]);
 
   const handleTabHoverPrefetch = (tab: AppTab) => {
+    // Prefetch po hoveri skrati cakanie pri kliknuti
     if (!isLoggedIn) return;
     if (tab === "home") {
       void loadHomePage();
@@ -185,11 +197,13 @@ export default function AppContent() {
   };
 
   const handleProfileHoverPrefetch = () => {
+    // Prefetch profilu pri hoveri na avatar
     if (!isLoggedIn) return;
     void loadProfilePopup();
   };
 
   const handleIslandHoverPrefetch = () => {
+    // Prefetch LearnPage pri hoveri nad ostrovcekom
     if (!isLoggedIn) return;
     void loadLearnPage();
   };
@@ -201,6 +215,7 @@ export default function AppContent() {
       }
     } catch {
     } finally {
+      // Hard reset lokalneho stavu po odhlaseni
       setAuthSessionState(INITIAL_AUTH_SESSION_STATE);
       setUserProfile(INITIAL_USER_PROFILE);
       setUserProgress(INITIAL_USER_PROGRESS);
@@ -216,6 +231,7 @@ export default function AppContent() {
   const handleApiError = EMPTY_ERROR_HANDLER;
 
   useEffect(() => {
+    // Pri starte overime session token a podla toho pustime app alebo signin
     const checkSession = async () => {
       const token = localStorage.getItem("accessToken");
       if (!token) {
@@ -253,6 +269,7 @@ export default function AppContent() {
   }, []);
 
   const loadUserData = async (token: string, email?: string) => {
+    // Nacitanie profilu/progressu/streaku + admin statusu
     const result = await loadUserDataHelper(token, email || currentUserEmail, {
       setUserProfile: setUserProfile,
       setUserProgress: setUserProgress,
@@ -265,15 +282,18 @@ export default function AppContent() {
     });
 
     if (result.had401) {
+      // Pri expirovanej session rovno odhlasime usera
       await forceLogout(token);
       return result;
     }
 
     try {
+      // Mistakes drzim v sync s backendom hned po nacitani session
       await loadMistakesFromBackend(token, email || currentUserEmail);
     } catch {}
 
     try {
+      // Podla role admin upravime pristupy k ostrovcekom
       const adminStatus = await adminAPI.checkAdmin(token);
       updateAuthSessionState({ isAdmin: adminStatus });
 
@@ -287,6 +307,7 @@ export default function AppContent() {
         });
         setIslandProgress(allIslands);
       } else {
+        // Beznemu userovi nechavame iba validny progres + postupne odomykanie
         const currentProgress = result.islandProgress || {};
         const correctedProgress: IslandProgress = {
           "beginner-1": currentProgress["beginner-1"] || "unlocked"
@@ -328,6 +349,7 @@ export default function AppContent() {
   };
 
   const saveToBackend = <T,>(data: T, saveFunction: (token: string, data: T) => Promise<unknown>) => {
+    // Auto-save je vypnuty pocas prveho loadu, aby sa neprepisi initial data
     if (!accessToken || !isLoggedIn || isInitialLoad) return;
     const timeoutId = setTimeout(async () => {
       try {
@@ -345,6 +367,7 @@ export default function AppContent() {
   useEffect(() => saveToBackend(islandProgress, progressAPI.updateIslands), [islandProgress, accessToken, isLoggedIn, isInitialLoad]);
   useEffect(() => saveToBackend(islandExerciseData, progressAPI.updateExerciseData), [islandExerciseData, accessToken, isLoggedIn, isInitialLoad]);
 
+  // Nazov temy pouzivame v LearnPage headri
   const getThemeName = (level: LearnLevel, theme: number): string => {
     if (theme === 0) {
       const names = {
@@ -358,6 +381,7 @@ export default function AppContent() {
   };
 
   const handleIslandClick = (level: LearnLevel, theme: number, _isFinal: boolean) => {
+    // Admin moze ist na ktorukolvek temu bez podmienok
     if (isAdmin) {
       navigate(`/learn/${level}/${theme}`);
       return;
@@ -367,6 +391,7 @@ export default function AppContent() {
     const status = islandProgress[key] || "locked";
 
     if (status === "locked") {
+      // Pri zamknutom final teste zobrazime co este chyba splnit
       if (theme === 0) {
         const sectionXp = userProgress.sectionXP[level];
         const xpNeeded = Math.max(0, 300 - sectionXp);
@@ -391,6 +416,7 @@ export default function AppContent() {
   };
 
   const handleLearnComplete = async (correctAnswers: number, totalExercises: number) => {
+    // Po dokonceni ostrovceka prepocitame XP a odomykanie dalsieho kroku
     if (!currentLearnLevel || currentLearnTheme === null || currentLearnTheme === undefined) return;
 
     const currentKey = `${currentLearnLevel}-${currentLearnTheme}`;
@@ -435,6 +461,7 @@ export default function AppContent() {
     }
 
     setIslandProgress((prev) => {
+      // Aktualizujeme stav aktualneho a pripadne dalsieho ostrovceka
       const newProgressState = { ...prev, [currentKey]: completionStatus };
       if (nextKey) {
         const nextIslandStatus = newProgressState[nextKey];
@@ -448,6 +475,7 @@ export default function AppContent() {
     setIslandExerciseData((prev) => ({ ...prev, [currentKey]: correctAnswers }));
 
     try {
+      // Streak zvysujeme po uspesnom dokonceni lekcie
       const streakData = await progressAPI.incrementStreak(accessToken);
       setStreakCount(streakData.count);
       setStreakActiveToday(streakData.activeToday);
@@ -455,6 +483,7 @@ export default function AppContent() {
   };
 
   const handleTabChange = (tab: AppTab) => {
+    // Klik na tab meni route + pripadne refreshne mistakes list
     setActiveTab(tab);
     if (tab === "mistakes") {
       setMistakesRefreshTrigger((prev) => prev + 1);
@@ -467,6 +496,7 @@ export default function AppContent() {
   };
 
   const handleProfileClick = () => {
+    // Profil modal iba pre prihlaseneho usera
     if (isLoggedIn) {
       setModalState("profile");
     } else {
@@ -475,9 +505,11 @@ export default function AppContent() {
   };
 
   if (isLoadingAuth) {
+    // Kym overujeme session, zobrazime loader
     return <LoadingSpinner className="z-[110]" />;
   }
 
+  // Context pre Learn route a porovnanie najlepsieho vysledku
   const learnRoute = parseLearnRoute(location.pathname);
   const isLearnRoute = Boolean(learnRoute);
   const learnIslandKey = learnRoute ? `${learnRoute.level}-${learnRoute.theme}` : null;
@@ -486,6 +518,7 @@ export default function AppContent() {
   return (
     <>
       <div className="bg-[#1c1c1e] min-h-screen w-full overflow-x-hidden flex flex-col">
+        {/* Header je skryty na Learn route pre cisty focus rezim */}
         {!isLearnRoute && (
           <Header
             activeTab={activeTab}
@@ -503,6 +536,7 @@ export default function AppContent() {
         )}
 
         <main className="w-full pb-8 flex-1" style={{ paddingTop: isLearnRoute ? "0" : "4rem" }}>
+          {/* Learn obsah */}
           {isLearnRoute && learnRoute && (
             <Suspense fallback={<PageLoader />}>
               <LearnPage
@@ -523,6 +557,7 @@ export default function AppContent() {
             </Suspense>
           )}
           {location.pathname === "/" && activeTab === "home" && (
+            /* Home mapa ostrovcekov */
             <Suspense fallback={<PageLoader />}>
               <HomePage
                 userProgress={userProgress}
@@ -544,11 +579,13 @@ export default function AppContent() {
             </Suspense>
           )}
           {activeTab === "mistakes" && location.pathname === "/mistakes" && (
+            /* Mistakes zoznam */
             <Suspense fallback={<PageLoader />}>
               <MistakesPage userEmail={currentUserEmail} refreshTrigger={mistakesRefreshTrigger} />
             </Suspense>
           )}
           {activeTab === "admin" && isAdmin && location.pathname === "/admin" && (
+            /* Admin panel iba pre admin rolu */
             <Suspense fallback={<PageLoader />}>
               <AdminPanel
                 accessToken={accessToken}
@@ -566,6 +603,7 @@ export default function AppContent() {
       </div>
 
       <ModalWrapper isOpen={modalState === "profile"} onClose={() => setModalState("none")} canClose={true} modalType="profile">
+        {/* Profil popup modal */}
         <Suspense fallback={<PageLoader />}>
           <ProfilePopup
             onLogout={async () => {

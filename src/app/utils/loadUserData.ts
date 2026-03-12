@@ -23,6 +23,7 @@ type LoadUserDataResult = {
   islandProgress?: IslandProgress;
 };
 
+// Jednoducha kontrola, ci API vratilo unauthorized
 const hasStatus401 = (error: unknown): boolean => {
   return typeof error === 'object' && error !== null && 'status' in error && (error as { status?: number }).status === 401;
 };
@@ -33,6 +34,7 @@ export async function loadUserData(
   currentUserEmail: string,
   callbacks: LoadUserDataCallbacks
 ): Promise<LoadUserDataResult> {
+  // Toto sa vracia von, aby parent komponent vedel dorobit odomykanie ostrovov
   let islandsData: IslandProgress | null = null;
   
   // Nacitanie profilu
@@ -149,7 +151,7 @@ export async function loadUserData(
     }
   }
   
-  // Ukoncenie nacitavania po kratkom delay
+  // Kratky delay zabrani okamzitemu flickeru pri prvom rendri
   setTimeout(() => {
     callbacks.setIsInitialLoad(false);
   }, 100);

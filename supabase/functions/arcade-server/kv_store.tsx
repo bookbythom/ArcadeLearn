@@ -2,11 +2,13 @@ import { createClient } from "jsr:@supabase/supabase-js@2.49.8";
 
 const TABLE_NAME = "kv_store_15e718fc";
 
+// Jednoduchy model jedneho riadku v KV tabulke
 type KVRow = {
   key: string;
   value: unknown;
 };
 
+// Guard na env pre backend - nech padne hned a citatelne
 const getRequiredEnv = (key: string): string => {
   const value = Deno.env.get(key);
   if (!value) {
@@ -21,6 +23,8 @@ const client = () =>
     getRequiredEnv("SUPABASE_SERVICE_ROLE_KEY"),
   );
 
+// Zakladne CRUD operacie nad KV store tabulkou
+// Ulozi alebo prepise hodnotu pod klucom
 export const set = async (key: string, value: unknown): Promise<void> => {
   const supabase = client();
   const { error } = await supabase.from(TABLE_NAME).upsert({ key, value });
@@ -29,6 +33,7 @@ export const set = async (key: string, value: unknown): Promise<void> => {
   }
 };
 
+// Nacita jednu hodnotu pod klucom
 export const get = async (key: string): Promise<unknown> => {
   const supabase = client();
   const { data, error } = await supabase
@@ -42,6 +47,7 @@ export const get = async (key: string): Promise<unknown> => {
   return data?.value;
 };
 
+// Vymaze jeden kluc
 export const del = async (key: string): Promise<void> => {
   const supabase = client();
   const { error } = await supabase.from(TABLE_NAME).delete().eq("key", key);
@@ -50,6 +56,7 @@ export const del = async (key: string): Promise<void> => {
   }
 };
 
+// Hromadne ulozenie viacerych klucov
 export const mset = async (
   keys: string[],
   values: unknown[],
@@ -63,6 +70,7 @@ export const mset = async (
   }
 };
 
+// Hromadne nacitanie viacerych klucov
 export const mget = async (keys: string[]): Promise<unknown[]> => {
   const supabase = client();
   const { data, error } = await supabase
@@ -75,6 +83,7 @@ export const mget = async (keys: string[]): Promise<unknown[]> => {
   return (data as Array<{ value: unknown }> | null)?.map((entry) => entry.value) ?? [];
 };
 
+// Hromadne zmazanie klucov
 export const mdel = async (keys: string[]): Promise<void> => {
   const supabase = client();
   const { error } = await supabase.from(TABLE_NAME).delete().in("key", keys);
@@ -83,6 +92,7 @@ export const mdel = async (keys: string[]): Promise<void> => {
   }
 };
 
+// Vrati hodnoty vsetkych klucov s danym prefixom
 export const getByPrefix = async (prefix: string): Promise<unknown[]> => {
   const supabase = client();
   const { data, error } = await supabase
@@ -95,6 +105,7 @@ export const getByPrefix = async (prefix: string): Promise<unknown[]> => {
   return (data as KVRow[] | null)?.map((entry) => entry.value) ?? [];
 };
 
+// Vrati cele zaznamy (key + value) pre dany prefix
 export const getEntriesByPrefix = async (
   prefix: string,
 ): Promise<Array<{ key: string; value: unknown }>> => {
