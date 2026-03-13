@@ -183,6 +183,15 @@
     font-size: var(--text-base);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
+    transition: scale 0.2s ease;
+    transform-origin: center;
+  }
+
+  /* Jemne zvacsenie tlacidiel pri hoveri na zariadeniach s kurzorom */
+  @media (hover: hover) {
+    button:not(:disabled):not([aria-disabled="true"]):hover {
+      scale: 1.03;
+    }
   }
 
   input {
