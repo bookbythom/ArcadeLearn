@@ -34,7 +34,7 @@ export const set = async (key: string, value: unknown): Promise<void> => {
 };
 
 // Nacita jednu hodnotu pod klucom
-export const get = async (key: string): Promise<unknown> => {
+export const get = async (key: string): Promise<string | null> => {
   const supabase = client();
   const { data, error } = await supabase
     .from(TABLE_NAME)
@@ -44,7 +44,7 @@ export const get = async (key: string): Promise<unknown> => {
   if (error) {
     throw new Error(error.message);
   }
-  return data?.value;
+  return typeof data?.value === "string" ? data.value : null;
 };
 
 // Vymaze jeden kluc
@@ -93,7 +93,7 @@ export const mdel = async (keys: string[]): Promise<void> => {
 };
 
 // Vrati hodnoty vsetkych klucov s danym prefixom
-export const getByPrefix = async (prefix: string): Promise<unknown[]> => {
+export const getByPrefix = async (prefix: string): Promise<string[]> => {
   const supabase = client();
   const { data, error } = await supabase
     .from(TABLE_NAME)
@@ -102,7 +102,9 @@ export const getByPrefix = async (prefix: string): Promise<unknown[]> => {
   if (error) {
     throw new Error(error.message);
   }
-  return (data as KVRow[] | null)?.map((entry) => entry.value) ?? [];
+  return (data as KVRow[] | null)
+    ?.map((entry) => (typeof entry.value === "string" ? entry.value : ""))
+    .filter((entry) => entry.length > 0) ?? [];
 };
 
 // Vrati cele zaznamy (key + value) pre dany prefix
