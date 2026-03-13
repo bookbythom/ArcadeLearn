@@ -2,7 +2,7 @@ import { createClient } from "jsr:@supabase/supabase-js@2.49.8";
 
 const TABLE_NAME = "kv_store";
 
-// Jednoduchy model jedneho riadku v KV tabulke
+// model jedneho riadku v KV tabulke
 type KVRow = {
   key: string;
   value: unknown;
