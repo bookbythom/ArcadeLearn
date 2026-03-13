@@ -27,9 +27,3 @@ pnpm-debug.log*
 # coverage
 coverage/
 
-# wrangler files
-.wrangler/
-.dev.vars*
-!.dev.vars.example
-PRAKTICKA_CAST_10A4_SK_WORD.txt
-PRAKTICKA_CAST_10A4_SK.md
