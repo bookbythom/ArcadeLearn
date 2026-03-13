@@ -19,7 +19,9 @@ pnpm-debug.log*
 .DS_Store
 
 # editors
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
 .idea/
 
 # coverage
