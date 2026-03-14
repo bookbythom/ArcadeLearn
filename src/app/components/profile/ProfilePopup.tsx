@@ -313,7 +313,7 @@ export default function ProfilePopup(props: ProfilePopupProps) {
           <h2 className="text-[30px] sm:text-[38px] lg:text-[44px] leading-none text-white text-center break-words">{profileData.name}</h2>
           <button
             onClick={handleNameEditClick}
-            className="relative top-[1px] sm:top-[2px] text-[#d9d9d9] hover:text-white transition-colors inline-flex items-center justify-center text-sm font-semibold px-2 py-1 rounded"
+            className="relative top-[3px] sm:top-[4px] text-[#d9d9d9] hover:text-white transition-colors inline-flex items-center justify-center text-sm font-semibold px-2 py-1 rounded"
             aria-label="Edit name"
           >
             <Pencil className="w-4 h-4" />
