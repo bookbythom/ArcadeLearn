@@ -289,11 +289,11 @@ export default function ProfilePopup(props: ProfilePopupProps) {
   };
 
   return (
-    <div className="bg-[#222224] max-h-[90vh] overflow-y-auto rounded-[40px] w-[95vw] max-w-[800px] mx-auto p-8">
-      <div className="max-w-[560px] mx-auto flex flex-col gap-6">
+    <div className="bg-[#222224] max-h-[90vh] overflow-y-auto rounded-[24px] sm:rounded-[32px] lg:rounded-[40px] w-[95vw] max-w-[800px] mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="max-w-[560px] mx-auto flex flex-col gap-4 sm:gap-5 lg:gap-6">
         <button
           onClick={handleProfilePictureClick}
-          className="w-[160px] h-[160px] self-center cursor-pointer hover:opacity-80 transition-opacity group relative"
+          className="w-[120px] h-[120px] sm:w-[140px] sm:h-[140px] lg:w-[160px] lg:h-[160px] self-center cursor-pointer hover:opacity-80 transition-opacity group relative"
         >
           {profileData.profilePicture ? (
             <img
@@ -305,12 +305,12 @@ export default function ProfilePopup(props: ProfilePopupProps) {
             <div className="w-full h-full rounded-full bg-[#D9D9D9]" />
           )}
           <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <Pencil className="w-9 h-9 text-white" />
+            <Pencil className="w-7 h-7 sm:w-8 sm:h-8 lg:w-9 lg:h-9 text-white" />
           </div>
         </button>
 
         <div className="flex items-center justify-center gap-3">
-          <h2 className="text-[44px] leading-none text-white text-center">{profileData.name}</h2>
+          <h2 className="text-[30px] sm:text-[38px] lg:text-[44px] leading-none text-white text-center break-words">{profileData.name}</h2>
           <button
             onClick={handleNameEditClick}
             className="text-[#d9d9d9] hover:text-white transition-colors text-sm font-semibold px-2 py-1 rounded"
@@ -321,8 +321,8 @@ export default function ProfilePopup(props: ProfilePopupProps) {
         </div>
 
         <div className="flex flex-col gap-3.5">
-          <div className="bg-[#d9d9d9] h-[56px] rounded-[18px] px-4 flex items-center justify-between">
-            <span className="text-[18px] text-black truncate">{profileData.email}</span>
+          <div className="bg-[#d9d9d9] h-[50px] sm:h-[56px] rounded-[14px] sm:rounded-[18px] px-3 sm:px-4 flex items-center justify-between">
+            <span className="text-[14px] sm:text-[18px] text-black truncate">{profileData.email}</span>
             <button
               onClick={handleEmailEditClick}
               className="text-[#3a3a3c] hover:text-black transition-colors text-sm font-semibold px-2 py-1"
@@ -332,8 +332,8 @@ export default function ProfilePopup(props: ProfilePopupProps) {
             </button>
           </div>
 
-          <div className="bg-[#d9d9d9] h-[56px] rounded-[18px] px-4 flex items-center justify-between">
-            <span className="text-[18px] text-black">{displayPassword}</span>
+          <div className="bg-[#d9d9d9] h-[50px] sm:h-[56px] rounded-[14px] sm:rounded-[18px] px-3 sm:px-4 flex items-center justify-between">
+            <span className="text-[14px] sm:text-[18px] text-black">{displayPassword}</span>
             <button
               onClick={handlePasswordEditClick}
               className="text-[#3a3a3c] hover:text-black transition-colors text-sm font-semibold px-2 py-1"
@@ -344,13 +344,13 @@ export default function ProfilePopup(props: ProfilePopupProps) {
           </div>
         </div>
 
-        <div className="bg-[#323235] min-h-[110px] rounded-[20px] p-5 flex items-center justify-center">
-          <p className="italic text-center text-white leading-snug text-[16px]">"{currentTip}"</p>
+        <div className="bg-[#323235] min-h-[100px] sm:min-h-[110px] rounded-[16px] sm:rounded-[20px] p-4 sm:p-5 flex items-center justify-center">
+          <p className="italic text-center text-white leading-snug text-[14px] sm:text-[16px]">"{currentTip}"</p>
         </div>
 
         <button
           onClick={props.onLogout}
-          className="bg-[#ec4545] hover:bg-[#d63939] h-[56px] rounded-[20px] text-[22px] text-white font-bold transition-colors"
+          className="bg-[#ec4545] hover:bg-[#d63939] h-[48px] sm:h-[56px] rounded-[16px] sm:rounded-[20px] text-[18px] sm:text-[22px] text-white font-bold transition-colors"
         >
           Log out
         </button>
@@ -359,13 +359,13 @@ export default function ProfilePopup(props: ProfilePopupProps) {
       {/* Modal pre zmenu mena */}
       {isEditingName && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#2a2a2c] rounded-[20px] p-8 w-full max-w-[500px] max-h-[90%] overflow-y-auto flex flex-col gap-6 shadow-2xl border border-[#3a3a3c]">
-            <h3 className="font-bold text-[30px] text-white text-center">
+          <div className="bg-[#2a2a2c] rounded-[20px] p-5 sm:p-8 w-full max-w-[500px] max-h-[90%] overflow-y-auto flex flex-col gap-5 sm:gap-6 shadow-2xl border border-[#3a3a3c]">
+            <h3 className="font-bold text-[24px] sm:text-[30px] text-white text-center">
               Change Name
             </h3>
 
             <div className="flex flex-col gap-2">
-              <label className="font-medium text-[16px] text-[#b6b6b6] pl-2">
+              <label className="font-medium text-[14px] sm:text-[16px] text-[#b6b6b6] pl-2">
                 Your Name
               </label>
               <input
@@ -380,7 +380,7 @@ export default function ProfilePopup(props: ProfilePopupProps) {
                 maxLength={25}
                 placeholder="Enter your name"
                 autoFocus
-                className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-medium text-[17px] text-[#222224] placeholder:text-[#777]"
+                className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[48px] sm:h-[52px] w-full outline-none font-medium text-[15px] sm:text-[17px] text-[#222224] placeholder:text-[#777]"
               />
               <p className="text-[12px] text-[#888] pl-2">
                 Maximum 25 characters
@@ -393,13 +393,13 @@ export default function ProfilePopup(props: ProfilePopupProps) {
                   setIsEditingName(false);
                   setTemporaryName(profileData.name);
                 }}
-                className="bg-[#ec4545] hover:bg-[#d63939] rounded-[15px] px-6 py-2.5 font-bold text-[18px] text-white transition-all"
+                className="bg-[#ec4545] hover:bg-[#d63939] rounded-[15px] px-5 sm:px-6 py-2.5 font-bold text-[16px] sm:text-[18px] text-white transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handleNameSaveClick}
-                className="bg-[#4cb025] hover:bg-[#3d9d1e] rounded-[15px] px-6 py-2.5 font-bold text-[18px] text-white transition-all"
+                className="bg-[#4cb025] hover:bg-[#3d9d1e] rounded-[15px] px-5 sm:px-6 py-2.5 font-bold text-[16px] sm:text-[18px] text-white transition-all"
               >
                 Save
               </button>
@@ -411,13 +411,13 @@ export default function ProfilePopup(props: ProfilePopupProps) {
       {/* Modal pre zmenu emailu */}
       {isEditingEmail && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#2a2a2c] rounded-[20px] p-8 w-full max-w-[500px] max-h-[90%] overflow-y-auto flex flex-col gap-6 shadow-2xl border border-[#3a3a3c]">
-            <h3 className="font-bold text-[30px] text-white text-center">
+          <div className="bg-[#2a2a2c] rounded-[20px] p-5 sm:p-8 w-full max-w-[500px] max-h-[90%] overflow-y-auto flex flex-col gap-5 sm:gap-6 shadow-2xl border border-[#3a3a3c]">
+            <h3 className="font-bold text-[24px] sm:text-[30px] text-white text-center">
               Change Email
             </h3>
 
             <div className="flex flex-col gap-2">
-              <label className="font-medium text-[16px] text-[#b6b6b6] pl-2">
+              <label className="font-medium text-[14px] sm:text-[16px] text-[#b6b6b6] pl-2">
                 New Email
               </label>
               <input
@@ -427,7 +427,7 @@ export default function ProfilePopup(props: ProfilePopupProps) {
                 onKeyDown={(e) => e.key === 'Enter' && handleEmailSaveClick()}
                 placeholder="email@example.com"
                 autoFocus
-                className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-medium text-[17px] text-[#222224] placeholder:text-[#777]"
+                className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[48px] sm:h-[52px] w-full outline-none font-medium text-[15px] sm:text-[17px] text-[#222224] placeholder:text-[#777]"
               />
               <p className="text-[12px] text-[#888] pl-2">
                 Enter a valid email address
@@ -440,13 +440,13 @@ export default function ProfilePopup(props: ProfilePopupProps) {
                   setIsEditingEmail(false);
                   setTemporaryEmail(profileData.email);
                 }}
-                className="bg-[#ec4545] hover:bg-[#d63939] rounded-[15px] px-6 py-2.5 font-bold text-[18px] text-white transition-all"
+                className="bg-[#ec4545] hover:bg-[#d63939] rounded-[15px] px-5 sm:px-6 py-2.5 font-bold text-[16px] sm:text-[18px] text-white transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handleEmailSaveClick}
-                className="bg-[#4cb025] hover:bg-[#3d9d1e] rounded-[15px] px-6 py-2.5 font-bold text-[18px] text-white transition-all"
+                className="bg-[#4cb025] hover:bg-[#3d9d1e] rounded-[15px] px-5 sm:px-6 py-2.5 font-bold text-[16px] sm:text-[18px] text-white transition-all"
               >
                 Save
               </button>
@@ -458,14 +458,14 @@ export default function ProfilePopup(props: ProfilePopupProps) {
       {/* Modal pre zmenu hesla */}
       {isEditingPassword && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#2a2a2c] rounded-[20px] p-8 w-full max-w-[500px] max-h-[90%] overflow-y-auto flex flex-col gap-6 shadow-2xl border border-[#3a3a3c]">
-            <h3 className="font-bold text-[30px] text-white text-center">
+          <div className="bg-[#2a2a2c] rounded-[20px] p-5 sm:p-8 w-full max-w-[500px] max-h-[90%] overflow-y-auto flex flex-col gap-5 sm:gap-6 shadow-2xl border border-[#3a3a3c]">
+            <h3 className="font-bold text-[24px] sm:text-[30px] text-white text-center">
               Change Password
             </h3>
 
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <label className="font-medium text-[16px] text-[#b6b6b6] pl-2">
+                <label className="font-medium text-[14px] sm:text-[16px] text-[#b6b6b6] pl-2">
                   Current Password
                 </label>
                 <input
@@ -474,12 +474,12 @@ export default function ProfilePopup(props: ProfilePopupProps) {
                   onChange={(e) => setCurrentPasswordForChange(e.target.value.replace(/\s/g, ''))}
                   placeholder="Enter current password"
                   autoFocus
-                  className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-medium text-[17px] text-[#222224] placeholder:text-[#777]"
+                  className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[48px] sm:h-[52px] w-full outline-none font-medium text-[15px] sm:text-[17px] text-[#222224] placeholder:text-[#777]"
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="font-medium text-[16px] text-[#b6b6b6] pl-2">
+                <label className="font-medium text-[14px] sm:text-[16px] text-[#b6b6b6] pl-2">
                   New Password
                 </label>
                 <input
@@ -488,7 +488,7 @@ export default function ProfilePopup(props: ProfilePopupProps) {
                   onChange={(e) => setTemporaryPassword(e.target.value.replace(/\s/g, ''))}
                   placeholder="Enter new password"
                   onKeyDown={(e) => e.key === 'Enter' && handlePasswordSaveClick()}
-                  className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[52px] w-full outline-none font-medium text-[17px] text-[#222224] placeholder:text-[#777]"
+                  className="bg-[#d9d9d9] rounded-[15px] px-4 py-3 h-[48px] sm:h-[52px] w-full outline-none font-medium text-[15px] sm:text-[17px] text-[#222224] placeholder:text-[#777]"
                 />
                 <p className="text-[12px] text-[#888] pl-2">
                   Password must be at least 6 characters long
@@ -503,13 +503,13 @@ export default function ProfilePopup(props: ProfilePopupProps) {
                   setCurrentPasswordForChange("");
                   setTemporaryPassword("");
                 }}
-                className="bg-[#ec4545] hover:bg-[#d63939] rounded-[15px] px-6 py-2.5 font-bold text-[18px] text-white transition-all"
+                className="bg-[#ec4545] hover:bg-[#d63939] rounded-[15px] px-5 sm:px-6 py-2.5 font-bold text-[16px] sm:text-[18px] text-white transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handlePasswordSaveClick}
-                className="bg-[#4cb025] hover:bg-[#3d9d1e] rounded-[15px] px-6 py-2.5 font-bold text-[18px] text-white transition-all"
+                className="bg-[#4cb025] hover:bg-[#3d9d1e] rounded-[15px] px-5 sm:px-6 py-2.5 font-bold text-[16px] sm:text-[18px] text-white transition-all"
               >
                 Save
               </button>

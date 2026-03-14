@@ -7,12 +7,12 @@ export function Footer() {
   
   return (
     <footer 
-      className="py-5 mt-auto" 
+      className="py-4 sm:py-5 mt-auto" 
       style={{ backgroundColor: bgColor }}
     >
-      <div className="w-full px-8 text-center">
+      <div className="w-full px-3 sm:px-6 lg:px-8 text-center">
         <p 
-          className="text-base" 
+          className="text-sm sm:text-base" 
           style={{ color: textColor }}
         >
           ©{currentYear} {appName} — All Rights Reserved

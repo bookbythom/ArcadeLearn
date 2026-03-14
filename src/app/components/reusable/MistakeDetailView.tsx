@@ -216,12 +216,12 @@ export default function MistakeDetailView(props: MistakeDetailViewProps) {
 
   return (
     <div className="fixed inset-0 bg-[#1c1c1e] z-[200] overflow-y-auto">
-      <div className="min-h-screen py-20 px-8">
+      <div className="min-h-screen py-8 sm:py-14 lg:py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           {/* Hlavicka s nazvom temy */}
           <div className="mb-8 text-center">
-            <p className="text-[#b6b6b6] text-lg mb-2">{themeName}</p>
-            <h1 className="text-4xl font-bold text-white mb-4">
+            <p className="text-[#b6b6b6] text-sm sm:text-base lg:text-lg mb-2">{themeName}</p>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4 break-words">
               {props.mistake.question}
             </h1>
             <p className="text-[#ff9505] text-sm">
@@ -230,7 +230,7 @@ export default function MistakeDetailView(props: MistakeDetailViewProps) {
           </div>
 
           {/* Obsah chyby */}
-          <div className="bg-[#212123] rounded-[50px] p-12 mb-8">
+          <div className="bg-[#212123] rounded-[30px] sm:rounded-[40px] lg:rounded-[50px] p-5 sm:p-8 lg:p-12 mb-8">
             {renderMistakeContent()}
           </div>
 
@@ -238,7 +238,7 @@ export default function MistakeDetailView(props: MistakeDetailViewProps) {
           <div className="flex justify-center">
             <button
               onClick={props.onBack}
-              className="bg-[#ec4545] hover:bg-[#d63939] text-white font-bold text-xl px-12 py-4 rounded-2xl transition-all hover:scale-105 active:scale-95"
+              className="bg-[#ec4545] hover:bg-[#d63939] text-white font-bold text-base sm:text-lg lg:text-xl px-7 sm:px-10 lg:px-12 py-3 sm:py-4 rounded-2xl transition-all hover:scale-105 active:scale-95"
             >
               Back to Mistakes
             </button>

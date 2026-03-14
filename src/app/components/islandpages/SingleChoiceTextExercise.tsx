@@ -239,7 +239,7 @@ export default function SingleChoiceTextExercise(props: SingleChoiceTextExercise
         </div>
 
         {/* Grid s moznostami - Fixna pozicia na desktope */}
-        <div className="w-full max-w-[1294px] grid grid-cols-2 gap-[16px]">
+        <div className="w-full max-w-[1294px] grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-[16px]">
           {shuffledData.shuffledOptions.map((option, index) => {
             return (
               <button

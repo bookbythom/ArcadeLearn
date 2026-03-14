@@ -163,12 +163,12 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
         </div>
 
         {/* Tlacidla Pravda/Nepravda */}
-        <div className="w-full max-w-[1242px] min-h-[96px] h-[min(137px,18vh)] grid grid-cols-2 gap-[16px]">
+        <div className="w-full max-w-[1242px] grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-[16px]">
           {/* Tlacidlo Pravda (vlavo) */}
           <button
             onClick={() => handleOptionClick(true)}
             disabled={isSubmitted}
-            className="rounded-[25px] flex items-center justify-center transition-all duration-200 hover:opacity-90"
+            className="rounded-[25px] h-[82px] sm:h-[110px] lg:h-[137px] flex items-center justify-center transition-all duration-200 hover:opacity-90"
             style={{
               backgroundColor: getOptionBackgroundColor(true),
               boxShadow: getOptionBoxShadow(true),
@@ -187,7 +187,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
           <button
             onClick={() => handleOptionClick(false)}
             disabled={isSubmitted}
-            className="rounded-[25px] flex items-center justify-center transition-all duration-200 hover:opacity-90"
+            className="rounded-[25px] h-[82px] sm:h-[110px] lg:h-[137px] flex items-center justify-center transition-all duration-200 hover:opacity-90"
             style={{
               backgroundColor: getOptionBackgroundColor(false),
               boxShadow: getOptionBoxShadow(false),

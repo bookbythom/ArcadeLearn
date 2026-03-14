@@ -46,22 +46,22 @@ export default function SignInPage(props: SignInPageProps) {
   const isCurrentlyLoading = props.isLoading === true;
 
   return (
-    <div className="min-h-screen bg-[#1c1c1e] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#1c1c1e] flex items-center justify-center p-3 sm:p-4">
       {isCurrentlyLoading && (
         <LoadingSpinner className="z-50" />
       )}
 
-      <div className="bg-[#222224] rounded-[40px] w-[90vw] max-w-[500px] p-10">
-        <h1 className="text-[56px] leading-none text-center text-white mb-12">Sign in</h1>
+      <div className="bg-[#222224] rounded-[24px] sm:rounded-[32px] lg:rounded-[40px] w-[94vw] max-w-[500px] p-5 sm:p-8 lg:p-10">
+        <h1 className="text-[38px] sm:text-[48px] lg:text-[56px] leading-none text-center text-white mb-8 sm:mb-10 lg:mb-12">Sign in</h1>
 
-        <form onSubmit={handleFormSubmit} className="flex flex-col gap-5">
+        <form onSubmit={handleFormSubmit} className="flex flex-col gap-4 sm:gap-5">
           <input
             type="email"
             value={emailInputValue}
             onChange={(event) => setEmailInputValue(event.target.value.toLowerCase())}
             placeholder="email@example.com"
             autoComplete="email"
-            className="h-[60px] w-full rounded-[21px] px-5 bg-[#d9d9d9] text-[#222224] text-[18px] outline-none placeholder:text-[#666]"
+            className="h-[52px] sm:h-[60px] w-full rounded-[15px] sm:rounded-[21px] px-4 sm:px-5 bg-[#d9d9d9] text-[#222224] text-[16px] sm:text-[18px] outline-none placeholder:text-[#666]"
           />
 
           <input
@@ -70,22 +70,22 @@ export default function SignInPage(props: SignInPageProps) {
             onChange={(event) => setPasswordInputValue(event.target.value.replace(/\s/g, ''))}
             placeholder="password"
             autoComplete="current-password"
-            className="h-[60px] w-full rounded-[21px] px-5 bg-[#d9d9d9] text-[#222224] text-[18px] outline-none placeholder:text-[#666]"
+            className="h-[52px] sm:h-[60px] w-full rounded-[15px] sm:rounded-[21px] px-4 sm:px-5 bg-[#d9d9d9] text-[#222224] text-[16px] sm:text-[18px] outline-none placeholder:text-[#666]"
           />
 
           <button
             type="submit"
             disabled={isCurrentlyLoading}
-            className="mt-3 h-[50px] w-[160px] self-center rounded-[15px] bg-[#4cb025] hover:bg-[#3d9d1e] text-white text-[24px] font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1"
+            className="mt-2 sm:mt-3 h-[46px] sm:h-[50px] w-[140px] sm:w-[160px] self-center rounded-[12px] sm:rounded-[15px] bg-[#4cb025] hover:bg-[#3d9d1e] text-white text-[20px] sm:text-[24px] font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1"
           >
             <span>Submit</span>
-            <svg className="w-[29px] h-[23px]" fill="none" viewBox="0 0 28.998 23.1377">
+            <svg className="w-[23px] h-[18px] sm:w-[29px] sm:h-[23px]" fill="none" viewBox="0 0 28.998 23.1377">
               <path d={svgPathsSignIn.p319dba00} fill="white" />
             </svg>
           </button>
         </form>
 
-        <div className="mt-14 text-center text-white text-[16px]">
+        <div className="mt-8 sm:mt-10 lg:mt-14 text-center text-white text-[14px] sm:text-[16px]">
           <span>You're New? </span>
           <button
             onClick={() => navigate('/register')}

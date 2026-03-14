@@ -1,45 +1,48 @@
 import { useEffect, useMemo, useState } from "react";
 
 interface ViewportScaleOptions {
+  baseWidth?: number;
   baseHeight?: number;
   minScale?: number;
   maxScale?: number;
 }
 
-// Returns a smooth scale factor based on current viewport height.
+// Returns a smooth scale factor based on current viewport size.
 export default function useViewportScale(options: ViewportScaleOptions = {}) {
-  const { baseHeight = 980, minScale = 0.68, maxScale = 1 } = options;
+  const { baseWidth = 1440, baseHeight = 980, minScale = 0.68, maxScale = 1 } = options;
 
-  const getViewportHeight = () => {
+  const getViewportSize = () => {
     if (typeof window === "undefined") {
-      return baseHeight;
+      return { width: baseWidth, height: baseHeight };
     }
-    return window.innerHeight;
+    return { width: window.innerWidth, height: window.innerHeight };
   };
 
-  const [viewportHeight, setViewportHeight] = useState<number>(getViewportHeight);
+  const [viewportSize, setViewportSize] = useState<{ width: number; height: number }>(getViewportSize);
 
   useEffect(() => {
     let animationFrameId = 0;
 
-    const updateHeight = () => {
+    const updateSize = () => {
       cancelAnimationFrame(animationFrameId);
       animationFrameId = requestAnimationFrame(() => {
-        setViewportHeight(window.innerHeight);
+        setViewportSize({ width: window.innerWidth, height: window.innerHeight });
       });
     };
 
-    updateHeight();
-    window.addEventListener("resize", updateHeight);
+    updateSize();
+    window.addEventListener("resize", updateSize);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("resize", updateHeight);
+      window.removeEventListener("resize", updateSize);
     };
   }, []);
 
   return useMemo(() => {
-    const rawScale = viewportHeight / baseHeight;
+    const widthScale = viewportSize.width / baseWidth;
+    const heightScale = viewportSize.height / baseHeight;
+    const rawScale = Math.min(widthScale, heightScale);
     return Math.min(maxScale, Math.max(minScale, rawScale));
-  }, [viewportHeight, baseHeight, minScale, maxScale]);
+  }, [viewportSize, baseWidth, baseHeight, minScale, maxScale]);
 }

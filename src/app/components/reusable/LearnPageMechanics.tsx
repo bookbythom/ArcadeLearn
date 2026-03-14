@@ -167,7 +167,7 @@ function KeywordPopup(props: KeywordPopupProps) {
       />
       <div 
         ref={popupRef}
-        className="fixed z-[111] bg-[#2c2c2e] rounded-[27px] p-[32px] w-[452px] max-w-[92vw] shadow-xl"
+        className="fixed z-[111] bg-[#2c2c2e] rounded-[20px] sm:rounded-[27px] p-4 sm:p-6 lg:p-[32px] w-[min(452px,92vw)] shadow-xl"
         style={{
           left: `${adjustedPosition.x}px`,
           top: `${adjustedPosition.y}px`,
@@ -740,13 +740,13 @@ export default function LearnPageMechanics(props: LearnPageMechanicsProps) {
         <LoadingSpinner className="z-[200]" />
       )}
 
-      <div className="w-full flex items-center justify-center overflow-visible px-8 xl:px-12 2xl:px-16">
+      <div className="w-full flex items-center justify-center overflow-visible px-3 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
         <div className="w-full max-w-[1600px] overflow-visible">
-          <div className="bg-[#1c1c1e] rounded-[46px] w-full p-14 xl:p-20 2xl:p-24 overflow-visible">
-            <div className="flex flex-col lg:flex-row gap-24 xl:gap-32 items-start overflow-visible">
+          <div className="bg-[#1c1c1e] rounded-[24px] sm:rounded-[34px] lg:rounded-[46px] w-full p-4 sm:p-8 lg:p-14 xl:p-20 2xl:p-24 overflow-visible">
+            <div className="flex flex-col lg:flex-row gap-6 sm:gap-10 lg:gap-24 xl:gap-32 items-start overflow-visible">
               <div ref={textContainerRef} className="flex flex-col gap-4 w-full max-w-[640px]">
                 {/* Sekcia s nadpisom */}
-                <h1 className="font-bold text-[clamp(16px,2.5vw,32px)] text-white leading-tight">
+                <h1 className="font-bold text-[clamp(18px,4vw,32px)] text-white leading-tight">
                   {themeData.title}
                 </h1>
                 

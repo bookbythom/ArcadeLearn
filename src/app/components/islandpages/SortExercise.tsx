@@ -234,9 +234,9 @@ function SortExerciseContent(props: SortExerciseProps) {
         </div>
 
         {/* Layout s dvoma stlpcami */}
-        <div className="w-full max-w-[1242px] grid grid-cols-2 gap-[64px]">
+        <div className="w-full max-w-[1242px] grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-[64px]">
           {/* Lavy stlpec - Staticke kategorie */}
-          <div className="flex flex-col gap-[40px]">
+          <div className="flex flex-col gap-3 sm:gap-5 lg:gap-[40px]">
             {props.categories ? (
               props.categories.map((category, index) => (
                 <div
@@ -267,7 +267,7 @@ function SortExerciseContent(props: SortExerciseProps) {
           </div>
 
           {/* Pravy stlpec - Draggable polozky */}
-          <div className="flex flex-col gap-[40px]">
+          <div className="flex flex-col gap-3 sm:gap-5 lg:gap-[40px]">
             {draggableItems.map((item, index) => (
               <DraggableItemComponent
                 key={item.id}

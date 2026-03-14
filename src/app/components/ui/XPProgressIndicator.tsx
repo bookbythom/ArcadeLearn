@@ -80,9 +80,9 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
 
     return (
       <div 
-        className="fixed left-8 z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-5 w-[320px] transition-opacity duration-300"
+        className="fixed left-1/2 sm:left-4 lg:left-8 -translate-x-1/2 sm:translate-x-0 z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-3 sm:p-4 lg:p-5 w-[calc(100vw-1.5rem)] max-w-[340px] transition-opacity duration-300"
         style={{
-          top: 'calc(4rem + env(safe-area-inset-top) + 1rem)',
+          top: 'calc(4rem + env(safe-area-inset-top) + 0.75rem)',
         }}
       >
         {/* Lock ikona */}
@@ -90,7 +90,7 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
           <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
-          <div className="text-2xl font-bold text-gray-300">
+          <div className="text-xl sm:text-2xl font-bold text-gray-300">
             {levelName} Locked
           </div>
         </div>
@@ -155,18 +155,18 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
 
   return (
     <div 
-      className="fixed left-8 z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-5 w-[320px] transition-opacity duration-300"
+      className="fixed left-1/2 sm:left-4 lg:left-8 -translate-x-1/2 sm:translate-x-0 z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-3 sm:p-4 lg:p-5 w-[calc(100vw-1.5rem)] max-w-[340px] transition-opacity duration-300"
       style={{
-        top: 'calc(4rem + env(safe-area-inset-top) + 1rem)',
+        top: 'calc(4rem + env(safe-area-inset-top) + 0.75rem)',
       }}
     >
       {/* Zobrazenie XP */}
       <div className="mb-3">
         <div className="flex items-baseline justify-between mb-3">
-          <span className="text-5xl font-bold text-white transition-all duration-300">
+          <span className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white transition-all duration-300">
             {xpInCurrentLevel}
           </span>
-          <span className="text-lg text-gray-400">
+          <span className="text-sm sm:text-base lg:text-lg text-gray-400">
             / {FINAL_TEST_XP} XP
           </span>
         </div>

@@ -185,7 +185,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
                   onClick={toggleExpandDropdown}
                   disabled={isSubmitted}
                   className={`
-                    rounded-[15px] h-[60px] w-[320px]
+                    rounded-[15px] h-[52px] sm:h-[60px] w-[min(320px,78vw)]
                     transition-all duration-200
                     ${!isSubmitted ? "cursor-pointer hover:opacity-90" : "cursor-default"}
                     flex items-center justify-center px-2
@@ -200,7 +200,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
                       {selectedOption}
                     </span>
                   ) : (
-                    <span className="font-normal text-[27.4px] leading-[1.5] text-[#666]">
+                    <span className="font-normal text-[20px] sm:text-[27.4px] leading-[1.4] text-[#666]">
                       klikni sem
                     </span>
                   )}
@@ -209,7 +209,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
                 {/* Dropdown moznosti */}
                 {isExpanded && !isSubmitted && (
                   <div
-                    className="absolute top-0 left-0 z-[120] bg-[#d9d9d9] rounded-[15px] w-[320px] p-[20px] flex flex-col gap-[12px] shadow-2xl"
+                    className="absolute top-0 left-0 z-[120] bg-[#d9d9d9] rounded-[15px] w-[min(320px,78vw)] p-[14px] sm:p-[20px] flex flex-col gap-[10px] sm:gap-[12px] shadow-2xl"
                     style={{ 
                       boxShadow: "0 0 0 4px #4cb025",
                     }}
@@ -218,7 +218,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
                       <button
                         key={index}
                         onClick={() => selectOption(option)}
-                        className="bg-white rounded-[11px] h-[50px] hover:bg-[#4cb025] hover:text-white transition-all px-[16px]"
+                        className="bg-white rounded-[11px] h-[44px] sm:h-[50px] hover:bg-[#4cb025] hover:text-white transition-all px-[12px] sm:px-[16px]"
                       >
                         <span className={`font-bold ${getOptionFontSize(option)} leading-[1.3]`}>
                           {option}

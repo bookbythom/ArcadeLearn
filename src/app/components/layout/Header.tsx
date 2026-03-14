@@ -65,16 +65,16 @@ export function Header(props: HeaderProps) {
   
   return (
     <header className="fixed top-0 left-0 right-0 z-[60] backdrop-blur-lg bg-[rgba(55,55,55,0.2)] border-b border-[rgba(255,255,255,0.1)]">
-      <div className="w-full px-8">
-        <div className="flex items-center justify-between h-16 gap-4">
+      <div className="w-full px-3 sm:px-6 lg:px-8">
+        <div className="flex flex-wrap sm:flex-nowrap items-center justify-between min-h-16 py-2 sm:py-0 gap-2 sm:gap-4">
           {/* Lava strana: Level a Streak */}
-          <div className="flex items-center gap-12">
-            <div className="flex items-center gap-2 w-[140px]">
+          <div className="flex items-center gap-4 sm:gap-8 lg:gap-12 order-1">
+            <div className="flex items-center gap-2 w-[124px] sm:w-[140px]">
               <div className="relative flex items-center gap-2 flex-1">
-                <div className="absolute right-2 text-[#7f7f7f] text-lg font-medium z-10 pointer-events-none">
+                <div className="absolute right-2 text-[#7f7f7f] text-sm sm:text-base lg:text-lg font-medium z-10 pointer-events-none">
                   {nextLevel}
                 </div>
-                <div className="flex-1 h-7 border-2 border-[#7f7f7f] rounded-full relative overflow-hidden">
+                <div className="flex-1 h-6 sm:h-7 border-2 border-[#7f7f7f] rounded-full relative overflow-hidden">
                   <div 
                     className="absolute inset-0.5 bg-[#4cb025] rounded-full" 
                     style={{ width: progressWidth }} 
@@ -87,26 +87,26 @@ export function Header(props: HeaderProps) {
             </div>
             
             <button 
-              className="flex items-center gap-2 hover:scale-110 transition-transform"
+              className="flex items-center gap-1.5 sm:gap-2 hover:scale-110 transition-transform"
               onClick={handleStreakClick}
             >
               <div className={streakIconClass}>
                 <StreakIcon />
               </div>
-              <span className={streakTextColor + ' text-xl font-medium'}>
+              <span className={streakTextColor + ' text-base sm:text-lg lg:text-xl font-medium'}>
                 {props.streakCount}
               </span>
             </button>
           </div>
 
           {/* Stred: Navigacia */}
-          <nav className="flex items-center gap-12 absolute left-1/2 -translate-x-1/2">
+          <nav className="flex items-center justify-center gap-6 sm:gap-10 lg:gap-12 w-full sm:w-auto order-3 sm:order-2 sm:absolute sm:left-1/2 sm:-translate-x-1/2 pb-1 sm:pb-0">
             <button 
               onClick={() => {
                 props.onTabChange("home");
               }}
               onMouseEnter={() => props.onTabHover?.("home")}
-              className={'text-xl transition-colors ' + homeTabColor}
+              className={'text-base sm:text-lg lg:text-xl transition-colors ' + homeTabColor}
             >
               Home
             </button>
@@ -115,7 +115,7 @@ export function Header(props: HeaderProps) {
                 props.onTabChange("mistakes");
               }}
               onMouseEnter={() => props.onTabHover?.("mistakes")}
-              className={'text-xl transition-colors ' + mistakesTabColor}
+              className={'text-base sm:text-lg lg:text-xl transition-colors ' + mistakesTabColor}
             >
               Mistakes
             </button>
@@ -125,7 +125,7 @@ export function Header(props: HeaderProps) {
                   props.onTabChange("admin");
                 }}
                 onMouseEnter={() => props.onTabHover?.("admin")}
-                className={'text-xl transition-colors ' + adminTabColor}
+                className={'text-base sm:text-lg lg:text-xl transition-colors ' + adminTabColor}
               >
                 Admin
               </button>
@@ -136,22 +136,22 @@ export function Header(props: HeaderProps) {
           <button 
             onClick={props.onProfileClick}
             onMouseEnter={props.onProfileHover}
-            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity order-2 sm:order-3"
           >
             {props.isAdmin ? (
-              <span className="text-[#FFD700] text-sm font-bold bg-[#FFD700]/20 px-2 py-1 rounded">
+              <span className="text-[#FFD700] text-xs sm:text-sm font-bold bg-[#FFD700]/20 px-2 py-1 rounded">
                 ADMIN
               </span>
             ) : null}
-            <span className="text-[#b6b6b6] text-base">{props.userProfile.name}</span>
+            <span className="text-[#b6b6b6] text-sm sm:text-base max-w-[90px] sm:max-w-none truncate">{props.userProfile.name}</span>
             {props.userProfile.profilePicture ? (
               <img 
                 src={props.userProfile.profilePicture} 
                 alt={props.userProfile.name} 
-                className="w-9 h-9 rounded-full object-cover flex-shrink-0" 
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover flex-shrink-0" 
               />
             ) : (
-              <div className="w-9 h-9 bg-[#c4c4c4] rounded-full flex-shrink-0" />
+              <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#c4c4c4] rounded-full flex-shrink-0" />
             )}
           </button>
         </div>

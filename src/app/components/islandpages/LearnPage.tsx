@@ -296,16 +296,16 @@ export default function LearnPage(props: LearnPageProps) {
 
     return (
       <div className="fixed bottom-0 left-0 right-0 bg-[#1c1c1e] border-t border-[#4e4e57] z-[106]">
-        <div className="w-full max-w-[1920px] mx-auto px-16">
-          <div className="h-[110px] flex items-center justify-between gap-4">
+        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-16">
+          <div className="h-[clamp(84px,11vh,110px)] flex items-center justify-between gap-3 sm:gap-4">
             <button
               onClick={handleBackButton}
-              className="bg-[#ec4545] hover:bg-[#d63939] text-white font-bold text-[clamp(14px,1.5vw,24px)] rounded-[15px] transition-colors px-6 h-[54px] w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0 leading-none"
+              className="bg-[#ec4545] hover:bg-[#d63939] text-white font-bold text-[clamp(14px,1.5vw,24px)] rounded-[15px] transition-colors px-4 sm:px-6 h-[clamp(44px,6vh,54px)] w-[120px] sm:w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0 leading-none"
             >
               ← Back
             </button>
 
-            <div className="flex items-center justify-center gap-[50px] flex-1 overflow-x-auto">
+            <div className="flex items-center justify-center gap-3 sm:gap-6 lg:gap-[50px] flex-1 overflow-x-auto px-1">
               {Array.from({ length: totalSlidesCount }).map((_, index) => (
                 <div key={index} className="flex-shrink-0">
                   <Dot isActive={index === currentSlideIndex} />
@@ -318,7 +318,7 @@ export default function LearnPage(props: LearnPageProps) {
               disabled={shouldShowTimer}
               className={`
                 ${shouldShowTimer ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#4cb025] hover:bg-[#3d9d1e]'}
-                rounded-[15px] transition-colors flex items-center justify-center gap-[6px] px-6 h-[54px] w-[155px] flex-shrink-0
+                rounded-[15px] transition-colors flex items-center justify-center gap-[6px] px-4 sm:px-6 h-[clamp(44px,6vh,54px)] w-[120px] sm:w-[155px] flex-shrink-0
               `}
             >
               <span className="font-bold text-white text-[clamp(14px,1.5vw,24px)]">

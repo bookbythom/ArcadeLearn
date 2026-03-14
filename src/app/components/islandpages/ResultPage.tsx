@@ -76,13 +76,13 @@ export default function ResultPage(props: ResultPageProps) {
           </div>
 
           {/* Kontajner s tlacidlami */}
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
             {/* XP Tlacidlo (Zlte) */}
             <button
-              className="bg-[#ffe76f] rounded-[24px] px-8 py-5 transition-colors cursor-default flex-shrink-0"
+              className="bg-[#ffe76f] rounded-[20px] sm:rounded-[24px] px-5 sm:px-8 py-3 sm:py-5 transition-colors cursor-default flex-shrink-0 min-w-[130px]"
               disabled
             >
-              <p className="font-bold text-[#c99e00] text-[clamp(18px,3vw,32px)] leading-[1.5]">
+              <p className="font-bold text-[#c99e00] text-[clamp(16px,3vw,32px)] leading-[1.4]">
                 +{props.xpEarned}xp
               </p>
             </button>
@@ -91,9 +91,9 @@ export default function ResultPage(props: ResultPageProps) {
             {props.correctAnswers < props.totalExercises && (
               <button
                 onClick={props.onCheckMistakes}
-                className="bg-[#ff7d7d] rounded-[24px] px-8 py-5 hover:bg-[#ff6b6b] transition-colors flex-shrink-0"
+                className="bg-[#ff7d7d] rounded-[20px] sm:rounded-[24px] px-5 sm:px-8 py-3 sm:py-5 hover:bg-[#ff6b6b] transition-colors flex-shrink-0 min-w-[180px]"
               >
-                <p className="font-bold text-[#bb2323] text-[clamp(18px,3vw,32px)] leading-[1.5] whitespace-nowrap">
+                <p className="font-bold text-[#bb2323] text-[clamp(16px,3vw,32px)] leading-[1.4] whitespace-nowrap">
                   Check Mistakes
                 </p>
               </button>
@@ -102,9 +102,9 @@ export default function ResultPage(props: ResultPageProps) {
             {/* Tlacidlo FINISH (Biele) */}
             <button
               onClick={props.onFinish}
-              className="bg-white rounded-[24px] px-8 py-5 hover:bg-[#f0f0f0] transition-colors flex-shrink-0"
+              className="bg-white rounded-[20px] sm:rounded-[24px] px-5 sm:px-8 py-3 sm:py-5 hover:bg-[#f0f0f0] transition-colors flex-shrink-0 min-w-[130px]"
             >
-              <p className="font-bold text-[#222224] text-[clamp(18px,3vw,32px)] leading-[1.5]">
+              <p className="font-bold text-[#222224] text-[clamp(16px,3vw,32px)] leading-[1.4]">
                 FINISH
               </p>
             </button>
