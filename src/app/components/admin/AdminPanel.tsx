@@ -47,6 +47,17 @@ const getErrorMessage = (error: unknown, fallback: string) => {
 
 // Komponent pre admin panel
 export default function AdminPanel(props: AdminPanelProps) {
+  const formatDateTimeEU = (value: string) => {
+    const date = new Date(value);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`;
+  };
+
   // State premenne
   const [usersList, setUsersList] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -194,7 +205,7 @@ export default function AdminPanel(props: AdminPanelProps) {
                     </button>
                   </td>
                   <td className="py-4 px-2 sm:px-4 text-center text-[#b6b6b6] text-xs sm:text-sm">
-                    {new Date(user.createdAt).toLocaleDateString()}
+                    {formatDateTimeEU(user.createdAt)}
                   </td>
                   <td className="py-4 px-2 sm:px-4 text-center">
                     <div className="flex flex-col sm:flex-row gap-2 justify-center">

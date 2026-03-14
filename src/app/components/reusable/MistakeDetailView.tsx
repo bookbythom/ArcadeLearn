@@ -13,6 +13,17 @@ interface MistakeDetailViewProps {
 
 // Komponent pre detailny pohlad na chybu
 export default function MistakeDetailView(props: MistakeDetailViewProps) {
+  const formatDateTimeEU = (value: number | string) => {
+    const date = new Date(value);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`;
+  };
+
   const toRenderableText = (value: unknown) => {
     if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
       return String(value);
@@ -225,7 +236,7 @@ export default function MistakeDetailView(props: MistakeDetailViewProps) {
               {props.mistake.question}
             </h1>
             <p className="text-[#ff9505] text-sm">
-              {new Date(props.mistake.timestamp).toLocaleString()}
+              {formatDateTimeEU(props.mistake.timestamp)}
             </p>
           </div>
 
