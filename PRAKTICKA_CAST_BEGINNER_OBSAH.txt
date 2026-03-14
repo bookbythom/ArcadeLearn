@@ -11,9 +11,9 @@ Inch), ktorý označuje hustotu tlačových bodov zariadenia, nie samotného obr
 patria JPEG pre fotografie, PNG pre grafiku s priehľadnosťou a GIF pre jednoduché animácie.
 
 KEYWORD POUCKY:
-1. pixel (pixelmi): Pixel je najmenšia jednotka digitálneho obrazu v rastrovej grafike - bod s definovanou farbou, ktorý
-                    v kombinácii s ďalšími pixelmi vytvára celkový obraz. Používa sa ako základný stavebný prvok
-                    všetkých digitálnych fotografií a obrázkov.
+1. pixel: Pixel je najmenšia jednotka digitálneho obrazu v rastrovej grafike - bod s definovanou farbou, ktorý v
+          kombinácii s ďalšími pixelmi vytvára celkový obraz. Používa sa ako základný stavebný prvok všetkých
+          digitálnych fotografií a obrázkov.
 2. počet pixelov: Počet pixelov je celkový počet obrazových bodov, ktoré tvoria digitálny obraz. Vyššie rozlíšenie
                   znamená viac pixelov a väčší detail. Používa sa na určenie kvality a vhodnosti obrázka pre konkrétne
                   použitie (web, tlač, veľkoformátový banner).
@@ -69,7 +69,6 @@ Moznosti:
 * Každý bod má svoju presnú pozíciu a farbu
 - Je vhodná pre tlač vo veľkých formátoch
 
-------------------------------------------------------------
 
 TEMA 2: Úvod do vektorovej grafiky
 
@@ -82,17 +81,15 @@ natívny formát Adobe Illustratora a EPS pre univerzálne použitie, najmä v t
 logá a ilustrácie, kde je kľúčová škálovateľnosť.
 
 KEYWORD POUCKY:
-1. vektory (vektory): Vektory sú matematicky definované čiary alebo krivky určené smerom a veľkosťou. Predstavujú
-                      základný prvok vektorovej grafiky. Používajú sa na vytváranie škálovateľných grafických prvkov ako
-                      ikony a ilustrácie.
+1. vektory: Vektory sú matematicky definované čiary alebo krivky určené smerom a veľkosťou. Predstavujú základný prvok
+            vektorovej grafiky. Používajú sa na vytváranie škálovateľných grafických prvkov ako ikony a ilustrácie.
 2. Bézierove krivky: Bézierove krivky sú matematicky definované krivky používané vo vektorovej grafike. Sú určené
                      začiatočným a koncovým bodom a jedným alebo viacerými kontrolnými bodmi, ktoré ovplyvňujú ich tvar.
                      Používajú sa na kreslenie hladkých organických tvarov a presných kriviek v dizajne.
-3. uzly (uzly): Uzly sú body v priestore, ktoré definujú začiatok, koniec alebo zmenu smeru vektorovej cesty. Môžu byť
-                ostré alebo hladké. Používajú sa na úpravu a presné tvarovanie vektorových objektov.
-4. kontrolné body (kontrolné body): Kontrolné body sú body, ktoré neurčujú priamo cestu, ale ovplyvňujú zakrivenie
-                                    Bézierovej krivky medzi dvoma uzlami. Používajú sa na jemnú úpravu tvaru kriviek a
-                                    dosiahnutie požadovaného zakrivenia.
+3. uzly: Uzly sú body v priestore, ktoré definujú začiatok, koniec alebo zmenu smeru vektorovej cesty. Môžu byť ostré
+         alebo hladké. Používajú sa na úpravu a presné tvarovanie vektorových objektov.
+4. kontrolné body: Kontrolné body sú body, ktoré neurčujú priamo cestu, ale ovplyvňujú zakrivenie Bézierovej krivky
+                   medzi dvoma uzlami. Používajú sa na jemnú úpravu tvaru kriviek a dosiahnutie požadovaného zakrivenia.
 5. SVG: Scalable Vector Graphics je vektorový formát pre web založený na XML. Umožňuje vytvárať grafiku, ktorá sa
         prispôsobí akejkoľvek veľkosti bez straty kvality. Používa sa pre ikony a grafické prvky na webových stránkach.
 6. AI: Adobe Illustrator je natívny vektorový formát programu Adobe Illustrator. Zachováva všetky editovateľné
@@ -139,7 +136,6 @@ Moznosti:
 - True
 * False
 
-------------------------------------------------------------
 
 TEMA 3: Farebné modely RGB a CMYK
 
@@ -156,11 +152,9 @@ KEYWORD POUCKY:
         zobrazenie na monitoroch, televízoroch a mobilných zariadeniach.
 2. CMYK: CMYK je subtraktívny farebný model založený na miešaní azúrovej, purpurovej, žltej a čiernej farby. Používa sa
          v tlačiarenskom priemysle pre tlač na papier a iné fyzické médiá.
-3. farebná hĺbka (farebnou hĺbkou): Farebná hĺbka určuje, koľko farebných odtieňov môže byť zobrazených. Meria sa v
-                                    bitoch na kanál, pričom vyššia hodnota umožňuje presnejšie zobrazenie farieb.
-4. konverzia: Konverzia je proces prevodu farieb z jedného farebného modelu do druhého, najčastejšie z RGB do CMYK pri
+3. konverzia: Konverzia je proces prevodu farieb z jedného farebného modelu do druhého, najčastejšie z RGB do CMYK pri
               príprave digitálnej grafiky na tlač. Používa sa vždy pri príprave digitálnych projektov pre fyzickú tlač.
-5. posun farieb: Posun farieb je zmena vo vzhľade farieb, ktorá nastáva pri konverzii medzi farebnými modelmi. Niektoré
+4. posun farieb: Posun farieb je zmena vo vzhľade farieb, ktorá nastáva pri konverzii medzi farebnými modelmi. Niektoré
                  farby v RGB nemožno presne reprodukovať v CMYK a naopak. Dôležité je pri príprave dizajnov o tom
                  vedieť, aby ste mohli upraviť farby pred finálnym exportom.
 
@@ -202,7 +196,6 @@ Moznosti:
 * [3] Azúrová
 * [4] Žltá
 
-------------------------------------------------------------
 
 TEMA 4: Základné formáty grafických súborov
 
@@ -224,18 +217,15 @@ KEYWORD POUCKY:
                  tvorbe lôg, ikon a webových grafických prvkov.
 4. GIF: Graphics Interchange Format je formát podporujúci jednoduché animácie a má obmedzenú paletu 256 farieb. Je
         vhodný pre jednoduché grafické prvky a animácie.
-5. animácia (animáciu): Animácia je sekvencia obrázkov vytvárajúca dojem pohybu. V kontexte webovej grafiky ju podporujú
-                        formáty ako GIF a modernejšie formáty ako APNG a WebP. Používa sa na prilákanie pozornosti,
-                        vysvetlenie procesov alebo pridanie interaktivity na web.
-6. SVG: Scalable Vector Graphics je vektorový formát pre web založený na XML. Umožňuje vytvárať grafiku, ktorá sa
+5. SVG: Scalable Vector Graphics je vektorový formát pre web založený na XML. Umožňuje vytvárať grafiku, ktorá sa
         prispôsobí akejkoľvek veľkosti bez straty kvality.
-7. PSD: Photoshop Document je natívny formát programu Adobe Photoshop. Zachováva všetky vrstvy, masky a editovateľné
+6. PSD: Photoshop Document je natívny formát programu Adobe Photoshop. Zachováva všetky vrstvy, masky a editovateľné
         vlastnosti. Používa sa na ukladanie rozpracovaných projektov pre neskoršie úpravy.
-8. AI: Adobe Illustrator je natívny vektorový formát programu Adobe Illustrator. Zachováva všetky editovateľné
+7. AI: Adobe Illustrator je natívny vektorový formát programu Adobe Illustrator. Zachováva všetky editovateľné
        vlastnosti vektorových objektov. Používa sa na ukladanie a zdieľanie vektorových projektov medzi dizajnérmi.
-9. vrstvy (vrstvy): Vrstvy sú koncept v grafických programoch, ktorý umožňuje pracovať s rôznymi elementmi obrázka
-                    nezávisle. Zachovávajú sa v editovateľných formátoch ako PSD, AI alebo XCF. Používajú sa na
-                    nedeštruktívnu editáciu, organizáciu projektu a jednoduché úpravy jednotlivých elementov.
+8. vrstvy: Vrstvy sú koncept v grafických programoch, ktorý umožňuje pracovať s rôznymi elementmi obrázka nezávisle.
+           Zachovávajú sa v editovateľných formátoch ako PSD, AI alebo XCF. Používajú sa na nedeštruktívnu editáciu,
+           organizáciu projektu a jednoduché úpravy jednotlivých elementov.
 
 CVICENIA:
 1) Typ: multiple-choice
@@ -274,7 +264,6 @@ Moznosti:
 - True
 * False
 
-------------------------------------------------------------
 
 TEMA 5: Úvod do Adobe Photoshop
 
@@ -296,21 +285,14 @@ KEYWORD POUCKY:
 3. nástroje: Nástroje sú súbor nástrojov na úpravu obrázkov vrátane výberových nástrojov, štetcov, retuše a iných
              funkcií. Používajú sa na každodenné úlohy ako výber, maľovanie, mazanie, retušovanie a transformáciu
              objektov.
-4. dokument: Dokument je pracovný súbor vo Photoshope s definovaným rozlíšením, farebným modelom a obsahom vrstiev.
-             Používa sa ako základ pre každý projekt, kde sa nastavujú rozmery a parametre podľa finálneho účelu.
-5. vrstvy: Vrstvy sú koncept umožňujúci prácu s rôznymi elementmi obrázka nezávisle. Fungujú ako priehľadné fólie
+4. vrstvy: Vrstvy sú koncept umožňujúci prácu s rôznymi elementmi obrázka nezávisle. Fungujú ako priehľadné fólie
            uložené nad sebou, pričom každá môže obsahovať rôzny obsah. Používajú sa na organizáciu projektu,
            nedeštruktívnu editáciu a jednoduchú úpravu jednotlivých elementov.
-6. výberové nástroje (výberových nástrojov): Výberové nástroje sú nástroje slúžiace na označenie konkrétnych častí
-                                             obrázka pre ďalšiu editáciu. Zahŕňajú obdĺžnikový výber, eliptický výber,
-                                             laso, magnetické laso a ďalšie. Používajú sa na izoláciu oblastí pre
-                                             samostatnú úpravu, vymazanie pozadia alebo aplikovanie efektov len na
-                                             určité časti.
-7. filtre (filtrami): Filtre sú efekty a úpravy, ktoré možno aplikovať na vrstvy alebo výbery. Zahŕňajú rozostrenie,
-                      zostrenie, skreslenie a umelecké efekty. Používajú sa na vylepšenie kvality obrázkov, vytvorenie
-                      špeciálnych efektov alebo štylizáciu fotografií.
-8. masky (maskami): Masky sú nástroj umožňujúci skryť alebo zobraziť časti vrstvy bez trvalého vymazania dát. Používajú
-                    sa pre nedeštruktívnu editáciu a umožňujú jemné prechody medzi viditeľnými a skrytými časťami.
+5. filtre: Filtre sú efekty a úpravy, ktoré možno aplikovať na vrstvy alebo výbery. Zahŕňajú rozostrenie, zostrenie,
+           skreslenie a umelecké efekty. Používajú sa na vylepšenie kvality obrázkov, vytvorenie špeciálnych efektov
+           alebo štylizáciu fotografií.
+6. masky: Masky sú nástroj umožňujúci skryť alebo zobraziť časti vrstvy bez trvalého vymazania dát. Používajú sa pre
+          nedeštruktívnu editáciu a umožňujú jemné prechody medzi viditeľnými a skrytými časťami.
 
 CVICENIA:
 1) Typ: sort
@@ -349,7 +331,6 @@ Moznosti:
 * Masky
 - Filtre
 
-------------------------------------------------------------
 
 TEMA 6: Úvod do Adobe Illustrator
 
@@ -365,38 +346,19 @@ KEYWORD POUCKY:
 1. pracovné prostredie: Pracovné prostredie je užívateľské rozhranie Illustratora, ktoré zahŕňa panely nástrojov,
                         vlastností, vrstiev a kresliacu plochu. Môže byť prispôsobené podľa typu práce (ikony,
                         ilustrácie, logo dizajn).
-2. panely (panelov): Panely sú prvky rozhrania poskytujúce prístup k funkciám programu. Zahŕňajú panel vrstiev, farieb,
-                     výplní a ďalšie. Používajú sa na rýchle nastavenie vlastností objektov a organizáciu pracovného
-                     postupu.
-3. nástroje (nástrojov): Nástroje sú sada nástrojov na tvorbu a úpravu vektorovej grafiky. Nachádzajú sa v ľavom paneli
-                         a zahŕňajú nástroje na kreslenie, výber, transformáciu a textové nástroje.
-4. kresliace plochy (artboards) (kresliacich plôch): Kresliace plochy sú pracovné oblasti v dokumente, kde vytvárate
-                                                     svoju grafiku. Jeden dokument môže obsahovať viacero artboardov pre
-                                                     rôzne verzie dizajnu. Používajú sa pri tvorbe viacstranových
-                                                     projektov, variácií loga alebo mobilných aplikácií.
-5. vektorové cesty (vektorových ciest): Vektorové cesty sú základné stavebné prvky vektorovej grafiky v Illustrátore.
-                                        Skladajú sa z uzlov spojených segmentami a určujú tvar objektov. Používajú sa na
-                                        vytváranie akýchkoľvek vektorových ilustrácií, lôg a ikon.
-6. uzly (uzlov): Uzly sú body, ktoré definujú tvar vektorovej cesty. Môžu byť rohové (sharp) alebo hladké (smooth).
-                 Používajú sa na presné tvarovanie a úpravu vektorových objektov posúvaním uzlov a úpravou kontrolných
-                 bodov.
-7. segmenty (segmentov): Segmenty sú časti cesty medzi dvoma uzlami. Môžu byť rovné alebo zakrivené. Používajú sa na
-                         vytvorenie kontúry tvaru a môžu byť samostatne upravované.
-8. základné tvarové nástroje: Základné tvarové nástroje sú nástroje na rýchle vytváranie geometrických tvarov. Zahŕňajú
-                              obdĺžnik (Rectangle), elipsu (Ellipse), polygón a hviezdu. Používajú sa ako základ pre
-                              komplexnejšie dizajny alebo pre tvorbu jednoduchých ikon.
-9. pero (Pen Tool) (pero): Pero je najdôležitejší nástroj v Illustrátore na vytváranie vlastných vektorových ciest.
-                           Umožňuje presné kreslenie priamych línií aj zakrivených Bézierových kriviek. Používa sa na
-                           kreslenie vlastných tvarov, vektorové obkreslenie a vytváranie presných ilustrácií.
-10. výplň (fill) (výplne): Výplň je farba alebo vzor vnútornej plochy vektorového objektu. Môže byť jednofarebná,
-                           gradientová alebo obsahovať vzor. Používa sa na definovanie vnútorného vzhľadu tvarov a
-                           objektov.
-11. obrys (stroke) (obrysu): Obrys je viditeľná čiara tvorená po obvode vektorového objektu. Môže mať nastavenú hrúbku,
-                             farbu a štýl (plná čiara, prerušovaná). Používa sa na definovanie ohraničenia objektov a
-                             vytváranie líniových ilustrácií.
-12. vrstvy (vrstvy): Vrstvy sú organizačný systém na usporiadanie objektov v Illustrátore. Umožňujú skupinovať súvisiace
-                     prvky a pracovať s nimi nezávisle. Používajú sa na udržanie poriadku v komplexných projektoch a
-                     rýchlu navigáciu medzi prvkami.
+2. vektorové cesty: Vektorové cesty sú základné stavebné prvky vektorovej grafiky v Illustrátore. Skladajú sa z uzlov
+                    spojených segmentami a určujú tvar objektov. Používajú sa na vytváranie akýchkoľvek vektorových
+                    ilustrácií, lôg a ikon.
+3. uzly: Uzly sú body, ktoré definujú tvar vektorovej cesty. Môžu byť rohové (sharp) alebo hladké (smooth). Používajú sa
+         na presné tvarovanie a úpravu vektorových objektov posúvaním uzlov a úpravou kontrolných bodov.
+4. segmenty: Segmenty sú časti cesty medzi dvoma uzlami. Môžu byť rovné alebo zakrivené. Používajú sa na vytvorenie
+             kontúry tvaru a môžu byť samostatne upravované.
+5. pero (Pen Tool): Pero je najdôležitejší nástroj v Illustrátore na vytváranie vlastných vektorových ciest. Umožňuje
+                    presné kreslenie priamych línií aj zakrivených Bézierových kriviek. Používa sa na kreslenie
+                    vlastných tvarov, vektorové obkreslenie a vytváranie presných ilustrácií.
+6. vrstvy: Vrstvy sú organizačný systém na usporiadanie objektov v Illustrátore. Umožňujú skupinovať súvisiace prvky a
+           pracovať s nimi nezávisle. Používajú sa na udržanie poriadku v komplexných projektoch a rýchlu navigáciu
+           medzi prvkami.
 
 CVICENIA:
 1) Typ: true-false
@@ -435,7 +397,6 @@ Moznosti:
 * [3] Artboard - Pracovná oblasť pre dizajn
 * [4] Uzol - Bod definujúci tvar vektorovej cesty
 
-------------------------------------------------------------
 
 TEMA 7: Základné nástroje výberu vo Photoshope a Illustrátore
 
@@ -449,8 +410,8 @@ programoch vieme kombinovať výbery cez pridávanie, odčítanie alebo prienik 
 výberu na plynulejšie prechody.
 
 KEYWORD POUCKY:
-1. Photoshop (Photoshope): Program Adobe Photoshop je určený na prácu s rastrovou grafikou. Obsahuje rozsiahlu sadu
-                           výberových nástrojov pre prácu s pixelmi a oblasťami obrázkov.
+1. Photoshop: Program Adobe Photoshop je určený na prácu s rastrovou grafikou. Obsahuje rozsiahlu sadu výberových
+              nástrojov pre prácu s pixelmi a oblasťami obrázkov.
 2. Obdĺžnikový a eliptický výber: Obdĺžnikový a eliptický výber sú základné geometrické výberové nástroje vo Photoshope.
                                   Obdĺžnikový výber vytvára pravouhlé výbery, zatiaľ čo eliptický výber vytvára oválne
                                   výbery. Používajú sa na rýchly výber pravidelných tvarov.
@@ -462,21 +423,17 @@ KEYWORD POUCKY:
                     parametrom tolerancie. Používa sa na rýchly výber jednofarebných pozadí.
 6. Rýchly výber: Rýchly výber je inteligentný nástroj vo Photoshope automaticky detekujúci hrany objektov. Je rýchlejší
                  a presnejší než manuálne výberové nástroje.
-7. Illustrator (Illustrátore): Program Adobe Illustrator je určený na prácu s vektorovou grafikou. Obsahuje nástroje na
-                               výber celých objektov aj jednotlivých uzlov a segmentov.
-8. výberový nástroj (Selection Tool) (výberovým nástrojom): Výberový nástroj je základný nástroj v Illustrátore označený
-                                                            ako Selection Tool (V). Slúži na výber, presun a
-                                                            transformáciu celých objektov. Používa sa na prácu s
-                                                            kompletným vektorovým objektom.
-9. nástroj priameho výberu (Direct Selection Tool) (nástrojom priameho výberu): Nástroj priameho výberu je nástroj v
-                                                                                Illustrátore označený ako Direct
-                                                                                Selection Tool (A). Umožňuje vyberať a
-                                                                                upravovať jednotlivé uzly a segmenty
-                                                                                vektorových ciest. Používa sa na presné
-                                                                                tvarovanie vektorových objektov.
-10. kombinovať výbery (kombinovať výbery): Kombinovanie výberov je možnosť spájať viacero výberov pomocou režimov
-                                           pridania, odčítania alebo prieniku. Je dostupné v oboch programoch. Používa
-                                           sa na vytváranie komplexných výberov.
+7. Illustrator: Program Adobe Illustrator je určený na prácu s vektorovou grafikou. Obsahuje nástroje na výber celých
+                objektov aj jednotlivých uzlov a segmentov.
+8. výberový nástroj (Selection Tool): Výberový nástroj je základný nástroj v Illustrátore označený ako Selection Tool
+                                      (V). Slúži na výber, presun a transformáciu celých objektov. Používa sa na prácu s
+                                      kompletným vektorovým objektom.
+9. nástroj priameho výberu (Direct Selection Tool): Nástroj priameho výberu je nástroj v Illustrátore označený ako
+                                                    Direct Selection Tool (A). Umožňuje vyberať a upravovať jednotlivé
+                                                    uzly a segmenty vektorových ciest. Používa sa na presné tvarovanie
+                                                    vektorových objektov.
+10. kombinovať výbery: Kombinovanie výberov je možnosť spájať viacero výberov pomocou režimov pridania, odčítania alebo
+                       prieniku. Je dostupné v oboch programoch. Používa sa na vytváranie komplexných výberov.
 11. Zjemnenie výberu: Zjemnenie výberu je technika vo Photoshope na elimináciu ostrých hrán výberu. Vytvára plynulé
                       prechody medzi vybranou oblasťou a pozadím.
 
@@ -517,7 +474,6 @@ Moznosti:
 * [3] Selection Tool (AI) - Vyberá celé objekty
 * [4] Direct Selection Tool (AI) - Vyberá jednotlivé uzly
 
-------------------------------------------------------------
 
 TEMA 8: Základy typografie
 
@@ -530,33 +486,19 @@ jasná hierarchia informácií, aby sa čitateľ v obsahu rýchlo orientoval. Do
 harmóniu a výrazne zlepšuje kvalitu komunikácie.
 
 KEYWORD POUCKY:
-1. písmo: Písmo je súbor znakov s jednotným dizajnom. Definuje vzhľad textu a má významný vplyv na celkový dojem z
-          dizajnu. Používa sa na vytvorenie osobitosti značky, zlepšenie čitateľnosti a dosiahnutie požadovaného
-          emocionálneho účinku.
-2. veľkosť: Veľkosť písma je výška písma meraná v bodoch (points) alebo pixeloch. Ovplyvňuje čitateľnosť a hierarchiu
-            textu. Používa sa na vytvorenie vizuálnej hierarchie (nadpisy vs. bežný text) a zabezpečenie čitateľnosti na
-            rôznych zariadeniach.
-3. rezy (rezy): Rezy sú varianty písma v rámci rovnakej rodiny (bold, italic, light). Používajú sa na zdôraznenie alebo
-                vytvorenie vizuálnej hierarchie.
-4. farba: Farba je farebný tón aplikovaný na text. Ovplyvňuje čitateľnosť, náladu a kontrast s pozadím. Používa sa na
-          vytvorenie kontrastu pre lepšiu čitateľnosť, zdôraznenie dôležitých prvkov a navodenie atmosféry.
-5. pätkové: Pätkové písmo je typ písma s malými ťahmi (pätkami) na koncoch znakov. Tradične sa používa v tlačených
+1. pätkové: Pätkové písmo je typ písma s malými ťahmi (pätkami) na koncoch znakov. Tradične sa používa v tlačených
             médiách, najmä pre dlhšie texty, keďže pätky vedú oko po riadku.
-6. bezpätkové: Bezpätkové písmo je typ písma bez pätiek. Pôsobí modernejšie a čistejšie, je vhodné pre digitálne médiá a
+2. bezpätkové: Bezpätkové písmo je typ písma bez pätiek. Pôsobí modernejšie a čistejšie, je vhodné pre digitálne médiá a
                nadpisy.
-7. kerning: Kerning je proces úpravy horizontálnych medzier medzi konkrétnymi pármi znakov. Cieľom je dosiahnuť vizuálne
+3. kerning: Kerning je proces úpravy horizontálnych medzier medzi konkrétnymi pármi znakov. Cieľom je dosiahnuť vizuálne
             rovnomerné rozostupy. Používa sa najmä pri veľkých písmach (nadpisy) na dosiahnutie profesionálneho vzhľadu.
-8. tracking: Tracking je úprava medzier medzi všetkými znakmi v bloku textu. Používa sa na zlepšenie čitateľnosti alebo
+4. tracking: Tracking je úprava medzier medzi všetkými znakmi v bloku textu. Používa sa na zlepšenie čitateľnosti alebo
              na dosiahnutie špecifického vizuálneho efektu.
-9. čitateľnosť: Čitateľnosť je miera ľahkosti čítania textu. Je ovplyvnená výberom písma, veľkosťou, farbou a
+5. čitateľnosť: Čitateľnosť je miera ľahkosti čítania textu. Je ovplyvnená výberom písma, veľkosťou, farbou a
                 rozostupmi. Je kľúčová pre webové stránky, články, knihy a všetky textovo náročné materiály.
-10. hierarchia (hierarchiu): Hierarchia je usporiadanie textových prvkov podľa dôležitosti. Vytvára sa pomocou veľkosti,
-                             hrúbky, farby a umiestnenia. Používa sa na vedenie pozornosti čitateľa a zlepšenie
-                             skenovateľnosti obsahu.
-11. vizuálna harmónia (vizuálnu harmóniu): Vizuálna harmónia je estetická rovnováha a súlad typografických prvkov.
-                                           Vytvára príjemný a profesionálny dojem. Používa sa na vytvorenie
-                                           konzistentného a príťažlivého dizajnu, ktorý buduje dôveru a zvyšuje
-                                           zapamätateľnosť značky.
+6. vizuálna harmónia: Vizuálna harmónia je estetická rovnováha a súlad typografických prvkov. Vytvára príjemný a
+                      profesionálny dojem. Používa sa na vytvorenie konzistentného a príťažlivého dizajnu, ktorý buduje
+                      dôveru a zvyšuje zapamätateľnosť značky.
 
 CVICENIA:
 1) Typ: multiple-choice
@@ -595,7 +537,6 @@ Moznosti:
 - True
 * False
 
-------------------------------------------------------------
 
 TEMA 9: Základy kompozície vo fotografii
 
@@ -612,17 +553,16 @@ KEYWORD POUCKY:
 1. Pravidlo tretín: Pravidlo tretín je kompozičný princíp, ktorý rozdeľuje obraz na deväť rovnakých častí dvoma
                     horizontálnymi a dvoma vertikálnymi čiarami. Kľúčové prvky by mali byť umiestnené na priesečníkoch
                     týchto línií alebo pozdĺž nich.
-2. Vedúce línie (Vedúce línie): Vedúce línie sú prirodzené alebo vytvorené línie v kompozícii, ktoré vedú pohľad diváka
-                                k hlavnému objektu. Môžu byť priame, zakrivené, konvergujúce alebo divergujúce.
+2. Vedúce línie: Vedúce línie sú prirodzené alebo vytvorené línie v kompozícii, ktoré vedú pohľad diváka k hlavnému
+                 objektu. Môžu byť priame, zakrivené, konvergujúce alebo divergujúce.
 3. Rámovanie: Rámovanie je technika, pri ktorej sa využívajú prvky scény (stromy, dvere, okná) na vytvorenie
               prirodzeného rámu okolo hlavného objektu. Zvýrazňuje objekt a pridáva hĺbku.
 4. Perspektíva: Perspektíva je spôsob zobrazenia trojrozmerného priestoru na dvojrozmernej ploche. Ovplyvňuje vnímanie
                 veľkosti, vzdialenosti a priestorových vzťahov.
 5. Symetria: Symetria je rovnováha a zrkadlenie prvkov v kompozícii. Vytvára pocit harmónie, stability a pokoja, zatiaľ
              čo jej narušenie môže pridať dynamiku a napätie.
-6. vzory (vzory): Vzory sú opakujúce sa prvky v kompozícii. Vytvárajú vizuálny záujem a harmóniu. Používajú sa pri
-                  architektonickej, prírodnej alebo abstraktnej fotografii na vytvorenie zaujímavých a hypnotických
-                  kompozícií.
+6. vzory: Vzory sú opakujúce sa prvky v kompozícii. Vytvárajú vizuálny záujem a harmóniu. Používajú sa pri
+          architektonickej, prírodnej alebo abstraktnej fotografii na vytvorenie zaujímavých a hypnotických kompozícií.
 7. porušenie symetrie: Porušenie symetrie je zámerné narušenie symetrického usporiadania. Vytvára napätie, dynamiku a
                        záujem. Používa sa na pridanie vizuálneho prekvapenia a pritiahnutie pozornosti v inak
                        symetrických scénach.
@@ -667,7 +607,6 @@ Moznosti:
 * Symetria
 - Perspektíva
 
-------------------------------------------------------------
 
 TEMA 10: Základy kompozície v grafickom dizajne
 
@@ -692,16 +631,13 @@ KEYWORD POUCKY:
            vytvorenie vizuálneho záujmu, pohybu a jednotnosti v dizajne.
 5. jednota: Jednota je koherencia a súlad všetkých prvkov v dizajne. Vytvára pocit úplnosti a profesionality. Používa sa
             na zabezpečenie, že všetky prvky dizajnu vyzerajú ako súčasť toho istého celku.
-6. mriežky (mriežky): Mriežky sú systém horizontálnych a vertikálnych línií používaný na organizáciu obsahu. Poskytujú
-                      štruktúru a konzistenciu dizajnu. Používajú sa pri tvorbe webových stránok, časopisov, posterov a
-                      všetkých viacprvkových layoutov.
-7. zlatý rez: Zlatý rez je matematický pomer približne 1:1,618, ktorý sa v umení a dizajne považuje za esteticky
+6. zlatý rez: Zlatý rez je matematický pomer približne 1:1,618, ktorý sa v umení a dizajne považuje za esteticky
               príjemný. Často sa používa na určenie proporcií a umiestnenie kľúčových prvkov. Používa sa pri fotografii,
               layoutoch a architektonických návrhoch pre prirodzene príjemné proporcie.
-8. Negatívny priestor: Negatívny priestor sú prázdne alebo nevyplnené oblasti v kompozícii. Pomáha definovať a zvýrazniť
+7. Negatívny priestor: Negatívny priestor sú prázdne alebo nevyplnené oblasti v kompozícii. Pomáha definovať a zvýrazniť
                        hlavné prvky, zlepšuje čitateľnosť a vytvára vizuálnu rovnováhu. Používa sa na zlepšenie
                        čitateľnosti, vytvorenie elegancie a niekedy aj na skryté vizuálne triky.
-9. vizuálny tok: Vizuálny tok je cesta, po ktorej oko pozorovateľa putuje po kompozícii. Môže byť riadený pomocou línií,
+8. vizuálny tok: Vizuálny tok je cesta, po ktorej oko pozorovateľa putuje po kompozícii. Môže byť riadený pomocou línií,
                  farieb a usporiadania prvkov. Používa sa na navigáciu diváka cez dizajn a zabezpečenie, že
                  najdôležitejšie informácie sú videné v správnom poradí.
 
@@ -742,7 +678,6 @@ Moznosti:
 * [3] Zlatý rez - Matematický pomer približne 1:1,618
 * [4] Negatívny priestor - Prázdne oblasti v kompozícii
 
-------------------------------------------------------------
 
 TEMA 11: Základy farieb a farebnej teórie
 
@@ -757,14 +692,14 @@ harmonickejšie. Pri práci s farbou rozlišujeme tri základné vlastnosti: odt
 KEYWORD POUCKY:
 1. Farebné koleso: Farebné koleso je kruhové usporiadanie farieb, ktoré zobrazuje vzťahy medzi primárnymi, sekundárnymi
                    a terciárnymi farbami. Slúži ako nástroj pre výber farebných schém.
-2. Primárne farby (Primárne farby): Primárne farby sú základné farby (červená, žltá, modrá v tradičnom modeli), ktoré sa
-                                    nedajú vytvoriť zmiešaním iných farieb. Z nich možno odvodiť všetky ostatné farby.
-3. Sekundárne farby (Sekundárne farby): Sekundárne farby sú farby vznikajúce zmiešaním dvoch primárnych farieb. Zahŕňajú
-                                        oranžovú, zelenú a fialovú.
-4. Komplementárne farby (Komplementárne farby): Komplementárne farby sú farby ležiace oproti sebe na farebnom kolese.
-                                                Vytvárajú maximálny kontrast a vzájomne sa zvýrazňujú.
-5. Analogické farby (Analogické farby): Analogické farby sú farby ležiace vedľa seba na farebnom kolese. Vytvárajú
-                                        harmonický, príjemný efekt a často sa vyskytujú v prírode.
+2. Primárne farby: Primárne farby sú základné farby (červená, žltá, modrá v tradičnom modeli), ktoré sa nedajú vytvoriť
+                   zmiešaním iných farieb. Z nich možno odvodiť všetky ostatné farby.
+3. Sekundárne farby: Sekundárne farby sú farby vznikajúce zmiešaním dvoch primárnych farieb. Zahŕňajú oranžovú, zelenú a
+                     fialovú.
+4. Komplementárne farby: Komplementárne farby sú farby ležiace oproti sebe na farebnom kolese. Vytvárajú maximálny
+                         kontrast a vzájomne sa zvýrazňujú.
+5. Analogické farby: Analogické farby sú farby ležiace vedľa seba na farebnom kolese. Vytvárajú harmonický, príjemný
+                     efekt a často sa vyskytujú v prírode.
 6. Odtieň: Odtieň je samotná farba identifikovaná názvom (červená, modrá, zelená, žltá atď.). Predstavuje základnú
            vlastnosť farby, ktorá ju odlišuje od iných farieb na farebnom kolese. Odtieň určuje, či je farba teplá alebo
            studená.
@@ -814,7 +749,6 @@ Moznosti:
 - True
 * False
 
-------------------------------------------------------------
 
 TEMA 12: Základy svetla a tieňa vo fotografii
 
@@ -827,8 +761,8 @@ ovplyvňuje atmosféru fotografie. Napokon, dynamický rozsah opisuje, ako dobre
 najtmavších častiach scény.
 
 KEYWORD POUCKY:
-1. expozícia (Expozíciu): Expozícia je množstvo svetla, ktoré dopadá na snímač fotoaparátu. Správna expozícia je kľúčová
-                          pre dobre exponovanú fotografiu bez preexponovaných alebo podexponovaných oblastí.
+1. expozícia: Expozícia je množstvo svetla, ktoré dopadá na snímač fotoaparátu. Správna expozícia je kľúčová pre dobre
+              exponovanú fotografiu bez preexponovaných alebo podexponovaných oblastí.
 2. clona: Clona je mechanizmus v objektíve, ktorý reguluje množstvo prechádzajúceho svetla. Označuje sa číslom f (napr.
           f/2.8, f/8), pričom nižšie číslo znamená väčší otvor a viac svetla. Používa sa na ovládanie expozície a hĺbky
           ostrosti - širšia clona pre rozmazané pozadie (portréty), užšia pre ostrý celok (krajiny).
@@ -844,14 +778,11 @@ KEYWORD POUCKY:
 6. mäkké svetlo: Mäkké svetlo je difúzne svetlo produkujúce jemné prechody a nízky kontrast. Vytvára sa v zamračenom
                  počasí alebo použitím difúzorov. Používa sa pri portrétnom fotografovaní pre lichotivý vzhľad pokožky a
                  pri produktovom fotografovaní.
-7. Smerové svetlo: Smerové svetlo je svetlo dopadajúce z konkrétneho smeru (predné, bočné, zadné). Každý smer vytvára
-                   odlišný efekt a atmosféru. Používa sa na modelovanie tvárí a objektov, vytvorenie hĺbky a
-                   dramatického účinku vo fotografii.
-8. Farebná teplota: Farebná teplota je charakteristika svetla vyjadrená v kelvinoch. Nižšie hodnoty (3000K) predstavujú
+7. Farebná teplota: Farebná teplota je charakteristika svetla vyjadrená v kelvinoch. Nižšie hodnoty (3000K) predstavujú
                     teplejšie, žltkasté svetlo, vyššie hodnoty (6500K) chladnejšie, modrasté svetlo. Používa sa na
                     nastavenie vyváženia bielej farby pre prirodzené farby alebo na vytvorenie umeleckej atmosféry
                     (teplý západ slnka vs. chladné ráno).
-9. Dynamický rozsah: Dynamický rozsah je schopnosť snímača zachytiť detaily v svetlých aj tmavých oblastiach. Širší
+8. Dynamický rozsah: Dynamický rozsah je schopnosť snímača zachytiť detaily v svetlých aj tmavých oblastiach. Širší
                      dynamický rozsah umožňuje zachovať viac detailov v tieňoch a svetlách. Používa sa pri HDR
                      fotografii, krajinách s jasnou oblohou a temnými lesmi, alebo pri interiéroch s oknami.
 
@@ -892,5 +823,3 @@ Otazka: Vyššie ISO hodnoty vždy vedú k lepšej kvalite fotografie.
 Moznosti:
 - True
 * False
-
-------------------------------------------------------------
