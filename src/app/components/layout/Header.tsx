@@ -82,10 +82,12 @@ export function Header(props: HeaderProps) {
                   {nextLevel}
                 </div>
                 <div className="flex-1 h-6 sm:h-7 border-2 border-[#7f7f7f] rounded-full relative overflow-hidden">
-                  <div 
-                    className="absolute left-0 top-0.5 bottom-0.5 bg-[#4cb025] rounded-r-full" 
-                    style={{ width: progressWidth }} 
-                  />
+                  <div className="absolute inset-0.5 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-[#4cb025] rounded-r-full" 
+                      style={{ width: progressWidth }} 
+                    />
+                  </div>
                   <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-medium z-10 pl-2">
                     LVL.{currentLevel}
                   </div>
