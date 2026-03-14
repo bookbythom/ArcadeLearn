@@ -237,7 +237,7 @@ export default function LearnPage(props: LearnPageProps) {
       if (currentSlideIndex > 0) {
         setCurrentSlideIndex(currentSlideIndex - 1);
       } else {
-        const confirmExit = window.confirm("Naozaj chcete odísť? Váš pokrok bude stratený.");
+        const confirmExit = window.confirm("Are you sure you want to leave? Your progress will be lost.");
         if (confirmExit) {
           props.onBack();
         }
@@ -248,7 +248,7 @@ export default function LearnPage(props: LearnPageProps) {
   // Funkcia pre back button
   const handleBackButton = () => {
     if (currentSlideIndex === 0) {
-      const confirmExit = window.confirm("Naozaj chcete odísť? Váš pokrok bude stratený.");
+      const confirmExit = window.confirm("Are you sure you want to leave? Your progress will be lost.");
       if (confirmExit) {
         props.onBack();
       }
