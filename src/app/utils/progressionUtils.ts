@@ -10,21 +10,36 @@ export interface UserProgress {
 }
 
 // Konstanty pre XP system
-const xpPerLevel = 100;
 const xpCorrect = 5; // Opravene z 10 na 5 XP za spravne cvicenie
 const finalTestXp = 300;
+const maxLevel = 15;
+const maxTotalXpForLeveling = 1050; // 3 urovne * 350 XP za 100%
+const xpPerLevel = 70;
+
+function clamp(value: number, min: number, max: number): number {
+  if (value < min) {
+    return min;
+  }
+  if (value > max) {
+    return max;
+  }
+  return value;
+}
+
+function getLevelStartXp(level: number): number {
+  const safeLevel = clamp(level, 0, maxLevel);
+  return safeLevel * xpPerLevel;
+}
 
 // Funkcia na vypocet levelu
 function calculateLevel(totalXP: number): number {
-  let lvl = 1;
-  let xp = totalXP;
-  
-  while (xp >= xpPerLevel) {
-    xp = xp - xpPerLevel;
-    lvl = lvl + 1;
+  if (totalXP === undefined || totalXP === null || isNaN(totalXP)) {
+    return 0;
   }
-  
-  return lvl;
+
+  const safeTotalXp = clamp(totalXP, 0, maxTotalXpForLeveling);
+  const computedLevel = Math.floor(safeTotalXp / xpPerLevel);
+  return clamp(computedLevel, 0, maxLevel);
 }
 
 // Vypocet zarobionych XP
@@ -86,18 +101,19 @@ export function getLevelProgress(totalXP: number): number {
   if (isNaN(totalXP)) {
     return 0;
   }
-  
-  // Vypocet XP v aktualnom leveli
-  let currentLevelXP = totalXP;
-  while (currentLevelXP >= xpPerLevel) {
-    currentLevelXP = currentLevelXP - xpPerLevel;
+
+  const safeTotalXp = clamp(totalXP, 0, maxTotalXpForLeveling);
+  const currentLevel = calculateLevel(safeTotalXp);
+
+  if (currentLevel >= maxLevel) {
+    return 100;
   }
-  
-  // Prevedenie na percenta
-  const percentage = (currentLevelXP / xpPerLevel) * 100;
-  
-  // Zaokruhlenie
-  const roundedPercentage = Math.round(percentage);
-  
-  return roundedPercentage;
+
+  const currentLevelStartXp = getLevelStartXp(currentLevel);
+  const nextLevelStartXp = getLevelStartXp(currentLevel + 1);
+  const xpWindow = Math.max(1, nextLevelStartXp - currentLevelStartXp);
+  const xpInsideWindow = safeTotalXp - currentLevelStartXp;
+
+  const percentage = (xpInsideWindow / xpWindow) * 100;
+  return Math.round(clamp(percentage, 0, 100));
 }
