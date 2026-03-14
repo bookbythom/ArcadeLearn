@@ -1,38 +1,42 @@
 Návod na lokálne spustenie webovej aplikácie
 
 1) Nainštalovanie Node.js (ak ešte nie je nainštalovaný)
-- Otvorte https://nodejs.org
-- Stiahnite verziu LTS (napr. "Node.js 20 LTS")
-- Spustite inštalátor a dokončite inštaláciu
+- Windows:
+    - Otvorte https://nodejs.org
+    - Kliknite na tlačidlo Get Node.js®
+    - Stiahnite verziu pre Windows kliknutim na tlačidlo Windows Installer (.msi)
+    - Spustite inštalátor a dokončite inštaláciu
 
-2) Nainštalovanie npm (ak ešte nie je nainštalované)
-- npm sa štandardne nainštaluje spolu s Node.js
-- Ak príkaz npm nefunguje, preinštalujte Node.js LTS z https://nodejs.org
+- macOS:
+    - Otvorte https://nodejs.org
+    - Kliknite na tlačidlo Get Node.js®
+    - Stiahnite verziu pre macOS kliknutim na tlačidlo macOS Installer (.pkg)
+    - Spustite inštalátor a dokončite inštaláciu
 
-3) Overenie inštalácie Node.js a npm (CMD/PowerShell/Terminal)
+2) Overenie inštalácie Node.js a npm (CMD/PowerShell/Terminal):
 	node -v
 	npm -v
 - Ak oba príkazy vypíšu verziu, inštalácia je v poriadku (napr. node -v -> v20.11.1, npm -v -> 10.2.4)
 
-4) Otvorenie projektového priečinka v termináli
+3) Otvorenie projektového priečinka v PowerShell / Termináli
 - Prejdite do priečinka ArcadeLearn (tam, kde je súbor package.json)
 Napr.:
 - (Windows): cd C:\Users\Meno\Desktop\ArcadeLearn
 - (macOS): cd /Users/meno/Desktop/ArcadeLearn
 
-5) Nainštalovanie závislostí projektu: npm install
+4) Nainštalovanie závislostí projektu: npm install
 - po spustení sa vypíše "added ... packages" a vytvorí sa priečinok node_modules
 
-6) Spustenie aplikácie: npm run dev
-- Príklad výstupu:
-	VITE v6.x.x  ready in  xxx ms
-	➜  Local:   http://localhost:5173/
-	➜  Network: use --host to expose
+5) Spustenie aplikácie: npm run dev
+    - Príklad výstupu:
+                        VITE v6.x.x  ready in  xxx ms
+                        ➜  Local:   http://localhost:5173/
+                        ➜  Network: use --host to expose
 
-7) Otvorenie aplikácie v prehliadači: http://localhost:5173
+6) Otvorenie aplikácie v prehliadači: http://localhost:5173
 - cislo za "localhost:" môże byť iné, preto treba použit to čo sa vypíše vo výstupe za "Local:"
 
-8) Prihlásenie:
+7) Prihlásenie:
     Admin účet:
     - email: admin@gmail.com
     - heslo: Admin123
@@ -42,8 +46,6 @@ Napr.:
     - heslo: User12345
     
     (je možné aj vytvorenie nového konta cez Register stránku a následne sa doň prihláste cez Sign in stránku)
-
-
 
 
 
@@ -62,3 +64,7 @@ Návod na spustenie a prihlásenie sa webovej aplikácie online
     - heslo: User12345
    
     (je možné aj vytvorenie nového konta cez Register stránku a následne sa doň prihláste cez Sign in stránku)
+
+
+
+Link s návrhom front-endu vo Figme: https://www.figma.com/design/p7BgsrZkERbMNdkynXGNRo/knoll_Maturita_ArcadeLearn?node-id=0-1&t=ln9p3dQ2UyJJljBv-1
