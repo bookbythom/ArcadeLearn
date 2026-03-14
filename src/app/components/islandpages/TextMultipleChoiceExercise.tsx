@@ -241,7 +241,7 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
       >
         <div className="relative h-full flex flex-col">
       {/* Hlavny obsah - vertikalne centrovaný */}
-      <div className="flex-1 flex flex-col items-center justify-start lg:justify-center px-4 sm:px-8 lg:px-12 pb-[120px] pt-4 overflow-y-auto">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-8 lg:px-12 pb-[120px] pt-4 overflow-y-auto">
         {/* Otazka s pozadim obdlznika - Fixna vyska na desktope */}
         <div className="w-full max-w-[1208px] mb-6 lg:mb-[50px] flex-shrink-0">
           <div className="bg-[#212123] rounded-[38px] px-6 sm:px-10 lg:px-[80px] py-0 min-h-[220px] h-[min(492px,48vh)] flex items-center justify-center overflow-auto">

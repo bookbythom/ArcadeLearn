@@ -223,7 +223,7 @@ function SortExerciseContent(props: SortExerciseProps) {
       >
         <div className="relative h-full flex flex-col">
       {/* Hlavny obsah - vertikalne centrovaný */}
-      <div className="flex-1 flex flex-col items-center justify-start lg:justify-center px-4 sm:px-8 lg:px-12 pb-[120px] pt-4 overflow-y-auto">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-8 lg:px-12 pb-[120px] pt-4 overflow-y-auto">
         {/* Pozadie otazky */}
         <div className="relative w-full max-w-[1278px] mb-6 lg:mb-[66px]">
           <div className="w-full bg-[#212123] rounded-[38px] px-[32px] py-[35px]">
