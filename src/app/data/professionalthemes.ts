@@ -50,7 +50,7 @@ export const professionalThemes: Theme[] = [
       {
         text: 'Contrast',
         displayName: 'kontrastné režimy',
-        explanation: 'Contrast je kategória blend modes zvyšujúca kontrast kombináciou stmavovanie a rozjasňovanie. Overlay znamená Multiply na tmavé, Screen na svetlé oblasti (50% šedá zmizne). Soft Light je jemnejšia verzia Overlay. Hard Light je ostrejšia verzia Overlay. Vivid/Linear/Pin Light sú rôzne variácie. Používajú sa na textúry, dodanie \'punch\' efektu, zvýraznenie detailov.'
+        explanation: 'Contrast je kategória blend modes zvyšujúca kontrast kombináciou stmavovania a rozjasňovania. Overlay znamená Multiply na tmavé, Screen na svetlé oblasti (50% šedá zmizne). Soft Light je jemnejšia verzia Overlay. Hard Light je ostrejšia verzia Overlay. Vivid/Linear/Pin Light sú rôzne variácie. Používajú sa na textúry, dodanie \'punch\' efektu, zvýraznenie detailov.'
       },
       {
         text: 'Composite',
@@ -787,7 +787,7 @@ export const professionalThemes: Theme[] = [
       {
         text: 'Content-Aware Scale',
         displayName: 'inteligentné škálovanie',
-        explanation: 'Edit > Content-Aware Scale škáluje obrázky neuniformne a chráni dôležité objekty. Ochrana Skin Tones, ochrana Alpha channel. Protect možnosť vyberá masku chránených oblastí. Amount posúvač určuje normal verzus content-aware. Používa sa na zmenu pomeru strán bez skreslenia subjektov, prispôsobenie obrázkov layoutom a zmenu veľkosti pozadia bez ovplyvnenia popredia.'
+        explanation: 'Edit > Content-Aware Scale škáluje obrázky neuniformne a chráni dôležité objekty. Ochrana Skin Tones, ochrana Alpha channel. Protect možnosť vyberá masku chránených oblastí. Amount posúvač určuje pomer medzi režimami Normal a Content-Aware. Používa sa na zmenu pomeru strán bez skreslenia subjektov, prispôsobenie obrázkov layoutom a zmenu veľkosti pozadia bez ovplyvnenia popredia.'
       },
       {
         text: 'Content-Aware Move',

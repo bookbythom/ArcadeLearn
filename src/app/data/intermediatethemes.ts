@@ -654,7 +654,7 @@ export const intermediateThemes: Theme[] = [
       {
         text: 'Saturation slider',
         displayName: 'Saturation',
-        explanation: 'Saturation slider je slider (±100) upravujúci intenzitu farieb. 0 znamená pôvodnú sýtosť. Kladné hodnoty zvyšujú sýtosť (živejšie farby), -100 vytvára čiernobiely obraz. Desaturation je používaná alternatíva k Grayscale režimu zachovávajúca RGB color mode. Používa sa na vylepšenie nudných farieb, vytvorenie vintage efektu alebo dramatizáciu scény.'
+        explanation: 'Saturation slider je slider (±100) upravujúci intenzitu farieb. 0 znamená pôvodnú sýtosť. Kladné hodnoty zvyšujú sýtosť (živejšie farby), -100 vytvára čiernobiely obraz. Desaturation je používaná alternatíva k Grayscale režimu, ktorá zachováva farebný režim RGB. Používa sa na vylepšenie nudných farieb, vytvorenie vintage efektu alebo dramatizáciu scény.'
       },
       {
         text: 'Lightness slider',
@@ -1025,7 +1025,7 @@ export const intermediateThemes: Theme[] = [
       {
         text: 'Expand/Contract',
         displayName: 'rozšírenie/zmrštenie',
-        explanation: 'Funkcie Select > Modify > Expand/Contract (1-100 pixelov) rovnomerne zväčšujúce alebo zmenšujúce výber. Expand pridáva pixely okolo hranice, Contract ich odoberá. Zachováva približný tvar výberu. Používa sa na kompenzáciu featheru, odstránenie farebných okrajov pri výstrihu (Contract 1-2 px) alebo zväčšenie výberu pre bezpečnostný priestor.'
+        explanation: 'Funkcie Select > Modify > Expand/Contract (1-100 pixelov) rovnomerne zväčšujú alebo zmenšujú výber. Expand pridáva pixely okolo hranice, Contract ich odoberá. Zachováva približný tvar výberu. Používa sa na kompenzáciu featheru, odstránenie farebných okrajov pri výstrihu (Contract 1-2 px) alebo zväčšenie výberu pre bezpečnostný priestor.'
       },
       {
         text: 'Transform Selection',

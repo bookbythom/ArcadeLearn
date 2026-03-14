@@ -445,11 +445,11 @@ export const beginnerThemes: Theme[] = [
     keywords: [
       {
         text: 'pracovné prostredie',
-        explanation: 'Pracovné prostredie je užívateľské rozhranie Photoshopu, ktoré zahŕňa panely, nástroje a pracovnú plochu. Môže byť prispôsobené podľa potrieb užívateľa. Používa sa na efektívnu organizáciu workspace pre rôzne typy projektov (retušovanie, web dizajn, ilustrácia).'
+        explanation: 'Pracovné prostredie je používateľské rozhranie Photoshopu, ktoré zahŕňa panely, nástroje a pracovnú plochu. Môže byť prispôsobené podľa potrieb používateľa. Používa sa na efektívnu organizáciu workspace pre rôzne typy projektov (retušovanie, web dizajn, ilustrácia).'
       },
       {
         text: 'panely',
-        explanation: 'Panely sú prvky užívateľského rozhrania, ktoré poskytujú prístup k funkciám a nastaveniam. Zahŕňajú panel vrstiev, panel histórie, panel vlastností a ďalšie. Používajú sa na rýchly prístup k často používaným funkciám a ovládacím prvkom.'
+        explanation: 'Panely sú prvky používateľského rozhrania, ktoré poskytujú prístup k funkciám a nastaveniam. Zahŕňajú panel vrstiev, panel histórie, panel vlastností a ďalšie. Používajú sa na rýchly prístup k často používaným funkciám a ovládacím prvkom.'
       },
       {
         text: 'nástroje',
@@ -543,7 +543,7 @@ export const beginnerThemes: Theme[] = [
     keywords: [
       {
         text: 'pracovné prostredie',
-        explanation: 'Pracovné prostredie je užívateľské rozhranie Illustratora, ktoré zahŕňa panely nástrojov, vlastností, vrstiev a kresliacu plochu. Môže byť prispôsobené podľa typu práce (ikony, ilustrácie, logo dizajn).'
+        explanation: 'Pracovné prostredie je používateľské rozhranie Illustratora, ktoré zahŕňa panely nástrojov, vlastností, vrstiev a kresliacu plochu. Môže byť prispôsobené podľa typu práce (ikony, ilustrácie, logo dizajn).'
       },
       {
         text: 'vektorových ciest',
