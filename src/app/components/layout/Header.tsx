@@ -38,10 +38,17 @@ export function Header(props: HeaderProps) {
   
   // Handler pre streak klik
   const handleStreakClick = () => {
-    let message = 'Current streak: ' + props.streakCount + ' day(s)!';
+    const dayLabel = props.streakCount === 1 ? 'day' : 'days';
+    let message = 'Current streak: ' + props.streakCount + ' ' + dayLabel + '!';
+
+    if (props.streakCount === 0) {
+      message = 'Current streak: 0 days.\n\nComplete an island today to start your streak!';
+      alert(message);
+      return;
+    }
     
     if (!props.streakActiveToday) {
-      message = message + '\\n\\nComplete an island today to grow your streak!';
+      message = message + '\n\nComplete an island today to grow your streak!';
     }
     
     alert(message);
