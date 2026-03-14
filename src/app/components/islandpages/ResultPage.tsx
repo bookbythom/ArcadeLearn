@@ -1,4 +1,5 @@
 import svgPaths from "../../../imports/result_page_graph";
+import useViewportScale from "@/app/utils/useViewportScale";
 
 // Rozhranie pre vlastnosti komponentu ResultPage
 interface ResultPageProps {
@@ -11,6 +12,8 @@ interface ResultPageProps {
 
 // Komponent pre zobrazenie vysledkov
 export default function ResultPage(props: ResultPageProps) {
+  const viewportScale = useViewportScale({ baseHeight: 930, minScale: 0.7 });
+
   // Vypocet percentualneho uspesnosti
   const percentageScore = (props.correctAnswers / props.totalExercises) * 100;
   
@@ -20,15 +23,21 @@ export default function ResultPage(props: ResultPageProps) {
   const strokeDashOffset = circleCircumference - (percentageScore / 100) * circleCircumference;
 
   return (
-    <div className="fixed inset-0 bg-[#1c1c1e] z-[105] flex items-center justify-center">
+    <div className="fixed inset-0 bg-[#1c1c1e] z-[105] flex items-start sm:items-center justify-center overflow-y-auto p-4 sm:p-6">
       {/* Hlavny kontajner - tmavo sedy zaobleny box */}
-      <div className="relative w-[90vw] max-w-[999px] h-auto">
+      <div
+        className="relative w-[90vw] max-w-[999px] h-auto my-auto"
+        style={{
+          transform: `scale(${viewportScale})`,
+          transformOrigin: 'center center',
+        }}
+      >
         {/* Pozadie kontajnera */}
-        <div className="bg-[#212123] rounded-[46px] w-full px-16 py-16">
+        <div className="bg-[#212123] rounded-[46px] w-full px-6 sm:px-10 lg:px-16 py-6 sm:py-10 lg:py-16">
           
           {/* Kruhovy indikator progresu */}
-          <div className="flex justify-center mb-12">
-            <div className="relative w-[296px] h-[296px]">
+          <div className="flex justify-center mb-6 sm:mb-10 lg:mb-12">
+            <div className="relative w-[220px] h-[220px] sm:w-[260px] sm:h-[260px] lg:w-[296px] lg:h-[296px]">
               {/* Kruhovy progres v SVG */}
               <div className="absolute inset-0 -rotate-90">
                 <svg className="block size-full" fill="none" viewBox="0 0 296 296">
@@ -67,7 +76,7 @@ export default function ResultPage(props: ResultPageProps) {
           </div>
 
           {/* Kontajner s tlacidlami */}
-          <div className="flex flex-nowrap items-center justify-center gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             {/* XP Tlacidlo (Zlte) */}
             <button
               className="bg-[#ffe76f] rounded-[24px] px-8 py-5 transition-colors cursor-default flex-shrink-0"

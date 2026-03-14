@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import svgPaths from "../../../imports/exercise-elements";
+import useViewportScale from "@/app/utils/useViewportScale";
 
 // Rozhranie pre vlastnosti komponentu TextMultipleChoiceExercise
 interface TextMultipleChoiceExerciseProps {
@@ -20,6 +21,8 @@ interface TextMultipleChoiceExerciseProps {
 
 // Komponent pre textove cvicenie s viacnasobnym vyberom
 export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExerciseProps) {
+  const viewportScale = useViewportScale({ baseHeight: 980, minScale: 0.66 });
+
   // Pomieshaj moznosti raz pri mount komponente alebo ked sa zmenia moznosti
   const shuffledData = useMemo(() => {
     const indicesArray = props.options.map((_, index) => index);
@@ -226,12 +229,22 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
   };
 
   return (
-    <div className="fixed inset-0 bg-[#1c1c1e] z-[105] flex flex-col">
+    <div className="fixed inset-0 bg-[#1c1c1e] z-[105] overflow-hidden">
+      <div
+        className="absolute top-0 left-1/2"
+        style={{
+          width: `${100 / viewportScale}%`,
+          height: `${100 / viewportScale}%`,
+          transform: `translateX(-50%) scale(${viewportScale})`,
+          transformOrigin: 'top center',
+        }}
+      >
+        <div className="relative h-full flex flex-col">
       {/* Hlavny obsah - vertikalne centrovaný */}
-      <div className="flex-1 flex flex-col items-center justify-center px-12 pb-[110px] pt-4 overflow-y-auto">
+      <div className="flex-1 flex flex-col items-center justify-start lg:justify-center px-4 sm:px-8 lg:px-12 pb-[120px] pt-4 overflow-y-auto">
         {/* Otazka s pozadim obdlznika - Fixna vyska na desktope */}
-        <div className="w-full max-w-[1208px] mb-[50px] flex-shrink-0">
-          <div className="bg-[#212123] rounded-[38px] px-[80px] py-0 h-[492px] flex items-center justify-center overflow-auto">
+        <div className="w-full max-w-[1208px] mb-6 lg:mb-[50px] flex-shrink-0">
+          <div className="bg-[#212123] rounded-[38px] px-6 sm:px-10 lg:px-[80px] py-0 min-h-[220px] h-[min(492px,48vh)] flex items-center justify-center overflow-auto">
             <p className={`font-normal ${getDynamicQuestionFontSize()} ${getDynamicQuestionLineHeight()} text-center text-white whitespace-pre-wrap`}>
               {props.question}
             </p>
@@ -248,7 +261,7 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
                 key={index}
                 onClick={() => handleOptionClick(index)}
                 disabled={isSubmitted}
-                className="h-[120px] rounded-[18px] flex items-center justify-center transition-all duration-200 hover:opacity-90 px-4 py-2"
+                className="h-[88px] sm:h-[104px] lg:h-[120px] rounded-[18px] flex items-center justify-center transition-all duration-200 hover:opacity-90 px-4 py-2"
                 style={{
                   backgroundColor: styles.background,
                   boxShadow: styles.boxShadow,
@@ -269,22 +282,22 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
 
       {/* Spodna navigacia */}
       <div className="absolute bottom-0 left-0 right-0 bg-[#1c1c1e] border-t border-[#4e4e57]">
-        <div className="w-full max-w-[1920px] mx-auto px-16">
-          <div className="h-[110px] flex items-center justify-between gap-4">
+        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-16">
+          <div className="h-[clamp(84px,11vh,110px)] flex items-center justify-between gap-4">
             {/* Tlacidlo Back */}
             {!props.hideBackButton ? (
               <button
                 onClick={props.onBack}
-                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-bold text-[20.55px] rounded-[15px] transition-colors px-6 h-[54px] w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0 leading-none"
+                className="bg-[#ec4545] hover:bg-[#d63939] text-white font-bold text-[clamp(16px,2vw,20.55px)] rounded-[15px] transition-colors px-6 h-[clamp(44px,6vh,54px)] w-[140px] sm:w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0 leading-none"
               >
                 ← Back
               </button>
             ) : (
-              <div className="w-[155px] flex-shrink-0" />
+              <div className="w-[140px] sm:w-[155px] flex-shrink-0" />
             )}
 
             {/* Progress bodky */}
-            <div className="flex items-center justify-center gap-[50px] flex-1 overflow-x-auto px-1">
+            <div className="flex items-center justify-center gap-4 sm:gap-8 lg:gap-[50px] flex-1 overflow-x-auto px-1">
               {Array.from({ length: props.totalSlides }).map((_, index) => (
                 <div key={index} className="flex-shrink-0">
                   <div className="w-[24px] h-[24px]">
@@ -304,7 +317,7 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
               <button
                 onClick={handleSubmitButton}
                 disabled={selectedOptions.length === 0}
-                className={`h-[54px] w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0 ${
+                className={`h-[clamp(44px,6vh,54px)] w-[140px] sm:w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0 ${
                   selectedOptions.length === 0 ? "bg-gray-400 cursor-not-allowed opacity-50" : "bg-[#4cb025] hover:bg-[#5cc030]"
                 }`}
               >
@@ -320,7 +333,7 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
             ) : (
               <button
                 onClick={props.onNext}
-                className="bg-[#4cb025] hover:bg-[#5cc030] h-[54px] w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
+                className="bg-[#4cb025] hover:bg-[#5cc030] h-[clamp(44px,6vh,54px)] w-[140px] sm:w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
               >
                 <p className="font-bold text-[20.55px] text-center text-white">
                   {props.isLastExercise ? 'Finish' : 'Next →'}
@@ -328,6 +341,8 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
               </button>
             )}
           </div>
+        </div>
+      </div>
         </div>
       </div>
     </div>
