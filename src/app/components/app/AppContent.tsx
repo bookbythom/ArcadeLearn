@@ -70,7 +70,7 @@ const INITIAL_AUTH_SESSION_STATE: AuthSessionState = {
 };
 
 // Pomocna funkcia pre API chyby
-const EMPTY_ERROR_HANDLER = async (_error: unknown) => {};
+async function EMPTY_ERROR_HANDLER(_error: unknown) {}
 
 // Z URL zistime ci sme v learn route a aku temu mame otvorenu
 function parseLearnRoute(pathname: string): { level: LearnLevel; theme: number } | null {
@@ -128,9 +128,9 @@ export default function AppContent() {
   } = authSessionState;
 
   // Pomocny updater, aby sme nemenili cely session state rucne na viac miestach
-  const updateAuthSessionState = (patch: Partial<AuthSessionState>) => {
+  function updateAuthSessionState(patch: Partial<AuthSessionState>) {
     setAuthSessionState((previousState) => ({ ...previousState, ...patch }));
-  };
+  }
 
   // Synchronizacia aktivnej karty podla aktualnej URL
   useEffect(() => {
@@ -155,36 +155,20 @@ export default function AppContent() {
     if (!isLoggedIn || isLoadingAuth) return;
 
     // Jemny prefetch po prihlaseni, aby boli prve prechody rychlejsie
-    const prefetch = () => {
+    function prefetch() {
       void loadHomePage();
       void loadLearnPage();
       void loadProfilePopup();
-    };
-
-    const win = window as Window & {
-      requestIdleCallback?: (callback: () => void, options?: { timeout?: number }) => number;
-      cancelIdleCallback?: (handle: number) => void;
-    };
-    let idleId: number | undefined;
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
-
-    if (typeof win.requestIdleCallback === "function") {
-      idleId = win.requestIdleCallback(prefetch, { timeout: 1500 });
-    } else {
-      timeoutId = setTimeout(prefetch, 800);
     }
 
+    const timeoutId = setTimeout(prefetch, 800);
+
     return () => {
-      if (idleId !== undefined && typeof win.cancelIdleCallback === "function") {
-        win.cancelIdleCallback(idleId);
-      }
-      if (timeoutId !== undefined) {
-        clearTimeout(timeoutId);
-      }
+      clearTimeout(timeoutId);
     };
   }, [isLoggedIn, isLoadingAuth]);
 
-  const handleTabHoverPrefetch = (tab: AppTab) => {
+  function handleTabHoverPrefetch(tab: AppTab) {
     // Prefetch po hoveri skrati cakanie pri kliknuti
     if (!isLoggedIn) return;
     if (tab === "home") {
@@ -194,21 +178,21 @@ export default function AppContent() {
     } else if (tab === "admin" && isAdmin) {
       void loadAdminPanel();
     }
-  };
+  }
 
-  const handleProfileHoverPrefetch = () => {
+  function handleProfileHoverPrefetch() {
     // Prefetch profilu pri hoveri na avatar
     if (!isLoggedIn) return;
     void loadProfilePopup();
-  };
+  }
 
-  const handleIslandHoverPrefetch = () => {
+  function handleIslandHoverPrefetch() {
     // Prefetch LearnPage pri hoveri nad ostrovcekom
     if (!isLoggedIn) return;
     void loadLearnPage();
-  };
+  }
 
-  const forceLogout = async (tokenToRevoke?: string) => {
+  async function forceLogout(tokenToRevoke?: string) {
     try {
       if (tokenToRevoke) {
         await authAPI.signOut(tokenToRevoke);
@@ -227,7 +211,7 @@ export default function AppContent() {
       localStorage.clear();
       navigate("/signin");
     }
-  };
+  }
 
   const handleApiError = EMPTY_ERROR_HANDLER;
 
@@ -269,7 +253,7 @@ export default function AppContent() {
     checkSession();
   }, []);
 
-  const loadUserData = async (token: string, email?: string) => {
+  async function loadUserData(token: string, email?: string) {
     // Nacitanie profilu/progressu/streaku + admin statusu
     const result = await loadUserDataHelper(token, email || currentUserEmail, {
       setUserProfile: setUserProfile,
@@ -348,9 +332,9 @@ export default function AppContent() {
     }
 
     return result;
-  };
+  }
 
-  const saveToBackend = <T,>(data: T, saveFunction: (token: string, data: T) => Promise<unknown>) => {
+  function saveToBackend<T>(data: T, saveFunction: (token: string, data: T) => Promise<unknown>) {
     // Auto-save je vypnuty pocas prveho loadu, aby sa neprepisi initial data
     if (!accessToken || !isLoggedIn || isInitialLoad) return;
     const timeoutId = setTimeout(async () => {
@@ -363,14 +347,14 @@ export default function AppContent() {
       }
     }, 500);
     return () => clearTimeout(timeoutId);
-  };
+  }
 
   useEffect(() => saveToBackend(userProgress, progressAPI.updateProgress), [userProgress, accessToken, isLoggedIn, isInitialLoad]);
   useEffect(() => saveToBackend(islandProgress, progressAPI.updateIslands), [islandProgress, accessToken, isLoggedIn, isInitialLoad]);
   useEffect(() => saveToBackend(islandExerciseData, progressAPI.updateExerciseData), [islandExerciseData, accessToken, isLoggedIn, isInitialLoad]);
 
   // Nazov temy pouzivame v LearnPage headri
-  const getThemeName = (level: LearnLevel, theme: number): string => {
+  function getThemeName(level: LearnLevel, theme: number): string {
     if (theme === 0) {
       const names = {
         beginner: "Beginner Final Test",
@@ -380,9 +364,9 @@ export default function AppContent() {
       return names[level];
     }
     return LEVEL_CONFIG[level].themes?.[theme - 1]?.title || `Theme ${theme}`;
-  };
+  }
 
-  const handleIslandClick = (level: LearnLevel, theme: number, _isFinal: boolean) => {
+  function handleIslandClick(level: LearnLevel, theme: number, _isFinal: boolean) {
     // Admin moze ist na ktorukolvek temu bez podmienok
     if (isAdmin) {
       navigate(`/learn/${level}/${theme}`);
@@ -415,9 +399,9 @@ export default function AppContent() {
     }
 
     navigate(`/learn/${level}/${theme}`);
-  };
+  }
 
-  const handleLearnComplete = async (correctAnswers: number, totalExercises: number) => {
+  async function handleLearnComplete(correctAnswers: number, totalExercises: number) {
     // Po dokonceni ostrovceka prepocitame XP a odomykanie dalsieho kroku
     if (!currentLearnLevel || currentLearnTheme === null || currentLearnTheme === undefined) return;
 
@@ -484,9 +468,9 @@ export default function AppContent() {
     } catch {
       // Zlyhanie streak requestu nemoze blokovat dokoncenu lekciu.
     }
-  };
+  }
 
-  const handleTabChange = (tab: AppTab) => {
+  function handleTabChange(tab: AppTab) {
     // Klik na tab meni route + pripadne refreshne mistakes list
     setActiveTab(tab);
     if (tab === "mistakes") {
@@ -497,16 +481,16 @@ export default function AppContent() {
     } else {
       navigate("/");
     }
-  };
+  }
 
-  const handleProfileClick = () => {
+  function handleProfileClick() {
     // Profil modal iba pre prihlaseneho usera
     if (isLoggedIn) {
       setModalState("profile");
     } else {
       navigate("/signin");
     }
-  };
+  }
 
   if (isLoadingAuth) {
     // Kym overujeme session, zobrazime loader

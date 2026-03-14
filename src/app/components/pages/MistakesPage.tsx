@@ -29,7 +29,7 @@ export default function MistakesPage(props: MistakesPageProps) {
   
   // Nacitanie mistakes pri pripojeni komponentu
   useEffect(() => {
-    const loadMistakes = () => {
+    function loadMistakes() {
       // Nacitame mistakes zoskupene podla temy
       const groupedMistakes = getMistakesGroupedByTheme(props.userEmail);
       setMistakesGroupedByTheme(groupedMistakes);
@@ -37,7 +37,7 @@ export default function MistakesPage(props: MistakesPageProps) {
       // Skontrolujeme ci su vsetky chyby opravene
       const areAllFixed = hasFixedAllMistakes(props.userEmail);
       setAllMistakesAreFixed(areAllFixed);
-    };
+    }
     
     loadMistakes();
   }, [props.refreshTrigger, props.userEmail]);
@@ -59,7 +59,7 @@ export default function MistakesPage(props: MistakesPageProps) {
   }
 
   // Funkcia na formatovanie typu cvicenia do citelneho textu
-  const formatExerciseTypeToReadableText = (exerciseType: string): string => {
+  function formatExerciseTypeToReadableText(exerciseType: string): string {
     if (exerciseType === 'single-choice') {
       return 'Single Choice';
     } else if (exerciseType === 'multiple-choice') {
@@ -73,7 +73,7 @@ export default function MistakesPage(props: MistakesPageProps) {
     } else {
       return exerciseType;
     }
-  };
+  }
 
   // Skontrolujeme ci existuju nejake chyby
   const mistakesExist = mistakesGroupedByTheme.length > 0;

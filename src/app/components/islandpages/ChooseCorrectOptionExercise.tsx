@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import svgPaths from "../../../imports/exercise-elements";
 import useViewportScale from "@/app/utils/useViewportScale";
 
@@ -20,23 +20,24 @@ interface ChooseCorrectOptionExerciseProps {
   hideBackButton?: boolean;
 }
 
+function createShuffledOptions(options: string[]): string[] {
+  const optionsCopy = [...options];
+
+  for (let i = optionsCopy.length - 1; i > 0; i--) {
+    const randomIndex = Math.floor(Math.random() * (i + 1));
+    const temp = optionsCopy[i];
+    optionsCopy[i] = optionsCopy[randomIndex];
+    optionsCopy[randomIndex] = temp;
+  }
+
+  return optionsCopy;
+}
+
 // Komponent pre vyber spravnej moznosti z dropdown menu
 export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionExerciseProps) {
   const viewportScale = useViewportScale({ baseHeight: 980, minScale: 0.66 });
 
-  // Pomieshaj moznosti raz pri mount komponente alebo ked sa zmenia moznosti
-  const shuffledOptions = useMemo(() => {
-    const optionsCopy = [...props.options];
-    
-    // Fisher-Yates shuffle algoritmus
-    for (let i = optionsCopy.length - 1; i > 0; i--) {
-      const randomIndex = Math.floor(Math.random() * (i + 1));
-      const temp = optionsCopy[i];
-      optionsCopy[i] = optionsCopy[randomIndex];
-      optionsCopy[randomIndex] = temp;
-    }
-    return optionsCopy;
-  }, [props.options.join(',')]);
+  const [shuffledOptions, setShuffledOptions] = useState<string[]>(() => createShuffledOptions(props.options));
 
   // State premenne
   const [selectedOption, setSelectedOption] = useState<string | null>(
@@ -45,8 +46,12 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(props.initialIsSubmitted || false);
 
+  useEffect(() => {
+    setShuffledOptions(createShuffledOptions(props.options));
+  }, [props.options.join(',')]);
+
   // Funkcia pre odoslanie odpovede
-  const handleSubmitButton = () => {
+  function handleSubmitButton() {
     setIsSubmitted(true);
     if (props.onStateChange) {
       props.onStateChange({ 0: selectedOption || "" }, true);
@@ -55,7 +60,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
       const isCorrect = selectedOption === props.correctAnswer[0];
       props.onAnswerSubmit(isCorrect);
     }
-  };
+  }
 
   // Spracovanie stlacenia klavesy Enter
   useEffect(() => {
@@ -84,13 +89,13 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
   }, [props.initialSelectedOptions, props.initialIsSubmitted]);
 
   // Funkcia pre prepnutie dropdown menu
-  const toggleExpandDropdown = () => {
+  function toggleExpandDropdown() {
     if (isSubmitted) return;
     setIsExpanded(!isExpanded);
-  };
+  }
 
   // Funkcia pre vyber moznosti
-  const selectOption = (option: string) => {
+  function selectOption(option: string) {
     if (isSubmitted) return;
 
     setSelectedOption(option);
@@ -99,21 +104,21 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
     if (props.onStateChange) {
       props.onStateChange({ 0: option }, false);
     }
-  };
+  }
 
   // Funkcia pre farbu pozadia dropdown tlacidla
-  const getBackgroundColor = () => {
+  function getBackgroundColor() {
     if (!isSubmitted) {
       return "#d9d9d9";
     }
     return selectedOption === props.correctAnswer[0] ? "#4cb025" : "#ec4545";
-  };
+  }
 
   // Funkcia pre parsovanie otazky
-  const parseQuestion = () => {
+  function parseQuestion() {
     const parts = props.question.split("________");
     return parts;
-  };
+  }
 
   const questionParts = parseQuestion();
 

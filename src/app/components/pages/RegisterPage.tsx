@@ -18,7 +18,7 @@ export default function RegisterPage(props: RegisterPageProps) {
   const [emailInputValue, setEmailInputValue] = useState("");
   const [passwordInputValue, setPasswordInputValue] = useState("");
 
-  const handleFormSubmit = (event?: React.FormEvent) => {
+  function handleFormSubmit(event?: React.FormEvent) {
     event?.preventDefault();
 
     if (nameInputValue.trim() === "" || emailInputValue.trim() === "" || passwordInputValue.trim() === "") {
@@ -50,7 +50,11 @@ export default function RegisterPage(props: RegisterPageProps) {
     }
 
     props.onSubmit(nameValue, emailLowercase, passwordInputValue);
-  };
+  }
+
+  function handleSignInClick() {
+    navigate('/signin');
+  }
 
   const isCurrentlyLoading = props.isLoading === true;
 
@@ -106,7 +110,7 @@ export default function RegisterPage(props: RegisterPageProps) {
         <div className="mt-8 sm:mt-10 lg:mt-12 text-center text-white text-[14px] sm:text-[16px]">
           <span>Already have an account? </span>
           <button
-            onClick={() => navigate('/signin')}
+            onClick={handleSignInClick}
             className="underline hover:text-[#4cb025] transition-colors"
           >
             Sign in

@@ -131,7 +131,7 @@ export function HomePage(props: HomePageProps) {
   };
 
   // Funkcia na vykreslenie ostrovov pre danu uroven
-  const renderIslandsForLevel = (levelName: 'beginner' | 'intermediate' | 'professional') => {
+  function renderIslandsForLevel(levelName: 'beginner' | 'intermediate' | 'professional') {
     const resultElements = [];
     
     // Najprv vykreslime 12 normalnych ostrovov
@@ -211,7 +211,7 @@ export function HomePage(props: HomePageProps) {
     resultElements.push(finalTestElement);
     
     return resultElements;
-  };
+  }
 
   // Effect pre sledovanie viditelnej sekcie pomocou Intersection Observer
   useEffect(() => {

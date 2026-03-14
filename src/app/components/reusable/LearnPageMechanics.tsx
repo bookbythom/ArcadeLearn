@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useLayoutEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { beginnerThemes, type KeywordDefinition } from "@/app/data/beginnerthemes";
 import { intermediateThemes } from "@/app/data/intermediatethemes";
 import { professionalThemes } from "@/app/data/professionalthemes";
@@ -7,14 +7,14 @@ import { Pencil, Upload } from "lucide-react";
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 
-const getErrorMessage = (error: unknown, fallback: string) => {
+function getErrorMessage(error: unknown, fallback: string) {
   if (error instanceof Error && error.message) {
     return error.message;
   }
   return fallback;
-};
+}
 
-const validateImageFile = (file: File): string | null => {
+function validateImageFile(file: File): string | null {
   if (!file.type.startsWith("image/")) {
     return "Please select an image file";
   }
@@ -24,17 +24,17 @@ const validateImageFile = (file: File): string | null => {
   }
 
   return null;
-};
+}
 
 // Funkcia pre prednacitanie obrazku
-const preloadImage = (url: string): Promise<void> => {
+function preloadImage(url: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve();
     img.onerror = reject;
     img.src = url;
   });
-};
+}
 
 // Rozhranie pre vlastnosti popupu pre keyword
 interface KeywordPopupProps {
@@ -63,7 +63,7 @@ function KeywordPopup(props: KeywordPopupProps) {
   });
   
   // Effect pre nastavenie pozicie popupu bez flickeru pred prvym paintom
-  useLayoutEffect(() => {
+  useEffect(() => {
     setIsPositionReady(false);
 
     if (popupRef.current) {
@@ -75,17 +75,20 @@ function KeywordPopup(props: KeywordPopupProps) {
       let x = props.position.x;
       let y = props.position.y;
       let transform = "translate(10px, -50%)";
+      let useLeftSide = false;
       
       // Kontrola ci popup preleze cez pravu hranu
       if (props.position.x + rect.width + 20 > viewportWidth) {
-        // Umiestnime na lavu stranu keywordu
-        x = props.position.x;
-        transform = "translate(calc(-100% - 10px), -50%)";
+        useLeftSide = true;
       }
       
+      if (useLeftSide) {
+        transform = "translate(calc(-100% - 10px), -50%)";
+      }
+
       // Kontrola ci popup preleze cez lavu hranu (ked je umiestneny nalavo)
-      if (transform.includes("-100%") && x - rect.width - 10 < 0) {
-        // Vycentrujeme ho horizontalne
+      if (useLeftSide && x - rect.width - 10 < 0) {
+        // Ked uz sa nevojde ani nalavo, vycentrujeme ho horizontalne
         x = viewportWidth / 2;
         transform = "translate(-50%, -50%)";
       }
@@ -106,7 +109,7 @@ function KeywordPopup(props: KeywordPopupProps) {
   }, [props.position.x, props.position.y, props.imageUrl]);
 
   // Funkcia pre pridanie alebo zmenu obrazku
-  const handleUploadKeywordImage = () => {
+  function handleUploadKeywordImage() {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
@@ -137,10 +140,10 @@ function KeywordPopup(props: KeywordPopupProps) {
       }
     };
     input.click();
-  };
+  }
 
   // Funkcia pre vymazanie obrazku
-  const handleRemoveImage = async () => {
+  async function handleRemoveImage() {
     setShowActionModal(false);
     
     if (!confirm("Are you sure you want to remove this image?")) {
@@ -161,7 +164,7 @@ function KeywordPopup(props: KeywordPopupProps) {
     } catch (error: unknown) {
       alert(getErrorMessage(error, "Failed to remove image"));
     }
-  };
+  }
   
   return (
     <>

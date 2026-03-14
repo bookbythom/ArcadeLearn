@@ -43,12 +43,12 @@ interface UseExerciseTypePopupParams {
 }
 
 // Hook pre popup s nazvom typu cvicenia pri prvom vstupe na slide
-const useExerciseTypePopup = ({
+function useExerciseTypePopup({
   currentSlideIndex,
   isFinalTest,
   numberOfExercises,
   exercises
-}: UseExerciseTypePopupParams) => {
+}: UseExerciseTypePopupParams) {
   const [popupState, setPopupState] = useState<ExerciseTypePopupState>({
     visible: false,
     exerciseTypeName: ""
@@ -68,24 +68,24 @@ const useExerciseTypePopup = ({
     }
   }, [currentSlideIndex, visitedSlides, isFinalTest, numberOfExercises, exercises]);
 
-  const closePopup = () => {
+  function closePopup() {
     setPopupState((previousState) => ({ ...previousState, visible: false }));
-  };
+  }
 
   return { popupState, closePopup };
-};
+}
 
 // Hook pre review mode (prechod iba cez nespravne odpovede)
-const useReviewMode = () => {
+function useReviewMode() {
   const [reviewState, setReviewState] = useState<ReviewState>({ active: false, incorrectExerciseIndices: [] });
 
-  const startReview = (incorrectExerciseIndices: number[]) => {
+  function startReview(incorrectExerciseIndices: number[]) {
     setReviewState({ active: true, incorrectExerciseIndices });
-  };
+  }
 
-  const stopReview = () => {
+  function stopReview() {
     setReviewState({ active: false, incorrectExerciseIndices: [] });
-  };
+  }
 
   return {
     reviewModeActive: reviewState.active,
@@ -93,7 +93,7 @@ const useReviewMode = () => {
     startReview,
     stopReview
   };
-};
+}
 
 interface UseContentSlideTimerParams {
   currentSlideIndex: number;
@@ -102,7 +102,7 @@ interface UseContentSlideTimerParams {
 }
 
 // Hook pre 30s timer na content slide pri beznom userovi
-const useContentSlideTimer = ({ currentSlideIndex, isFinalTest, isAdmin }: UseContentSlideTimerParams) => {
+function useContentSlideTimer({ currentSlideIndex, isFinalTest, isAdmin }: UseContentSlideTimerParams) {
   const [timerSeconds, setTimerSeconds] = useState(30);
   const [canUserProceed, setCanUserProceed] = useState(false);
 
@@ -131,7 +131,7 @@ const useContentSlideTimer = ({ currentSlideIndex, isFinalTest, isAdmin }: UseCo
   }, [currentSlideIndex, isAdmin, isFinalTest]);
 
   return { timerSeconds, canUserProceed };
-};
+}
 
 // Hlavny komponent pre ucenie sa a cvicenia na ostrove
 export default function LearnPage(props: LearnPageProps) {
@@ -205,7 +205,7 @@ export default function LearnPage(props: LearnPageProps) {
   }, [showResultsPage, hasCalledCompleteCallback, exerciseResults, exerciseStates, props.userEmail, props.level, props.theme, props.themeName, props.accessToken, isFinalTest, themeData, numberOfExercises, props.onComplete]);
 
   // Funkcia pre prechod na dalsi slide
-  const handleNextButton = () => {
+  function handleNextButton() {
     if (reviewModeActive) {
       const currentIndex = incorrectExerciseIndices.indexOf(currentSlideIndex);
       if (currentIndex !== -1 && currentIndex < incorrectExerciseIndices.length - 1) {
@@ -221,10 +221,10 @@ export default function LearnPage(props: LearnPageProps) {
         setShowResultsPage(true);
       }
     }
-  };
+  }
 
   // Funkcia pre prechod na predchadzajuci slide
-  const handlePreviousButton = () => {
+  function handlePreviousButton() {
     if (reviewModeActive) {
       const currentIndex = incorrectExerciseIndices.indexOf(currentSlideIndex);
       if (currentIndex > 0) {
@@ -243,10 +243,10 @@ export default function LearnPage(props: LearnPageProps) {
         }
       }
     }
-  };
+  }
 
   // Funkcia pre back button
-  const handleBackButton = () => {
+  function handleBackButton() {
     if (currentSlideIndex === 0) {
       const confirmExit = window.confirm("Are you sure you want to leave? Your progress will be lost.");
       if (confirmExit) {
@@ -255,19 +255,19 @@ export default function LearnPage(props: LearnPageProps) {
     } else {
       handlePreviousButton();
     }
-  };
+  }
 
   // Funkcia pre odoslanie odpovede
-  const handleAnswerSubmit = (slideIndex: number, isCorrect: boolean) => {
+  function handleAnswerSubmit(slideIndex: number, isCorrect: boolean) {
     setExerciseResults(previousResults => {
       const newResults = [...previousResults];
       newResults[slideIndex] = isCorrect;
       return newResults;
     });
-  };
+  }
 
   // Funkcia pre kontrolu chyb
-  const handleCheckMistakesButton = () => {
+  function handleCheckMistakesButton() {
     const incorrectIndices = exerciseResults
       .map((result, index) => (result === false && index > 0 ? index : -1))
       .filter(index => index !== -1);
@@ -277,20 +277,20 @@ export default function LearnPage(props: LearnPageProps) {
       setCurrentSlideIndex(incorrectIndices[0]);
       setShowResultsPage(false);
     }
-  };
+  }
 
   // Funkcia pre dokoncenie
-  const handleFinishButton = () => {
+  function handleFinishButton() {
     const correctCount = exerciseResults.filter(result => result === true).length;
     if (props.onComplete && !hasCalledCompleteCallback) {
       props.onComplete(correctCount, numberOfExercises);
       setHasCalledCompleteCallback(true);
     }
     props.onBack();
-  };
+  }
 
   // Funkcia pre vykreslovanie navigacneho baru
-  const renderNavigationBar = () => {
+  function renderNavigationBar() {
     const isContentSlide = !isFinalTest && currentSlideIndex === 0;
     const shouldShowTimer = isContentSlide && !props.isAdmin && !canUserProceed;
 
@@ -329,10 +329,10 @@ export default function LearnPage(props: LearnPageProps) {
         </div>
       </div>
     );
-  };
+  }
 
   // Funkcia pre vykreslovanie cvicenia
-  const renderExercise = () => {
+  function renderExercise() {
     // Ak je to content slide
     if (!isFinalTest && currentSlideIndex === 0) {
       return renderContentSlide({ 
@@ -398,7 +398,7 @@ export default function LearnPage(props: LearnPageProps) {
         })}
       </>
     );
-  };
+  }
 
   // Ak sa zobrazuju vysledky
   if (showResultsPage) {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import svgPaths from "../../../imports/exercise-elements";
 import useViewportScale from "@/app/utils/useViewportScale";
 
@@ -19,48 +19,74 @@ interface TextMultipleChoiceExerciseProps {
   hideBackButton?: boolean;
 }
 
+interface ShuffledMultipleChoiceData {
+  shuffledOptions: string[];
+  indexMap: Map<number, number>;
+  reverseIndexMap: Map<number, number>;
+}
+
+function createShuffledMultipleChoiceData(options: string[]): ShuffledMultipleChoiceData {
+  const indicesArray = options.map((_, index) => index);
+
+  for (let i = indicesArray.length - 1; i > 0; i--) {
+    const randomIndex = Math.floor(Math.random() * (i + 1));
+    const temp = indicesArray[i];
+    indicesArray[i] = indicesArray[randomIndex];
+    indicesArray[randomIndex] = temp;
+  }
+
+  const indexMap = new Map<number, number>();
+  const reverseIndexMap = new Map<number, number>();
+  for (let i = 0; i < indicesArray.length; i++) {
+    indexMap.set(indicesArray[i], i);
+    reverseIndexMap.set(i, indicesArray[i]);
+  }
+
+  return {
+    shuffledOptions: indicesArray.map((i) => options[i]),
+    indexMap,
+    reverseIndexMap,
+  };
+}
+
+function mapInitialSelectedOptions(initial: number[] | undefined, indexMap: Map<number, number>): number[] {
+  const source = initial || [];
+  const mapped: number[] = [];
+
+  for (let i = 0; i < source.length; i++) {
+    const maybeMapped = indexMap.get(source[i]);
+    if (maybeMapped !== undefined) {
+      mapped.push(maybeMapped);
+    }
+  }
+
+  return mapped;
+}
+
 // Komponent pre textove cvicenie s viacnasobnym vyberom
 export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExerciseProps) {
   const viewportScale = useViewportScale({ baseHeight: 980, minScale: 0.66 });
 
-  // Pomieshaj moznosti raz pri mount komponente alebo ked sa zmenia moznosti
-  const shuffledData = useMemo(() => {
-    const indicesArray = props.options.map((_, index) => index);
-    
-    // Fisher-Yates shuffle algoritmus
-    for (let i = indicesArray.length - 1; i > 0; i--) {
-      const randomIndex = Math.floor(Math.random() * (i + 1));
-      const temp = indicesArray[i];
-      indicesArray[i] = indicesArray[randomIndex];
-      indicesArray[randomIndex] = temp;
-    }
-    
-    // Mapa originalneho indexu na pomieshany index
-    const indexMap = new Map<number, number>();
-    const reverseIndexMap = new Map<number, number>();
-    indicesArray.forEach((originalIndex, shuffledIndex) => {
-      indexMap.set(originalIndex, shuffledIndex);
-      reverseIndexMap.set(shuffledIndex, originalIndex);
-    });
-    
-    return {
-      shuffledOptions: indicesArray.map(i => props.options[i]),
-      indexMap,
-      reverseIndexMap
-    };
-  }, [props.options.join(',')]);
-
-  // Konvertuj initial selected options z originalnych indexov na pomieshane indexy
-  const initialShuffledOptions = useMemo(() => {
-    return (props.initialSelectedOptions || []).map(originalIndex => shuffledData.indexMap.get(originalIndex)).filter((idx): idx is number => idx !== undefined);
-  }, [props.initialSelectedOptions, shuffledData.indexMap]);
+  const [shuffledData, setShuffledData] = useState<ShuffledMultipleChoiceData>(() =>
+    createShuffledMultipleChoiceData(props.options)
+  );
 
   // State premenne
-  const [selectedOptions, setSelectedOptions] = useState<number[]>(initialShuffledOptions);
+  const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(props.initialIsSubmitted || false);
 
+  useEffect(() => {
+    setShuffledData(createShuffledMultipleChoiceData(props.options));
+  }, [props.options.join(',')]);
+
+  useEffect(() => {
+    const mappedSelected = mapInitialSelectedOptions(props.initialSelectedOptions, shuffledData.indexMap);
+    setSelectedOptions(mappedSelected);
+    setIsSubmitted(props.initialIsSubmitted || false);
+  }, [props.initialSelectedOptions, props.initialIsSubmitted, shuffledData]);
+
   // Funkcia pre odoslanie odpovede
-  const handleSubmitButton = () => {
+  function handleSubmitButton() {
     if (selectedOptions.length > 0) {
       setIsSubmitted(true);
       
@@ -77,7 +103,7 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
         props.onAnswerSubmit(isCorrect);
       }
     }
-  };
+  }
 
   // Spracovanie stlacenia klavesy Enter
   useEffect(() => {
@@ -96,7 +122,7 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
   }, [isSubmitted, selectedOptions, props.onNext]);
 
   // Funkcia pre kliknutie na moznost
-  const handleOptionClick = (shuffledIndex: number) => {
+  function handleOptionClick(shuffledIndex: number) {
     if (!isSubmitted) {
       if (selectedOptions.includes(shuffledIndex)) {
         // Ak je moznost uz vybrata, odstran ju
@@ -118,7 +144,7 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
         }
       }
     }
-  };
+  }
 
   // Funkcia pre ziskanie stylou moznosti
   const getOptionStyles = (shuffledIndex: number) => {

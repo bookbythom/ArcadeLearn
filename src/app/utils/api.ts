@@ -10,15 +10,15 @@ export interface APIError extends Error {
 }
 
 // Pomocna funkcia: z neznamej chyby vytiahne bezpecny text
-const getErrorMessage = (error: unknown, fallback = 'Unknown error') => {
+function getErrorMessage(error: unknown, fallback = 'Unknown error') {
   if (error instanceof Error && error.message) {
     return error.message;
   }
   return fallback;
-};
+}
 
 // Vytvorenie error objektu
-const makeAPIError = (response: Response, data: unknown): APIError => {
+function makeAPIError(response: Response, data: unknown): APIError {
   let errorMessage = 'API request failed';
 
   if (typeof data === 'object' && data !== null) {
@@ -34,10 +34,10 @@ const makeAPIError = (response: Response, data: unknown): APIError => {
   error.status = response.status;
   error.data = data;
   return error;
-};
+}
 
 // Vytvorenie headers pre API requesty
-const makeHeaders = (accessToken?: string, skipWarning = false) => {
+function makeHeaders(accessToken?: string, skipWarning = false) {
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
     'apikey': publicAnonKey,
@@ -51,63 +51,31 @@ const makeHeaders = (accessToken?: string, skipWarning = false) => {
   }
   
   return headers;
-};
+}
 
 // Fetch s retry mechanikou
 async function doFetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
-  // Simple retry cyklus: timeout + exponential-ish delay
-  let attemptNumber = 0;
-  
-  while (attemptNumber < maxRetries) {
+  // Jednoduchy retry cyklus pre docasne vypadky siete
+  let attemptNumber = 1;
+
+  while (attemptNumber <= maxRetries) {
     try {
-      const abortController = new AbortController();
-      const timeoutMs = 15000;
-      
-      const timeout = setTimeout(() => {
-        abortController.abort();
-      }, timeoutMs);
-      
-      const requestOptions = {
-        ...options,
-        signal: abortController.signal
-      };
-      
-      const resp = await fetch(url, requestOptions);
-      
-      clearTimeout(timeout);
-      return resp;
+      return await fetch(url, options);
     } catch (error: unknown) {
-      let isTimeout = false;
-
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        isTimeout = true;
-      }
-
       const errorMessage = getErrorMessage(error);
-      if (errorMessage.includes('aborted')) {
-        isTimeout = true;
+
+      if (attemptNumber === maxRetries) {
+        throw new Error('Network error: ' + (errorMessage || 'Failed to connect to server'));
       }
 
-      let errMsg = errorMessage;
-      if (isTimeout) {
-        errMsg = 'Request timeout (15s)';
-      }
-
-      if (attemptNumber === maxRetries - 1) {
-        if (isTimeout) {
-          throw new Error('Request timeout - Server did not respond within 15 seconds. The backend might be slow or unavailable.');
-        }
-        throw new Error('Network error: ' + (errMsg || 'Failed to connect to server'));
-      }
-      
-      // Delay pred dalsim pokusom
-      const delayMs = 1000 * (attemptNumber + 1);
+      // Kratka pauza pred dalsim pokusom
+      const delayMs = 1000;
       await new Promise(resolve => setTimeout(resolve, delayMs));
-      
+
       attemptNumber = attemptNumber + 1;
     }
   }
-  
+
   throw new Error('All retries failed');
 }
 

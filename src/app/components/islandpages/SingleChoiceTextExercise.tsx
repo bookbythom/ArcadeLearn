@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import svgPaths from "../../../imports/exercise-elements";
 import useViewportScale from "@/app/utils/useViewportScale";
 
@@ -19,42 +19,61 @@ interface SingleChoiceTextExerciseProps {
   hideBackButton?: boolean;
 }
 
+interface ShuffledSingleChoiceData {
+  shuffledOptions: string[];
+  indexMap: Map<number, number>;
+}
+
+function createShuffledSingleChoiceData(options: string[]): ShuffledSingleChoiceData {
+  const indicesArray = options.map((_, index) => index);
+
+  for (let i = indicesArray.length - 1; i > 0; i--) {
+    const randomIndex = Math.floor(Math.random() * (i + 1));
+    const temp = indicesArray[i];
+    indicesArray[i] = indicesArray[randomIndex];
+    indicesArray[randomIndex] = temp;
+  }
+
+  const indexMap = new Map<number, number>();
+  for (let i = 0; i < indicesArray.length; i++) {
+    indexMap.set(indicesArray[i], i);
+  }
+
+  return {
+    shuffledOptions: indicesArray.map((i) => options[i]),
+    indexMap: indexMap,
+  };
+}
+
 // Komponent pre textove cvicenie s jednou moznostou
 export default function SingleChoiceTextExercise(props: SingleChoiceTextExerciseProps) {
   const viewportScale = useViewportScale({ baseHeight: 980, minScale: 0.66 });
 
-  // Pomieshaj moznosti raz pri mount komponente alebo ked sa zmenia moznosti
-  const shuffledData = useMemo(() => {
-    const indicesArray = props.options.map((_, index) => index);
-    
-    // Fisher-Yates shuffle algoritmus
-    for (let i = indicesArray.length - 1; i > 0; i--) {
-      const randomIndex = Math.floor(Math.random() * (i + 1));
-      const temp = indicesArray[i];
-      indicesArray[i] = indicesArray[randomIndex];
-      indicesArray[randomIndex] = temp;
-    }
-    
-    // Mapa originalneho indexu na pomieshany index
-    const indexMap = new Map<number, number>();
-    indicesArray.forEach((originalIndex, shuffledIndex) => {
-      indexMap.set(originalIndex, shuffledIndex);
-    });
-    
-    return {
-      shuffledOptions: indicesArray.map(i => props.options[i]),
-      indexMap: indexMap
-    };
-  }, [props.options.join(',')]);
+  const [shuffledData, setShuffledData] = useState<ShuffledSingleChoiceData>(() =>
+    createShuffledSingleChoiceData(props.options)
+  );
 
   // State premenne
-  const [selectedOption, setSelectedOption] = useState<number | null>(
-    props.initialSelectedOption !== null ? shuffledData.indexMap.get(props.initialSelectedOption || 0) ?? null : null
-  );
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(props.initialIsSubmitted || false);
 
+  useEffect(() => {
+    setShuffledData(createShuffledSingleChoiceData(props.options));
+  }, [props.options.join(',')]);
+
+  useEffect(() => {
+    if (props.initialSelectedOption !== null && props.initialSelectedOption !== undefined) {
+      const mappedIndex = shuffledData.indexMap.get(props.initialSelectedOption);
+      setSelectedOption(mappedIndex ?? null);
+    } else {
+      setSelectedOption(null);
+    }
+
+    setIsSubmitted(props.initialIsSubmitted || false);
+  }, [props.initialSelectedOption, props.initialIsSubmitted, shuffledData]);
+
   // Funkcia pre odoslanie odpovede
-  const handleSubmitButton = () => {
+  function handleSubmitButton() {
     if (selectedOption !== null) {
       setIsSubmitted(true);
       
@@ -69,7 +88,7 @@ export default function SingleChoiceTextExercise(props: SingleChoiceTextExercise
         props.onAnswerSubmit(isCorrect);
       }
     }
-  };
+  }
 
   // Spracovanie stlacenia klavesy Enter
   useEffect(() => {
@@ -88,7 +107,7 @@ export default function SingleChoiceTextExercise(props: SingleChoiceTextExercise
   }, [selectedOption, isSubmitted, props.onAnswerSubmit]);
 
   // Funkcia pre kliknutie na moznost
-  const handleOptionClick = (index: number) => {
+  function handleOptionClick(index: number) {
     if (!isSubmitted) {
       setSelectedOption(index);
       
@@ -99,7 +118,7 @@ export default function SingleChoiceTextExercise(props: SingleChoiceTextExercise
         props.onStateChange(originalIndex, false);
       }
     }
-  };
+  }
 
   // Funkcia pre farbu pozadia tlacidla
   const getOptionBackgroundColor = (index: number) => {

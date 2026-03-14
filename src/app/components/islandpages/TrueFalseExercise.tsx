@@ -32,7 +32,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
   const correctAnswerBoolean = Boolean(props.correctAnswer);
 
   // Funkcia pre odeslanie odpovede
-  const handleSubmitButton = () => {
+  function handleSubmitButton() {
     if (selectedOption !== null) {
       setIsSubmitted(true);
       if (props.onStateChange) {
@@ -43,7 +43,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
         props.onAnswerSubmit(isCorrect);
       }
     }
-  };
+  }
 
   // Spracovanie stlacenia klavesy Enter
   useEffect(() => {
@@ -62,14 +62,14 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
   }, [selectedOption, isSubmitted, props.onAnswerSubmit, props.correctAnswer]);
 
   // Funkcia pre kliknutie na moznost
-  const handleOptionClick = (value: boolean) => {
+  function handleOptionClick(value: boolean) {
     if (!isSubmitted) {
       setSelectedOption(value);
       if (props.onStateChange) {
         props.onStateChange(value, false);
       }
     }
-  };
+  }
 
   // Funkcia pre farbu pozadia tlacidla
   const getOptionBackgroundColor = (value: boolean) => {

@@ -116,10 +116,13 @@ const testIslandByLevel: Record<"beginner" | "intermediate" | "professional", Is
 // Hlavny IslandRenderer komponent
 export default function IslandRenderer(props: IslandRendererProps) {
   // Nastavime default hodnotu pre exercisesCorrect
-  const exercisesCorrectCount = props.exercisesCorrect || 0;
+  let exercisesCorrectCount = 0;
+  if (props.exercisesCorrect !== undefined) {
+    exercisesCorrectCount = props.exercisesCorrect;
+  }
 
   // Render funkcia
-  const renderIsland = () => {
+  function renderIsland() {
     // Ak je ostrov locked, zobrazime locked verziu
     if (props.status === "locked") {
       // Locked test island alebo locked regular island
@@ -168,7 +171,7 @@ export default function IslandRenderer(props: IslandRendererProps) {
 
     // Fallback ak nenajdeme spravny ostrov
     return <LockedIsland onClick={props.onClick} />;
-  };
+  }
 
   // Urcime ci zobrazit progress arcs (kruzky s progressom)
   const shouldShowProgressArcs = (

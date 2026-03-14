@@ -37,7 +37,7 @@ export function Header(props: HeaderProps) {
   const progressWidth = levelProgressPercent + '%';
   
   // Handler pre streak klik
-  const handleStreakClick = () => {
+  function handleStreakClick() {
     const dayLabel = props.streakCount === 1 ? 'day' : 'days';
     let message = 'Current streak: ' + props.streakCount + ' ' + dayLabel + '!';
 
@@ -52,7 +52,7 @@ export function Header(props: HeaderProps) {
     }
     
     alert(message);
-  };
+  }
   
   // Styling pre streak
   let streakIconClass = 'transition-all';

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ViewportScaleOptions {
   baseWidth?: number;
@@ -10,39 +10,52 @@ interface ViewportScaleOptions {
 // Returns a smooth scale factor based on current viewport size.
 export default function useViewportScale(options: ViewportScaleOptions = {}) {
   const { baseWidth = 1440, baseHeight = 980, minScale = 0.68, maxScale = 1 } = options;
-
-  const getViewportSize = () => {
+  const [scale, setScale] = useState(() => {
     if (typeof window === "undefined") {
-      return { width: baseWidth, height: baseHeight };
+      return 1;
     }
-    return { width: window.innerWidth, height: window.innerHeight };
-  };
 
-  const [viewportSize, setViewportSize] = useState<{ width: number; height: number }>(getViewportSize);
+    const widthScale = window.innerWidth / baseWidth;
+    const heightScale = window.innerHeight / baseHeight;
+    const smallerRatio = Math.min(widthScale, heightScale);
+
+    if (smallerRatio < minScale) {
+      return minScale;
+    }
+    if (smallerRatio > maxScale) {
+      return maxScale;
+    }
+    return smallerRatio;
+  });
 
   useEffect(() => {
-    let animationFrameId = 0;
+    const updateScale = () => {
+      const widthScale = window.innerWidth / baseWidth;
+      const heightScale = window.innerHeight / baseHeight;
+      const smallerRatio = Math.min(widthScale, heightScale);
 
-    const updateSize = () => {
-      cancelAnimationFrame(animationFrameId);
-      animationFrameId = requestAnimationFrame(() => {
-        setViewportSize({ width: window.innerWidth, height: window.innerHeight });
-      });
+      let nextScale = smallerRatio;
+      if (nextScale < minScale) {
+        nextScale = minScale;
+      }
+      if (nextScale > maxScale) {
+        nextScale = maxScale;
+      }
+
+      setScale(nextScale);
     };
 
-    updateSize();
-    window.addEventListener("resize", updateSize);
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    updateScale();
+    window.addEventListener("resize", updateScale);
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("resize", updateSize);
+      window.removeEventListener("resize", updateScale);
     };
-  }, []);
+  }, [baseWidth, baseHeight, minScale, maxScale]);
 
-  return useMemo(() => {
-    const widthScale = viewportSize.width / baseWidth;
-    const heightScale = viewportSize.height / baseHeight;
-    const rawScale = Math.min(widthScale, heightScale);
-    return Math.min(maxScale, Math.max(minScale, rawScale));
-  }, [viewportSize, baseWidth, baseHeight, minScale, maxScale]);
+  return scale;
 }

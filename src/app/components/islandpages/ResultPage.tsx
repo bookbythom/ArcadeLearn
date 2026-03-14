@@ -15,7 +15,10 @@ export default function ResultPage(props: ResultPageProps) {
   const viewportScale = useViewportScale({ baseHeight: 930, minScale: 0.7 });
 
   // Vypocet percentualneho uspesnosti
-  const percentageScore = (props.correctAnswers / props.totalExercises) * 100;
+  let percentageScore = 0;
+  if (props.totalExercises > 0) {
+    percentageScore = (props.correctAnswers / props.totalExercises) * 100;
+  }
   
   // Konstanty pre kruhovy indikator
   const circleRadius = 140;
