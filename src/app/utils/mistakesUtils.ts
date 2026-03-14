@@ -24,6 +24,32 @@ export interface UserMistakes {
   [key: string]: ThemeMistakes;
 }
 
+function getMistakesHydratedKey(userEmail: string): string {
+  return 'mistakes_hydrated_' + userEmail;
+}
+
+function setMistakesHydrated(userEmail: string, value: boolean): void {
+  if (typeof window === 'undefined' || !userEmail) {
+    return;
+  }
+
+  const hydratedKey = getMistakesHydratedKey(userEmail);
+  if (value) {
+    localStorage.setItem(hydratedKey, 'true');
+  } else {
+    localStorage.removeItem(hydratedKey);
+  }
+}
+
+function hasMistakesHydrated(userEmail: string): boolean {
+  if (typeof window === 'undefined' || !userEmail) {
+    return false;
+  }
+
+  const hydratedKey = getMistakesHydratedKey(userEmail);
+  return localStorage.getItem(hydratedKey) === 'true';
+}
+
 // Nacitanie mistakes z localStorage
 export function getUserMistakes(userEmail: string): UserMistakes {
   if (typeof window === 'undefined') {
@@ -73,13 +99,23 @@ export function saveUserMistakes(mistakes: UserMistakes, userEmail: string): voi
 }
 
 // Synchronizacia mistakes na backend
-export async function syncMistakesToBackend(accessToken: string, mistakes: UserMistakes): Promise<void> {
+export async function syncMistakesToBackend(accessToken: string, mistakes: UserMistakes, userEmail?: string): Promise<void> {
   if (!accessToken) {
     return;
   }
   
   if (accessToken === 'DEMO_TOKEN') {
     return;
+  }
+
+  // Ochrana: ak sa backend mistakes nepodarilo nacitat a lokalny stav je prazdny,
+  // neposielame prazdny objekt, aby sme omylom neprepisali data na serveri.
+  if (userEmail) {
+    const noMistakesLocally = Object.keys(mistakes).length === 0;
+    const hydratedFromBackend = hasMistakesHydrated(userEmail);
+    if (noMistakesLocally && !hydratedFromBackend) {
+      return;
+    }
   }
 
   try {
@@ -117,6 +153,7 @@ export async function loadMistakesFromBackend(accessToken: string, userEmail: st
       // Vycistenie nevalidnych tem
       const cleaned = cleanInvalidThemes(backendData);
       saveUserMistakes(cleaned, userEmail);
+      setMistakesHydrated(userEmail, true);
       
       // Pocitanie celkoveho poctu chyb
       let totalCount = 0;
@@ -135,10 +172,12 @@ export async function loadMistakesFromBackend(accessToken: string, userEmail: st
       
       return cleaned;
     } else if (Array.isArray(backendData)) {
+      setMistakesHydrated(userEmail, true);
       return {};
     }
   } catch (error) {
-    // Tichý error handling
+    // Pri zlyhani nacitania nedovolime prazdny sync, kym nepride uspesny load.
+    setMistakesHydrated(userEmail, false);
   }
   
   return getUserMistakes(userEmail);
@@ -171,7 +210,7 @@ export async function replaceThemeMistakes(
   saveUserMistakes(currentMistakes, userEmail);
   
   if (accessToken) {
-    await syncMistakesToBackend(accessToken, currentMistakes);
+    await syncMistakesToBackend(accessToken, currentMistakes, userEmail);
   }
 }
 
