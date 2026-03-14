@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { beginnerThemes, type KeywordDefinition } from "@/app/data/beginnerthemes";
 import { intermediateThemes } from "@/app/data/intermediatethemes";
 import { professionalThemes } from "@/app/data/professionalthemes";
@@ -55,14 +55,17 @@ interface KeywordPopupProps {
 function KeywordPopup(props: KeywordPopupProps) {
   const [showActionModal, setShowActionModal] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
+  const [isPositionReady, setIsPositionReady] = useState(false);
   const [adjustedPosition, setAdjustedPosition] = useState({
     x: props.position.x,
     y: props.position.y,
     transform: "translate(10px, -50%)",
   });
   
-  // Effect pre nastavenie pozicie popupu
-  useEffect(() => {
+  // Effect pre nastavenie pozicie popupu bez flickeru pred prvym paintom
+  useLayoutEffect(() => {
+    setIsPositionReady(false);
+
     if (popupRef.current) {
       const popup = popupRef.current;
       const rect = popup.getBoundingClientRect();
@@ -98,6 +101,7 @@ function KeywordPopup(props: KeywordPopupProps) {
       }
       
       setAdjustedPosition({ x, y, transform });
+      setIsPositionReady(true);
     }
   }, [props.position.x, props.position.y, props.imageUrl]);
 
@@ -172,6 +176,8 @@ function KeywordPopup(props: KeywordPopupProps) {
           left: `${adjustedPosition.x}px`,
           top: `${adjustedPosition.y}px`,
           transform: adjustedPosition.transform,
+          opacity: isPositionReady ? 1 : 0,
+          visibility: isPositionReady ? "visible" : "hidden",
         }}
         onClick={(e) => e.stopPropagation()}
       >
