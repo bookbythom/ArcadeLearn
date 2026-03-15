@@ -27,6 +27,23 @@ const hasStatus401 = (error: unknown): boolean => {
   return typeof error === 'object' && error !== null && 'status' in error && (error as { status?: number }).status === 401;
 };
 
+function getFallbackUserName(email: string): string {
+  const nameFromEmail = email.split('@')[0];
+  return nameFromEmail || 'User';
+}
+
+function getDefaultProgress(): UserProgress {
+  return {
+    level: 0,
+    totalXP: 0,
+    sectionXP: {
+      beginner: 0,
+      intermediate: 0,
+      professional: 0,
+    },
+  };
+}
+
 // Funkcia na nacitanie user dat z backendu
 export async function loadUserData(
   token: string,
@@ -54,10 +71,7 @@ export async function loadUserData(
     }
     
     // Fallback profil
-    let userName = currentUserEmail.split('@')[0];
-    if (!userName) {
-      userName = 'User';
-    }
+    const userName = getFallbackUserName(currentUserEmail);
     
     callbacks.setUserProfile({
       name: userName,
@@ -77,17 +91,7 @@ export async function loadUserData(
     }
     
     // Defaultny progress
-    const defaultProgress = {
-      level: 0,
-      totalXP: 0,
-      sectionXP: {
-        beginner: 0,
-        intermediate: 0,
-        professional: 0
-      }
-    };
-    
-    callbacks.setUserProgress(defaultProgress);
+    callbacks.setUserProgress(getDefaultProgress());
   }
 
   // Nacitanie island progressu
@@ -119,11 +123,7 @@ export async function loadUserData(
     callbacks.setStreakCount(streakCount);
     
     if (callbacks.setStreakActiveToday) {
-      let isActive = streak.activeToday;
-      if (!isActive) {
-        isActive = false;
-      }
-      callbacks.setStreakActiveToday(isActive);
+      callbacks.setStreakActiveToday(Boolean(streak.activeToday));
     }
   } catch (error: unknown) {
     if (hasStatus401(error)) {

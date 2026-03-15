@@ -69,13 +69,12 @@ export function getUserMistakes(userEmail: string): UserMistakes {
       
       // Kontrola ci je to pole (stary format)
       if (Array.isArray(parsedData)) {
-        const emptyObj = {};
-        localStorage.setItem(storageKey, JSON.stringify(emptyObj));
-        return emptyObj;
+        localStorage.setItem(storageKey, JSON.stringify({}));
+        return {};
       }
       
       return parsedData;
-    } catch (e) {
+    } catch {
       return {};
     }
   }
@@ -139,15 +138,7 @@ export async function loadMistakesFromBackend(accessToken: string, userEmail: st
     const backendData = await mistakesAPI.getMistakes(accessToken);
     
     // Kontrola ci su data validne
-    let isValidData = false;
-    
-    if (backendData) {
-      if (typeof backendData === 'object') {
-        if (!Array.isArray(backendData)) {
-          isValidData = true;
-        }
-      }
-    }
+    const isValidData = Boolean(backendData && typeof backendData === 'object' && !Array.isArray(backendData));
     
     if (isValidData) {
       // Vycistenie nevalidnych tem
@@ -253,12 +244,7 @@ export function getMistakesGroupedByTheme(userEmail: string): ThemeMistakes[] {
     const theme = values[i];
     
     // Musi mat mistakes
-    let hasMistakes = false;
-    if (theme.mistakes) {
-      if (theme.mistakes.length > 0) {
-        hasMistakes = true;
-      }
-    }
+    const hasMistakes = Boolean(theme.mistakes && theme.mistakes.length > 0);
     
     if (!hasMistakes) {
       continue;
@@ -303,12 +289,7 @@ export function hasEverHadMistakes(userEmail: string): boolean {
   
   const historyKey = 'mistakes_history_' + userEmail;
   const historyValue = localStorage.getItem(historyKey);
-  
-  if (historyValue === 'true') {
-    return true;
-  }
-  
-  return false;
+  return historyValue === 'true';
 }
 
 // Oznacenie ze uzivatel mal chyby
@@ -329,12 +310,7 @@ export function markHasHadMistakes(userEmail: string): void {
 export function hasFixedAllMistakes(userEmail: string): boolean {
   const currentCount = getTotalMistakesCount(userEmail);
   const hadMistakes = hasEverHadMistakes(userEmail);
-  
-  if (hadMistakes && currentCount === 0) {
-    return true;
-  }
-  
-  return false;
+  return hadMistakes && currentCount === 0;
 }
 
 // Vycistenie nevalidnych tem

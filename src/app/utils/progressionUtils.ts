@@ -10,11 +10,11 @@ export interface UserProgress {
 }
 
 // Konstanty pre XP system
-const xpCorrect = 5; // Opravene z 10 na 5 XP za spravne cvicenie
-const finalTestXp = 300;
-const maxLevel = 15;
-const maxTotalXpForLeveling = 1050; // 3 urovne * 350 XP za 100%
-const xpPerLevel = 70;
+const XP_PER_CORRECT_ANSWER = 5;
+const FINAL_TEST_UNLOCK_XP = 300;
+const MAX_LEVEL = 15;
+const MAX_TOTAL_XP_FOR_LEVELING = 1050; // 3 urovne * 350 XP za 100%
+const XP_PER_LEVEL = 70;
 
 function clamp(value: number, min: number, max: number): number {
   if (value < min) {
@@ -27,8 +27,8 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 function getLevelStartXp(level: number): number {
-  const safeLevel = clamp(level, 0, maxLevel);
-  return safeLevel * xpPerLevel;
+  const safeLevel = clamp(level, 0, MAX_LEVEL);
+  return safeLevel * XP_PER_LEVEL;
 }
 
 // Funkcia na vypocet levelu
@@ -37,9 +37,9 @@ function calculateLevel(totalXP: number): number {
     return 0;
   }
 
-  const safeTotalXp = clamp(totalXP, 0, maxTotalXpForLeveling);
-  const computedLevel = Math.floor(safeTotalXp / xpPerLevel);
-  return clamp(computedLevel, 0, maxLevel);
+  const safeTotalXp = clamp(totalXP, 0, MAX_TOTAL_XP_FOR_LEVELING);
+  const computedLevel = Math.floor(safeTotalXp / XP_PER_LEVEL);
+  return clamp(computedLevel, 0, MAX_LEVEL);
 }
 
 // Vypocet zarobionych XP
@@ -48,7 +48,7 @@ export function calculateXPEarned(_totalExercises: number, correctAnswers: numbe
   
   // Za kazdu spravnu odpoved
   for (let i = 0; i < correctAnswers; i++) {
-    earnedXP = earnedXP + xpCorrect;
+    earnedXP = earnedXP + XP_PER_CORRECT_ANSWER;
   }
   
   return earnedXP;
@@ -88,7 +88,7 @@ export function addXP(
 
 // Kontrola ci je final test odomknuty
 export function isFinalTestUnlocked(sectionXP: number): boolean {
-  return sectionXP >= finalTestXp;
+  return sectionXP >= FINAL_TEST_UNLOCK_XP;
 }
 
 // Vypocet progressu v aktuálnom leveli (percenta)
@@ -102,10 +102,10 @@ export function getLevelProgress(totalXP: number): number {
     return 0;
   }
 
-  const safeTotalXp = clamp(totalXP, 0, maxTotalXpForLeveling);
+  const safeTotalXp = clamp(totalXP, 0, MAX_TOTAL_XP_FOR_LEVELING);
   const currentLevel = calculateLevel(safeTotalXp);
 
-  if (currentLevel >= maxLevel) {
+  if (currentLevel >= MAX_LEVEL) {
     return 100;
   }
 
