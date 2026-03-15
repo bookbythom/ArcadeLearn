@@ -22,25 +22,41 @@ interface TrueFalseExerciseProps {
 
 // Komponent pre cvicenie Pravda/Nepravda
 export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
+  const {
+    question,
+    options,
+    correctAnswer,
+    onNext,
+    onBack,
+    currentSlide,
+    totalSlides,
+    initialSelectedOption,
+    initialIsSubmitted,
+    onStateChange,
+    isLastExercise,
+    onAnswerSubmit,
+    hideBackButton,
+  } = props;
+
   const viewportScale = useViewportScale({ baseHeight: 980, minScale: 0.66 });
 
   // State premenne
-  const [selectedOption, setSelectedOption] = useState<boolean | null>(props.initialSelectedOption || null);
-  const [isSubmitted, setIsSubmitted] = useState(props.initialIsSubmitted || false);
+  const [selectedOption, setSelectedOption] = useState<boolean | null>(initialSelectedOption || null);
+  const [isSubmitted, setIsSubmitted] = useState(initialIsSubmitted || false);
 
   // Konverzia spravnej odpovede na boolean
-  const correctAnswerBoolean = Boolean(props.correctAnswer);
+  const correctAnswerBoolean = Boolean(correctAnswer);
 
   // Funkcia pre odeslanie odpovede
   function handleSubmitButton() {
     if (selectedOption !== null) {
       setIsSubmitted(true);
-      if (props.onStateChange) {
-        props.onStateChange(selectedOption, true);
+      if (onStateChange) {
+        onStateChange(selectedOption, true);
       }
-      if (props.onAnswerSubmit) {
+      if (onAnswerSubmit) {
         const isCorrect = selectedOption === correctAnswerBoolean;
-        props.onAnswerSubmit(isCorrect);
+        onAnswerSubmit(isCorrect);
       }
     }
   }
@@ -52,21 +68,21 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
         if (!isSubmitted && selectedOption !== null) {
           handleSubmitButton();
         } else if (isSubmitted) {
-          props.onNext();
+          onNext();
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [selectedOption, isSubmitted, props.onAnswerSubmit, props.correctAnswer]);
+  }, [selectedOption, isSubmitted, onAnswerSubmit, correctAnswer]);
 
   // Funkcia pre kliknutie na moznost
   function handleOptionClick(value: boolean) {
     if (!isSubmitted) {
       setSelectedOption(value);
-      if (props.onStateChange) {
-        props.onStateChange(value, false);
+      if (onStateChange) {
+        onStateChange(value, false);
       }
     }
   }
@@ -126,7 +142,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
 
   // Funkcia pre dynamicku velkost pisma
   const getDynamicFontSize = () => {
-    const totalLength = props.question.length;
+    const totalLength = question.length;
     if (totalLength < 100) return 'text-[52px]';
     if (totalLength < 180) return 'text-[42px]';
     if (totalLength < 280) return 'text-[34px]';
@@ -157,7 +173,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
         <div className="w-full max-w-[1214px] mb-8 lg:mb-[100px] flex-shrink-0">
           <div className="bg-[#212123] rounded-[38px] px-6 sm:px-10 lg:px-[80px] py-0 min-h-[220px] h-[min(492px,48vh)] flex items-center justify-center overflow-auto">
             <p className={`font-normal ${getDynamicFontSize()} ${getDynamicLineHeight()} text-center text-white whitespace-pre-wrap`}>
-              {props.question}
+              {question}
             </p>
           </div>
         </div>
@@ -179,7 +195,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
               className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-[40px] leading-[1.3] text-center"
               style={{ color: getOptionTextColor(true) }}
             >
-              {props.options[0]}
+              {options[0]}
             </p>
           </button>
 
@@ -198,7 +214,7 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
               className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-[40px] leading-[1.3] text-center"
               style={{ color: getOptionTextColor(false) }}
             >
-              {props.options[1]}
+              {options[1]}
             </p>
           </button>
         </div>
@@ -209,9 +225,9 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
         <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-16">
           <div className="h-[clamp(84px,11vh,110px)] flex items-center justify-between gap-4">
             {/* Tlacidlo Back */}
-            {!props.hideBackButton ? (
+            {!hideBackButton ? (
               <button
-                onClick={props.onBack}
+                onClick={onBack}
                 className="bg-[#ec4545] hover:bg-[#d63939] text-white font-bold text-[clamp(16px,2vw,20.55px)] rounded-[15px] transition-colors px-6 h-[clamp(44px,6vh,54px)] w-[140px] sm:w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0 leading-none"
               >
                 ← Back
@@ -222,13 +238,13 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
 
             {/* Progress bodky */}
             <div className="flex items-center justify-center gap-4 sm:gap-8 lg:gap-[50px] flex-1 overflow-x-auto px-1">
-              {Array.from({ length: props.totalSlides }).map((_, index) => (
+              {Array.from({ length: totalSlides }).map((_, index) => (
                 <div key={index} className="flex-shrink-0">
                   <div className="w-[24px] h-[24px]">
                     <svg className="block size-full" fill="none" viewBox="0 0 24 24">
                       <path
                         d={svgPaths.p1c665200}
-                        fill={index === props.currentSlide ? "#4CB025" : "#D9D9D9"}
+                        fill={index === currentSlide ? "#4CB025" : "#D9D9D9"}
                       />
                     </svg>
                   </div>
@@ -256,11 +272,11 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
               </button>
             ) : (
               <button
-                onClick={props.onNext}
+                onClick={onNext}
                 className="bg-[#4cb025] hover:bg-[#5cc030] h-[clamp(44px,6vh,54px)] w-[140px] sm:w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
               >
                 <p className="font-bold text-[20.55px] text-center text-white">
-                  {props.isLastExercise ? 'Finish' : 'Next →'}
+                  {isLastExercise ? 'Finish' : 'Next →'}
                 </p>
               </button>
             )}

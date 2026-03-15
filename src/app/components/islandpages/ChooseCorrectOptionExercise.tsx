@@ -35,30 +35,46 @@ function createShuffledOptions(options: string[]): string[] {
 
 // Komponent pre vyber spravnej moznosti z dropdown menu
 export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionExerciseProps) {
+  const {
+    question,
+    options,
+    correctAnswer,
+    onNext,
+    onBack,
+    currentSlide,
+    totalSlides,
+    initialSelectedOptions,
+    initialIsSubmitted,
+    onStateChange,
+    isLastExercise,
+    onAnswerSubmit,
+    hideBackButton,
+  } = props;
+
   const viewportScale = useViewportScale({ baseHeight: 980, minScale: 0.66 });
 
-  const [shuffledOptions, setShuffledOptions] = useState<string[]>(() => createShuffledOptions(props.options));
+  const [shuffledOptions, setShuffledOptions] = useState<string[]>(() => createShuffledOptions(options));
 
   // State premenne
   const [selectedOption, setSelectedOption] = useState<string | null>(
-    props.initialSelectedOptions?.[0] || null
+    initialSelectedOptions?.[0] || null
   );
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(props.initialIsSubmitted || false);
+  const [isSubmitted, setIsSubmitted] = useState(initialIsSubmitted || false);
 
   useEffect(() => {
-    setShuffledOptions(createShuffledOptions(props.options));
-  }, [props.options.join(',')]);
+    setShuffledOptions(createShuffledOptions(options));
+  }, [options.join(',')]);
 
   // Funkcia pre odoslanie odpovede
   function handleSubmitButton() {
     setIsSubmitted(true);
-    if (props.onStateChange) {
-      props.onStateChange({ 0: selectedOption || "" }, true);
+    if (onStateChange) {
+      onStateChange({ 0: selectedOption || "" }, true);
     }
-    if (props.onAnswerSubmit) {
-      const isCorrect = selectedOption === props.correctAnswer[0];
-      props.onAnswerSubmit(isCorrect);
+    if (onAnswerSubmit) {
+      const isCorrect = selectedOption === correctAnswer[0];
+      onAnswerSubmit(isCorrect);
     }
   }
 
@@ -69,24 +85,24 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
         if (!isSubmitted && selectedOption !== null) {
           handleSubmitButton();
         } else if (isSubmitted) {
-          props.onNext();
+          onNext();
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isSubmitted, selectedOption, props.onNext]);
+  }, [isSubmitted, selectedOption, onNext]);
 
   // Inicializacia z props
   useEffect(() => {
-    if (props.initialSelectedOptions?.[0]) {
-      setSelectedOption(props.initialSelectedOptions[0]);
+    if (initialSelectedOptions?.[0]) {
+      setSelectedOption(initialSelectedOptions[0]);
     }
-    if (props.initialIsSubmitted !== undefined) {
-      setIsSubmitted(props.initialIsSubmitted);
+    if (initialIsSubmitted !== undefined) {
+      setIsSubmitted(initialIsSubmitted);
     }
-  }, [props.initialSelectedOptions, props.initialIsSubmitted]);
+  }, [initialSelectedOptions, initialIsSubmitted]);
 
   // Funkcia pre prepnutie dropdown menu
   function toggleExpandDropdown() {
@@ -101,8 +117,8 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
     setSelectedOption(option);
     setIsExpanded(false);
 
-    if (props.onStateChange) {
-      props.onStateChange({ 0: option }, false);
+    if (onStateChange) {
+      onStateChange({ 0: option }, false);
     }
   }
 
@@ -111,12 +127,12 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
     if (!isSubmitted) {
       return "#d9d9d9";
     }
-    return selectedOption === props.correctAnswer[0] ? "#4cb025" : "#ec4545";
+    return selectedOption === correctAnswer[0] ? "#4cb025" : "#ec4545";
   }
 
   // Funkcia pre parsovanie otazky
   function parseQuestion() {
-    const parts = props.question.split("________");
+    const parts = question.split("________");
     return parts;
   }
 
@@ -124,7 +140,7 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
 
   // Funkcia pre dynamicku velkost pisma otazky
   const getDynamicQuestionFontSize = () => {
-    const totalLength = props.question.length;
+    const totalLength = question.length;
     if (totalLength < 80) return 'text-[41.1px]';
     if (totalLength < 120) return 'text-[36px]';
     if (totalLength < 180) return 'text-[30px]';
@@ -250,9 +266,9 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
         <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-16">
           <div className="h-[clamp(84px,11vh,110px)] flex items-center justify-between gap-4">
             {/* Tlacidlo Back */}
-            {!props.hideBackButton ? (
+            {!hideBackButton ? (
               <button
-                onClick={props.onBack}
+                onClick={onBack}
                 className="bg-[#ec4545] hover:bg-[#d63939] text-white font-bold text-[clamp(16px,2vw,20.55px)] rounded-[15px] transition-colors px-6 h-[clamp(44px,6vh,54px)] w-[140px] sm:w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0 leading-none"
               >
                 ← Back
@@ -263,13 +279,13 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
 
             {/* Progress bodky */}
             <div className="flex items-center justify-center gap-4 sm:gap-8 lg:gap-[50px] flex-1 overflow-x-auto px-1">
-              {Array.from({ length: props.totalSlides }).map((_, index) => (
+              {Array.from({ length: totalSlides }).map((_, index) => (
                 <div key={index} className="flex-shrink-0">
                   <div className="w-[24px] h-[24px]">
                     <svg className="block size-full" fill="none" viewBox="0 0 24 24">
                       <path
                         d={svgPaths.p1c665200}
-                        fill={index === props.currentSlide ? "#4CB025" : "#D9D9D9"}
+                        fill={index === currentSlide ? "#4CB025" : "#D9D9D9"}
                       />
                     </svg>
                   </div>
@@ -297,11 +313,11 @@ export default function ChooseCorrectOptionExercise(props: ChooseCorrectOptionEx
               </button>
             ) : (
               <button
-                onClick={props.onNext}
+                onClick={onNext}
                 className="bg-[#4cb025] hover:bg-[#5cc030] h-[clamp(44px,6vh,54px)] w-[140px] sm:w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
               >
                 <p className="font-bold text-[20.55px] text-center text-white">
-                  {props.isLastExercise ? 'Finish' : 'Next →'}
+                  {isLastExercise ? 'Finish' : 'Next →'}
                 </p>
               </button>
             )}
