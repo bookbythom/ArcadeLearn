@@ -262,6 +262,10 @@ type IslandState = 'locked' | 'unlocked' | 'completed-perfect' | 'completed-mist
 const VALID_ISLAND_STATES: IslandState[] = ['locked', 'unlocked', 'completed-perfect', 'completed-mistakes'];
 const VALID_ISLAND_KEY_REGEX = /^(beginner|intermediate|professional)-(0|[1-9]|1[0-2])$/;
 const VALID_EXERCISE_DATA_KEY_REGEX = /^(beginner|intermediate|professional)-(0|[1-9]|1[0-2])(-xp-mask)?$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_NAME_LENGTH = 25;
+const ALLOWED_IMAGE_MIME_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
+const MAX_IMAGE_UPLOAD_BYTES = 5 * 1024 * 1024;
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> => {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -389,7 +393,7 @@ const validateProgressPayload = (payload: unknown): { ok: boolean; error?: strin
   const level = payload.level;
   const sectionXP = payload.sectionXP;
 
-  if (!isSafeNumber(totalXP) || totalXP < 0) {
+  if (!isSafeNumber(totalXP) || !Number.isInteger(totalXP) || totalXP < 0) {
     return { ok: false, error: 'Invalid totalXP value' };
   }
 
@@ -405,16 +409,26 @@ const validateProgressPayload = (payload: unknown): { ok: boolean; error?: strin
   const intermediateXP = sectionXP.intermediate;
   const professionalXP = sectionXP.professional;
 
-  if (!isSafeNumber(beginnerXP) || beginnerXP < 0) {
+  if (!isSafeNumber(beginnerXP) || !Number.isInteger(beginnerXP) || beginnerXP < 0 || beginnerXP > 350) {
     return { ok: false, error: 'Invalid sectionXP.beginner value' };
   }
 
-  if (!isSafeNumber(intermediateXP) || intermediateXP < 0) {
+  if (!isSafeNumber(intermediateXP) || !Number.isInteger(intermediateXP) || intermediateXP < 0 || intermediateXP > 350) {
     return { ok: false, error: 'Invalid sectionXP.intermediate value' };
   }
 
-  if (!isSafeNumber(professionalXP) || professionalXP < 0) {
+  if (!isSafeNumber(professionalXP) || !Number.isInteger(professionalXP) || professionalXP < 0 || professionalXP > 350) {
     return { ok: false, error: 'Invalid sectionXP.professional value' };
+  }
+
+  const totalFromSections = beginnerXP + intermediateXP + professionalXP;
+  if (totalXP !== totalFromSections) {
+    return { ok: false, error: 'totalXP must match sectionXP sum' };
+  }
+
+  const expectedLevel = Math.min(15, Math.floor(totalXP / 70));
+  if (level !== expectedLevel) {
+    return { ok: false, error: 'level does not match totalXP' };
   }
 
   return { ok: true };
@@ -470,6 +484,51 @@ const validateMistakesPayload = (payload: unknown): { ok: boolean; error?: strin
   }
 
   return { ok: true };
+};
+
+const validateProfilePayload = (
+  payload: unknown,
+  sessionEmail: string,
+): { ok: boolean; error?: string; normalized?: { name: string; email: string; profilePicture: string } } => {
+  if (!isPlainObject(payload)) {
+    return { ok: false, error: 'Invalid profile payload format' };
+  }
+
+  const rawName = payload.name;
+  const rawEmail = payload.email;
+  const rawProfilePicture = payload.profilePicture;
+
+  if (typeof rawName !== 'string') {
+    return { ok: false, error: 'Invalid profile name' };
+  }
+
+  const normalizedName = rawName.trim();
+  if (normalizedName.length < 2 || normalizedName.length > 25) {
+    return { ok: false, error: 'Invalid profile name length' };
+  }
+
+  const normalizedSessionEmail = sessionEmail.trim().toLowerCase();
+  if (typeof rawEmail !== 'string' || rawEmail.trim().toLowerCase() !== normalizedSessionEmail) {
+    return { ok: false, error: 'Profile email must match session email' };
+  }
+
+  if (typeof rawProfilePicture !== 'string') {
+    return { ok: false, error: 'Invalid profile picture value' };
+  }
+
+  // Base64 string moze byt vacsi, ale stale chceme dat rozumny strop.
+  if (rawProfilePicture.length > 8 * 1024 * 1024) {
+    return { ok: false, error: 'Profile picture payload too large' };
+  }
+
+  return {
+    ok: true,
+    normalized: {
+      name: normalizedName,
+      email: normalizedSessionEmail,
+      profilePicture: rawProfilePicture,
+    },
+  };
 };
 
 const auth = async (context: Context) => {
@@ -562,29 +621,57 @@ app.get(apiRoute('/health'), (c) => c.json({ status: 'ok' }));
 
 app.post(apiRoute('/auth/signup'), async (c) => {
   const { email, password, name } = await c.req.json();
-  if (await kv.get(`user:${email}`)) return c.json({ error: 'Email exists' }, 400);
+  const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+  const cleanPassword = typeof password === 'string' ? password : '';
+  const cleanName = typeof name === 'string' ? name.trim() : '';
+
+  if (!normalizedEmail || !EMAIL_REGEX.test(normalizedEmail)) {
+    return c.json({ error: 'Invalid email format' }, 400);
+  }
+
+  if (cleanPassword.length < 8) {
+    return c.json({ error: 'Password too short' }, 400);
+  }
+
+  if (cleanPassword.includes(' ')) {
+    return c.json({ error: 'Password cannot contain spaces' }, 400);
+  }
+
+  if (cleanName.length < 2) {
+    return c.json({ error: 'Name too short' }, 400);
+  }
+
+  if (cleanName.length > MAX_NAME_LENGTH) {
+    return c.json({ error: 'Name too long' }, 400);
+  }
+
+  if (await kv.get(`user:${normalizedEmail}`)) return c.json({ error: 'Email exists' }, 400);
   const uid = crypto.randomUUID(), tok = crypto.randomUUID();
-  await kv.set(`user:${email}`, JSON.stringify({ userId: uid, email, passwordHash: await createPasswordHash(password), createdAt: new Date().toISOString() }));
-  await kv.set(`session:${tok}`, JSON.stringify({ userId: uid, email, createdAt: new Date().toISOString() }));
-  await kv.set(`profile:${uid}`, JSON.stringify({ name: name || email.split('@')[0], email, profilePicture: '' }));
+  await kv.set(`user:${normalizedEmail}`, JSON.stringify({ userId: uid, email: normalizedEmail, passwordHash: await createPasswordHash(cleanPassword), createdAt: new Date().toISOString() }));
+  await kv.set(`session:${tok}`, JSON.stringify({ userId: uid, email: normalizedEmail, createdAt: new Date().toISOString() }));
+  await kv.set(`profile:${uid}`, JSON.stringify({ name: cleanName || normalizedEmail.split('@')[0], email: normalizedEmail, profilePicture: '' }));
   await kv.set(`progress:${uid}`, JSON.stringify({ level: 0, totalXP: 0, sectionXP: { beginner: 0, intermediate: 0, professional: 0 } }));
   await kv.set(`islands:${uid}`, JSON.stringify({ "beginner-1": "unlocked" }));
   await kv.set(`streak:${uid}`, JSON.stringify({ count: 0, lastIslandCompletedDate: null, activeToday: false }));
-  return c.json({ accessToken: tok, user: { id: uid, email } });
+  return c.json({ accessToken: tok, user: { id: uid, email: normalizedEmail } });
 });
 
 app.post(apiRoute('/auth/signin'), async (c) => {
   const { email, password } = await c.req.json();
-  const ud = await kv.get(`user:${email}`);
+  const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+  const cleanPassword = typeof password === 'string' ? password : '';
+  if (!normalizedEmail || !cleanPassword) return c.json({ error: 'Invalid credentials' }, 401);
+
+  const ud = await kv.get(`user:${normalizedEmail}`);
   if (!ud) return c.json({ error: 'Invalid credentials' }, 401);
   const u = JSON.parse(ud);
-  const verify = await verifyPassword(password, u.passwordHash);
+  const verify = await verifyPassword(cleanPassword, u.passwordHash);
   if (!verify.valid) return c.json({ error: 'Invalid credentials' }, 401);
 
   // Postupna migracia: po prvom uspesnom prihlaseni prepiseme legacy hash na PBKDF2.
   if (verify.needsRehash) {
-    u.passwordHash = await createPasswordHash(password);
-    await kv.set(`user:${email}`, JSON.stringify(u));
+    u.passwordHash = await createPasswordHash(cleanPassword);
+    await kv.set(`user:${normalizedEmail}`, JSON.stringify(u));
   }
 
   const tok = crypto.randomUUID();
@@ -614,27 +701,34 @@ app.put(apiRoute('/profile'), async (c) => {
   const s = await auth(c);
   if (!s) return c.json({ error: 'Unauthorized' }, 401);
   const pd = await c.req.json();
-  await kv.set(`profile:${s.userId}`, JSON.stringify(pd));
-  return c.json({ profile: pd });
+
+  const validation = validateProfilePayload(pd, s.email);
+  if (!validation.ok || !validation.normalized) {
+    return c.json({ error: validation.error || 'Invalid profile payload' }, 400);
+  }
+
+  await kv.set(`profile:${s.userId}`, JSON.stringify(validation.normalized));
+  return c.json({ profile: validation.normalized });
 });
 
 app.post(apiRoute('/profile/change-email-direct'), async (c) => {
   const s = await auth(c);
   if (!s) return c.json({ error: 'Unauthorized' }, 401);
   const { newEmail } = await c.req.json();
-  if (!newEmail) return c.json({ error: 'Email required' }, 400);
-  if (await kv.get(`user:${newEmail}`)) return c.json({ error: 'Email in use' }, 409);
+  const normalizedNewEmail = typeof newEmail === 'string' ? newEmail.trim().toLowerCase() : '';
+  if (!normalizedNewEmail || !EMAIL_REGEX.test(normalizedNewEmail)) return c.json({ error: 'Email required' }, 400);
+  if (await kv.get(`user:${normalizedNewEmail}`)) return c.json({ error: 'Email in use' }, 409);
   const ud = await kv.get(`user:${s.email}`);
   if (!ud) return c.json({ error: 'User not found' }, 404);
   const u = JSON.parse(ud);
-  u.email = newEmail;
+  u.email = normalizedNewEmail;
   await kv.del(`user:${s.email}`);
-  await kv.set(`user:${newEmail}`, JSON.stringify(u));
+  await kv.set(`user:${normalizedNewEmail}`, JSON.stringify(u));
   const pd = await kv.get(`profile:${s.userId}`);
-  if (pd) { const p = JSON.parse(pd); p.email = newEmail; await kv.set(`profile:${s.userId}`, JSON.stringify(p)); }
+  if (pd) { const p = JSON.parse(pd); p.email = normalizedNewEmail; await kv.set(`profile:${s.userId}`, JSON.stringify(p)); }
   const tok = getTok(c), sd = await kv.get(`session:${tok}`);
-  if (sd) { const si = JSON.parse(sd); si.email = newEmail; await kv.set(`session:${tok}`, JSON.stringify(si)); }
-  return c.json({ success: true, newEmail });
+  if (sd) { const si = JSON.parse(sd); si.email = normalizedNewEmail; await kv.set(`session:${tok}`, JSON.stringify(si)); }
+  return c.json({ success: true, newEmail: normalizedNewEmail });
 });
 
 app.post(apiRoute('/profile/change-password-direct'), async (c) => {
@@ -642,7 +736,7 @@ app.post(apiRoute('/profile/change-password-direct'), async (c) => {
   if (!s) return c.json({ error: 'Unauthorized' }, 401);
   const { currentPassword, newPassword } = await c.req.json();
   if (!currentPassword || !newPassword) return c.json({ error: 'Passwords required' }, 400);
-  if (newPassword.length < 6) return c.json({ error: 'Password too short' }, 400);
+  if (newPassword.length < 8) return c.json({ error: 'Password too short' }, 400);
   const ud = await kv.get(`user:${s.email}`);
   if (!ud) return c.json({ error: 'User not found' }, 404);
   const u = JSON.parse(ud);
@@ -901,6 +995,9 @@ app.post(apiRoute('/admin/island-image'), async (c) => {
   const fd = await c.req.formData();
   const lvl = fd.get('level'), thm = fd.get('theme'), imgf = fd.get('image');
   if (!lvl || !thm || !imgf) return c.json({ error: 'Missing fields' }, 400);
+  if (!(imgf instanceof File)) return c.json({ error: 'Invalid image file' }, 400);
+  if (!ALLOWED_IMAGE_MIME_TYPES.includes(imgf.type)) return c.json({ error: 'Unsupported format' }, 400);
+  if (imgf.size > MAX_IMAGE_UPLOAD_BYTES) return c.json({ error: 'File too large' }, 400);
   const su = Deno.env.get('SUPABASE_URL'), sk = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!su || !sk) return c.json({ error: 'Config error' }, 500);
   const sb = createClient(su, sk);
@@ -937,8 +1034,9 @@ app.post(apiRoute('/admin/content-image'), async (c) => {
   const fd = await c.req.formData();
   const lvl = fd.get('level'), thm = fd.get('theme'), idx = fd.get('imageIndex'), imgf = fd.get('image');
   if (!lvl || !thm || !idx || !imgf) return c.json({ error: 'Missing fields' }, 400);
-  const allowed = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
-  if (!allowed.includes(imgf.type)) return c.json({ error: 'Unsupported format' }, 400);
+  if (!(imgf instanceof File)) return c.json({ error: 'Invalid image file' }, 400);
+  if (!ALLOWED_IMAGE_MIME_TYPES.includes(imgf.type)) return c.json({ error: 'Unsupported format' }, 400);
+  if (imgf.size > MAX_IMAGE_UPLOAD_BYTES) return c.json({ error: 'File too large' }, 400);
   const su = Deno.env.get('SUPABASE_URL'), sk = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!su || !sk) return c.json({ error: 'Config error' }, 500);
   const sb = createClient(su, sk);
@@ -985,6 +1083,9 @@ app.post(apiRoute('/admin/keyword-image'), async (c) => {
   const fd = await c.req.formData();
   const lvl = fd.get('level'), thm = fd.get('theme'), idx = fd.get('keywordIndex'), imgf = fd.get('image');
   if (!lvl || !thm || !idx || !imgf) return c.json({ error: 'Missing fields' }, 400);
+  if (!(imgf instanceof File)) return c.json({ error: 'Invalid image file' }, 400);
+  if (!ALLOWED_IMAGE_MIME_TYPES.includes(imgf.type)) return c.json({ error: 'Unsupported format' }, 400);
+  if (imgf.size > MAX_IMAGE_UPLOAD_BYTES) return c.json({ error: 'File too large' }, 400);
   const su = Deno.env.get('SUPABASE_URL'), sk = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
   if (!su || !sk) return c.json({ error: 'Config error' }, 500);
   const sb = createClient(su, sk);
