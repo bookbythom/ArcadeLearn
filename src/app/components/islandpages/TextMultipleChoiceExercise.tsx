@@ -65,25 +65,41 @@ function mapInitialSelectedOptions(initial: number[] | undefined, indexMap: Map<
 
 // Komponent pre textove cvicenie s viacnasobnym vyberom
 export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExerciseProps) {
+  const {
+    question,
+    options,
+    correctAnswer,
+    onNext,
+    onBack,
+    currentSlide,
+    totalSlides,
+    initialSelectedOptions,
+    initialIsSubmitted,
+    onStateChange,
+    isLastExercise,
+    onAnswerSubmit,
+    hideBackButton,
+  } = props;
+
   const viewportScale = useViewportScale({ baseHeight: 980, minScale: 0.66 });
 
   const [shuffledData, setShuffledData] = useState<ShuffledMultipleChoiceData>(() =>
-    createShuffledMultipleChoiceData(props.options)
+    createShuffledMultipleChoiceData(options)
   );
 
   // State premenne
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
-  const [isSubmitted, setIsSubmitted] = useState(props.initialIsSubmitted || false);
+  const [isSubmitted, setIsSubmitted] = useState(initialIsSubmitted || false);
 
   useEffect(() => {
-    setShuffledData(createShuffledMultipleChoiceData(props.options));
-  }, [props.options.join(',')]);
+    setShuffledData(createShuffledMultipleChoiceData(options));
+  }, [options.join(',')]);
 
   useEffect(() => {
-    const mappedSelected = mapInitialSelectedOptions(props.initialSelectedOptions, shuffledData.indexMap);
+    const mappedSelected = mapInitialSelectedOptions(initialSelectedOptions, shuffledData.indexMap);
     setSelectedOptions(mappedSelected);
-    setIsSubmitted(props.initialIsSubmitted || false);
-  }, [props.initialSelectedOptions, props.initialIsSubmitted, shuffledData]);
+    setIsSubmitted(initialIsSubmitted || false);
+  }, [initialSelectedOptions, initialIsSubmitted, shuffledData]);
 
   // Funkcia pre odoslanie odpovede
   function handleSubmitButton() {
@@ -93,14 +109,14 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
       // Konvertuj pomieshane indexy spat na originalne indexy
       const originalIndices = selectedOptions.map(shuffledIdx => shuffledData.reverseIndexMap.get(shuffledIdx)).filter((idx): idx is number => idx !== undefined);
       
-      if (props.onStateChange) {
-        props.onStateChange(originalIndices, true);
+      if (onStateChange) {
+        onStateChange(originalIndices, true);
       }
-      if (props.onAnswerSubmit) {
+      if (onAnswerSubmit) {
         const isCorrect =
-          originalIndices.length === props.correctAnswer.length &&
-          originalIndices.every((opt) => props.correctAnswer.includes(opt));
-        props.onAnswerSubmit(isCorrect);
+          originalIndices.length === correctAnswer.length &&
+          originalIndices.every((opt) => correctAnswer.includes(opt));
+        onAnswerSubmit(isCorrect);
       }
     }
   }
@@ -112,14 +128,14 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
         if (!isSubmitted && selectedOptions.length > 0) {
           handleSubmitButton();
         } else if (isSubmitted) {
-          props.onNext();
+          onNext();
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isSubmitted, selectedOptions, props.onNext]);
+  }, [isSubmitted, selectedOptions, onNext]);
 
   // Funkcia pre kliknutie na moznost
   function handleOptionClick(shuffledIndex: number) {
@@ -128,19 +144,19 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
         // Ak je moznost uz vybrata, odstran ju
         const newOptions = selectedOptions.filter((opt) => opt !== shuffledIndex);
         setSelectedOptions(newOptions);
-        if (props.onStateChange) {
+        if (onStateChange) {
           // Konvertuj pomieshane indexy spat na originalne indexy
           const originalIndices = newOptions.map(idx => shuffledData.reverseIndexMap.get(idx)).filter((idx): idx is number => idx !== undefined);
-          props.onStateChange(originalIndices, false);
+          onStateChange(originalIndices, false);
         }
       } else {
         // Ak nie je vybrata, pridaj ju
         const newOptions = [...selectedOptions, shuffledIndex];
         setSelectedOptions(newOptions);
-        if (props.onStateChange) {
+        if (onStateChange) {
           // Konvertuj pomieshane indexy spat na originalne indexy
           const originalIndices = newOptions.map(idx => shuffledData.reverseIndexMap.get(idx)).filter((idx): idx is number => idx !== undefined);
-          props.onStateChange(originalIndices, false);
+          onStateChange(originalIndices, false);
         }
       }
     }
@@ -153,7 +169,7 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
     
     // Ziskaj originalny index z pomieshaneho indexu
     const originalIndex = shuffledData.reverseIndexMap.get(shuffledIndex);
-    const isCorrect = originalIndex !== undefined && props.correctAnswer.includes(originalIndex);
+    const isCorrect = originalIndex !== undefined && correctAnswer.includes(originalIndex);
 
     if (!isSubmitted) {
       return {
@@ -242,7 +258,7 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
 
   // Funkcia pre dynamicku velkost pisma otazky
   const getDynamicQuestionFontSize = () => {
-    const totalLength = props.question.length;
+    const totalLength = question.length;
     if (totalLength < 100) return 'text-[47.95px]';
     if (totalLength < 180) return 'text-[38px]';
     if (totalLength < 280) return 'text-[32px]';
@@ -272,7 +288,7 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
         <div className="w-full max-w-[1208px] mb-6 lg:mb-[50px] flex-shrink-0">
           <div className="bg-[#212123] rounded-[38px] px-6 sm:px-10 lg:px-[80px] py-0 min-h-[220px] h-[min(492px,48vh)] flex items-center justify-center overflow-auto">
             <p className={`font-normal ${getDynamicQuestionFontSize()} ${getDynamicQuestionLineHeight()} text-center text-white whitespace-pre-wrap`}>
-              {props.question}
+              {question}
             </p>
           </div>
         </div>
@@ -311,9 +327,9 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
         <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-16">
           <div className="h-[clamp(84px,11vh,110px)] flex items-center justify-between gap-4">
             {/* Tlacidlo Back */}
-            {!props.hideBackButton ? (
+            {!hideBackButton ? (
               <button
-                onClick={props.onBack}
+                onClick={onBack}
                 className="bg-[#ec4545] hover:bg-[#d63939] text-white font-bold text-[clamp(16px,2vw,20.55px)] rounded-[15px] transition-colors px-6 h-[clamp(44px,6vh,54px)] w-[140px] sm:w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0 leading-none"
               >
                 ← Back
@@ -324,13 +340,13 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
 
             {/* Progress bodky */}
             <div className="flex items-center justify-center gap-4 sm:gap-8 lg:gap-[50px] flex-1 overflow-x-auto px-1">
-              {Array.from({ length: props.totalSlides }).map((_, index) => (
+              {Array.from({ length: totalSlides }).map((_, index) => (
                 <div key={index} className="flex-shrink-0">
                   <div className="w-[24px] h-[24px]">
                     <svg className="block size-full" fill="none" viewBox="0 0 24 24">
                       <path
                         d={svgPaths.p1c665200}
-                        fill={index === props.currentSlide ? "#4CB025" : "#D9D9D9"}
+                        fill={index === currentSlide ? "#4CB025" : "#D9D9D9"}
                       />
                     </svg>
                   </div>
@@ -358,11 +374,11 @@ export default function TextMultipleChoiceExercise(props: TextMultipleChoiceExer
               </button>
             ) : (
               <button
-                onClick={props.onNext}
+                onClick={onNext}
                 className="bg-[#4cb025] hover:bg-[#5cc030] h-[clamp(44px,6vh,54px)] w-[140px] sm:w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
               >
                 <p className="font-bold text-[20.55px] text-center text-white">
-                  {props.isLastExercise ? 'Finish' : 'Next →'}
+                  {isLastExercise ? 'Finish' : 'Next →'}
                 </p>
               </button>
             )}

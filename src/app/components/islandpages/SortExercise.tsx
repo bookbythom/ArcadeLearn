@@ -115,15 +115,32 @@ function DraggableItemComponent(props: {
 
 // Hlavny komponent cvicenia zoradovania
 function SortExerciseContent(props: SortExerciseProps) {
+  const {
+    question,
+    options,
+    correctAnswer,
+    categories,
+    onNext,
+    onBack,
+    currentSlide,
+    totalSlides,
+    initialItemOrder,
+    initialIsSubmitted,
+    onStateChange,
+    isLastExercise,
+    onAnswerSubmit,
+    hideBackButton,
+  } = props;
+
   const viewportScale = useViewportScale({ baseHeight: 980, minScale: 0.66 });
 
   // Inicializacia draggable poloziek
   const [draggableItems, setDraggableItems] = useState<DraggableItem[]>(() => {
-    if (props.initialItemOrder) {
-      return props.initialItemOrder;
+    if (initialItemOrder) {
+      return initialItemOrder;
     }
-    const items = props.options.map((opt, idx) => {
-      const label = !props.categories && opt.includes(' - ')
+    const items = options.map((opt, idx) => {
+      const label = !categories && opt.includes(' - ')
         ? opt.split(' - ')[1]
         : opt;
       return {
@@ -136,26 +153,26 @@ function SortExerciseContent(props: SortExerciseProps) {
     return items.sort(() => Math.random() - 0.5).map((item, pos) => ({ ...item, position: pos }));
   });
 
-  const [isSubmitted, setIsSubmitted] = useState(props.initialIsSubmitted || false);
+  const [isSubmitted, setIsSubmitted] = useState(initialIsSubmitted || false);
 
   // Funkcia pre odoslanie odpovede
   const handleSubmitButton = () => {
     setIsSubmitted(true);
-    if (props.onStateChange) {
-      props.onStateChange(draggableItems, true);
+    if (onStateChange) {
+      onStateChange(draggableItems, true);
     }
-    if (props.onAnswerSubmit) {
+    if (onAnswerSubmit) {
       let isCorrect = false;
       
       // Kontrola ci je spravna odpoved pole cisel alebo stringov
-      if (Array.isArray(props.correctAnswer) && typeof props.correctAnswer[0] === 'number') {
+      if (Array.isArray(correctAnswer) && typeof correctAnswer[0] === 'number') {
         isCorrect = draggableItems.every((item, index) => {
           const itemOriginalIndex = parseInt(item.id) - 1; // Konvertuj 1-based ID na 0-based index
-          return itemOriginalIndex === props.correctAnswer[index];
+          return itemOriginalIndex === correctAnswer[index];
         });
       } else {
         isCorrect = draggableItems.every((item, index) => {
-          const correctAnswerText = props.correctAnswer[index];
+          const correctAnswerText = correctAnswer[index];
           const compareText = typeof correctAnswerText === 'string' && correctAnswerText.includes(' - ')
             ? correctAnswerText.split(' - ')[1]
             : correctAnswerText;
@@ -163,7 +180,7 @@ function SortExerciseContent(props: SortExerciseProps) {
         });
       }
       
-      props.onAnswerSubmit(isCorrect);
+      onAnswerSubmit(isCorrect);
     }
   };
 
@@ -174,14 +191,14 @@ function SortExerciseContent(props: SortExerciseProps) {
         if (!isSubmitted) {
           handleSubmitButton();
         } else {
-          props.onNext();
+          onNext();
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isSubmitted, props.onNext]);
+  }, [isSubmitted, onNext]);
 
   // Funkcia pre presun polozky
   const moveItem = (dragIndex: number, hoverIndex: number) => {
@@ -191,14 +208,14 @@ function SortExerciseContent(props: SortExerciseProps) {
     newItems.splice(hoverIndex, 0, draggedItem);
     const updatedItems = newItems.map((item, idx) => ({ ...item, position: idx }));
     setDraggableItems(updatedItems);
-    if (props.onStateChange) {
-      props.onStateChange(updatedItems, false);
+    if (onStateChange) {
+      onStateChange(updatedItems, false);
     }
   };
 
   // Funkcia pre dynamicku velkost pisma otazky
   const getDynamicQuestionFontSize = () => {
-    const totalLength = props.question.length;
+    const totalLength = question.length;
     if (totalLength < 60) return 'text-[34.25px]';
     if (totalLength < 100) return 'text-[30px]';
     if (totalLength < 150) return 'text-[26px]';
@@ -228,7 +245,7 @@ function SortExerciseContent(props: SortExerciseProps) {
         <div className="relative w-full max-w-[1278px] mb-6 lg:mb-[66px]">
           <div className="w-full bg-[#212123] rounded-[38px] px-[32px] py-[35px]">
             <p className={`font-normal ${getDynamicQuestionFontSize()} ${getDynamicQuestionLineHeight()} text-center text-white`}>
-              {props.question}
+              {question}
             </p>
           </div>
         </div>
@@ -237,8 +254,8 @@ function SortExerciseContent(props: SortExerciseProps) {
         <div className="w-full max-w-[1242px] grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-[64px]">
           {/* Lavy stlpec - Staticke kategorie */}
           <div className="flex flex-col gap-3 sm:gap-5 lg:gap-[40px]">
-            {props.categories ? (
-              props.categories.map((category, index) => (
+            {categories ? (
+              categories.map((category, index) => (
                 <div
                   key={`category-${index}`}
                   className="h-[88px] sm:h-[104px] lg:h-[120px] w-full bg-[#d9d9d9] rounded-[34px] flex items-center justify-center px-[24px]"
@@ -249,7 +266,7 @@ function SortExerciseContent(props: SortExerciseProps) {
                 </div>
               ))
             ) : (
-              props.options.map((option, index) => {
+              options.map((option, index) => {
                 const parts = option.split(' - ');
                 const leftText = parts[0];
                 return (
@@ -275,8 +292,8 @@ function SortExerciseContent(props: SortExerciseProps) {
                 index={index}
                 moveItem={moveItem}
                 isSubmitted={isSubmitted}
-                correctIndex={Array.isArray(props.correctAnswer) && typeof props.correctAnswer[0] === 'number' ? Number(props.correctAnswer[index]) : index}
-                categories={props.categories}
+                correctIndex={Array.isArray(correctAnswer) && typeof correctAnswer[0] === 'number' ? Number(correctAnswer[index]) : index}
+                categories={categories}
               />
             ))}
           </div>
@@ -288,9 +305,9 @@ function SortExerciseContent(props: SortExerciseProps) {
         <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-16">
           <div className="h-[clamp(84px,11vh,110px)] flex items-center justify-between gap-4">
             {/* Tlacidlo Back */}
-            {!props.hideBackButton ? (
+            {!hideBackButton ? (
               <button
-                onClick={props.onBack}
+                onClick={onBack}
                 className="bg-[#ec4545] hover:bg-[#d63939] text-white font-bold text-[clamp(16px,2vw,20.55px)] rounded-[15px] transition-colors px-6 h-[clamp(44px,6vh,54px)] w-[140px] sm:w-[155px] flex items-center justify-center whitespace-nowrap flex-shrink-0 leading-none"
               >
                 ← Back
@@ -301,13 +318,13 @@ function SortExerciseContent(props: SortExerciseProps) {
 
             {/* Progress bodky */}
             <div className="flex items-center justify-center gap-4 sm:gap-8 lg:gap-[50px] flex-1 overflow-x-auto px-1">
-              {Array.from({ length: props.totalSlides }).map((_, index) => (
+              {Array.from({ length: totalSlides }).map((_, index) => (
                 <div key={index} className="flex-shrink-0">
                   <div className="w-[24px] h-[24px]">
                     <svg className="block size-full" fill="none" viewBox="0 0 24 24">
                       <path
                         d={svgPaths.p1c665200}
-                        fill={index === props.currentSlide ? "#4CB025" : "#D9D9D9"}
+                        fill={index === currentSlide ? "#4CB025" : "#D9D9D9"}
                       />
                     </svg>
                   </div>
@@ -332,11 +349,11 @@ function SortExerciseContent(props: SortExerciseProps) {
               </button>
             ) : (
               <button
-                onClick={props.onNext}
+                onClick={onNext}
                 className="bg-[#4cb025] hover:bg-[#5cc030] h-[clamp(44px,6vh,54px)] w-[140px] sm:w-[155px] rounded-[15px] px-6 flex items-center justify-center gap-[6px] transition-all flex-shrink-0"
               >
                 <p className="font-bold text-[20.55px] text-center text-white">
-                  {props.isLastExercise ? 'Finish' : 'Next →'}
+                  {isLastExercise ? 'Finish' : 'Next →'}
                 </p>
               </button>
             )}
