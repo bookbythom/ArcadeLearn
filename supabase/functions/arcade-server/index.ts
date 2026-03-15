@@ -261,7 +261,7 @@ type IslandState = 'locked' | 'unlocked' | 'completed-perfect' | 'completed-mist
 
 const VALID_ISLAND_STATES: IslandState[] = ['locked', 'unlocked', 'completed-perfect', 'completed-mistakes'];
 const VALID_ISLAND_KEY_REGEX = /^(beginner|intermediate|professional)-(0|[1-9]|1[0-2])$/;
-const VALID_EXERCISE_DATA_KEY_REGEX = /^(beginner|intermediate|professional)-(0|[1-9]|1[0-2])$/;
+const VALID_EXERCISE_DATA_KEY_REGEX = /^(beginner|intermediate|professional)-(0|[1-9]|1[0-2])(-xp-mask)?$/;
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> => {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -431,7 +431,23 @@ const validateExerciseDataPayload = (payload: unknown): { ok: boolean; error?: s
     }
 
     const value = payload[key];
-    if (!isSafeNumber(value) || !Number.isInteger(value) || value < 0 || value > 10) {
+    if (!isSafeNumber(value) || !Number.isInteger(value) || value < 0) {
+      return { ok: false, error: `Invalid exercise-data value for ${key}` };
+    }
+
+    const isMaskKey = key.endsWith('-xp-mask');
+    if (isMaskKey) {
+      // Regular island (5 cviceni) = maska do 31, final test (10 cviceni) = maska do 1023.
+      const keyParts = key.split('-');
+      const themeNumber = Number(keyParts[1]);
+      const maxMaskValue = themeNumber === 0 ? 1023 : 31;
+      if (value > maxMaskValue) {
+        return { ok: false, error: `Invalid exercise-data mask for ${key}` };
+      }
+      continue;
+    }
+
+    if (value > 10) {
       return { ok: false, error: `Invalid exercise-data value for ${key}` };
     }
   }

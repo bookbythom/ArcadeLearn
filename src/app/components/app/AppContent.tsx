@@ -193,6 +193,36 @@ export default function AppContent() {
     void loadLearnPage();
   }
 
+  function countSetBits(value: number): number {
+    let bits = value;
+    let count = 0;
+
+    while (bits > 0) {
+      if ((bits & 1) === 1) {
+        count++;
+      }
+      bits >>= 1;
+    }
+
+    return count;
+  }
+
+  function buildFallbackMaskFromBest(bestCorrectAnswers: number, totalExercises: number): number {
+    if (bestCorrectAnswers <= 0) {
+      return 0;
+    }
+
+    if (bestCorrectAnswers >= totalExercises) {
+      return (1 << totalExercises) - 1;
+    }
+
+    let fallbackMask = 0;
+    for (let i = 0; i < bestCorrectAnswers; i++) {
+      fallbackMask |= (1 << i);
+    }
+    return fallbackMask;
+  }
+
   function getCompletedIslandsCount(level: LearnLevel): number {
     let completedCount = 0;
     for (let i = 1; i <= 12; i++) {
@@ -443,20 +473,20 @@ export default function AppContent() {
     }
   }
 
-  async function handleLearnComplete(correctAnswers: number, totalExercises: number, fixedPreviousMistakesCount = 0) {
+  async function handleLearnComplete(correctAnswers: number, totalExercises: number, correctMask = 0, attemptStartAwardedMask = 0) {
     // Po dokonceni ostrovceka prepocitame XP a odomykanie dalsieho kroku
     if (currentLearnTheme === null || currentLearnTheme === undefined) return;
 
     const currentKey = `${currentLearnLevel}-${currentLearnTheme}`;
+    const awardedMaskKey = `${currentKey}-xp-mask`;
     const previousBest = islandExerciseData[currentKey] || 0;
-    const improvedBy = Math.max(0, correctAnswers - previousBest);
-    const fixedMistakesDelta = Math.max(0, fixedPreviousMistakesCount);
+    const stateAwardedMask = islandExerciseData[awardedMaskKey] || 0;
+    const fallbackAwardedMask = buildFallbackMaskFromBest(previousBest, totalExercises);
+    const effectivePreviousAwardedMask = Math.max(attemptStartAwardedMask, stateAwardedMask, fallbackAwardedMask);
 
-    // XP dame podla vacsieho ziskaneho progresu:
-    // - lepsi celkovy vysledok oproti best score,
-    // - alebo pocet opravenych starych chyb oproti minulemu pokusu.
-    const progressDelta = Math.max(improvedBy, fixedMistakesDelta);
-    const xpToAward = progressDelta * 5;
+    const newlyAwardedMask = correctMask & ~effectivePreviousAwardedMask;
+    const newlyAwardedCount = countSetBits(newlyAwardedMask);
+    const xpToAward = newlyAwardedCount * 5;
 
     let newProgress = userProgress;
     if (xpToAward > 0) {
@@ -507,7 +537,15 @@ export default function AppContent() {
       return newProgressState;
     });
 
-    setIslandExerciseData((prev) => ({ ...prev, [currentKey]: correctAnswers }));
+    setIslandExerciseData((prev) => {
+      const existingMask = prev[awardedMaskKey] || 0;
+      const mergedMask = existingMask | effectivePreviousAwardedMask | correctMask;
+      return {
+        ...prev,
+        [currentKey]: correctAnswers,
+        [awardedMaskKey]: mergedMask,
+      };
+    });
 
     try {
       // Streak zvysujeme po uspesnom dokonceni lekcie
@@ -547,6 +585,7 @@ export default function AppContent() {
   const isLearnRoute = Boolean(learnRoute);
   const learnIslandKey = learnRoute ? `${learnRoute.level}-${learnRoute.theme}` : null;
   const previousBestCorrectAnswers = learnIslandKey ? (islandExerciseData[learnIslandKey] ?? 0) : 0;
+  const previousAwardedMask = learnIslandKey ? (islandExerciseData[`${learnIslandKey}-xp-mask`] ?? 0) : 0;
 
   // Guard proti direct URL pristupu na zamknute learn route.
   useEffect(() => {
@@ -602,6 +641,7 @@ export default function AppContent() {
                 isAdmin={isAdmin}
                 accessToken={accessToken}
                 previousBestCorrectAnswers={previousBestCorrectAnswers}
+                previousAwardedMask={previousAwardedMask}
               />
             </Suspense>
           )}

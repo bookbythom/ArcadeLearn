@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getUserMistakes, replaceThemeMistakes } from "@/app/utils/mistakesUtils";
+import { replaceThemeMistakes } from "@/app/utils/mistakesUtils";
 import { Dot } from './Dot';
 import ResultPage from './ResultPage';
 import ExerciseTypePopup from '@/app/components/reusable/ExerciseTypePopup';
@@ -15,12 +15,13 @@ interface LearnPageProps {
   level: "beginner" | "intermediate" | "professional";
   theme: number;
   onBack: () => void;
-  onComplete?: (correctAnswers: number, totalExercises: number, fixedPreviousMistakesCount?: number) => void;
+  onComplete?: (correctAnswers: number, totalExercises: number, correctMask?: number, attemptStartAwardedMask?: number) => void;
   userEmail: string;
   themeName: string;
   isAdmin?: boolean;
   accessToken?: string;
   previousBestCorrectAnswers?: number;
+  previousAwardedMask?: number;
 }
 
 type ExerciseStateMap = Record<number, ExerciseState>;
@@ -146,28 +147,55 @@ export default function LearnPage(props: LearnPageProps) {
   const [showResultsPage, setShowResultsPage] = useState(false);
   const [exerciseResults, setExerciseResults] = useState<boolean[]>([]);
   const [hasCalledCompleteCallback, setHasCalledCompleteCallback] = useState(false);
-  const [lastFixedPreviousMistakesCount, setLastFixedPreviousMistakesCount] = useState(0);
   const [exerciseStates, setExerciseStates] = useState<ExerciseStateMap>({});
   const [isInitialized, setIsInitialized] = useState(false);
-  const [initialBestCorrectAnswers, setInitialBestCorrectAnswers] = useState(props.previousBestCorrectAnswers || 0);
 
-  function getFixedPreviousMistakesCount(newMistakes: Omit<import("@/app/utils/mistakesUtils").MistakeExercise, 'timestamp'>[]): number {
-    const themeKey = props.level + '-' + props.theme;
-    const currentMistakesData = getUserMistakes(props.userEmail);
-    const previousThemeMistakes = currentMistakesData[themeKey]?.mistakes || [];
+  function getCorrectMaskFromResults(results: boolean[]): number {
+    let mask = 0;
 
-    const previousMistakeIds = new Set(previousThemeMistakes.map((mistake) => `${mistake.type}::${mistake.question}`));
-    const newMistakeIds = new Set(newMistakes.map((mistake) => `${mistake.type}::${mistake.question}`));
-
-    let fixedPreviousMistakesCount = 0;
-    for (const previousMistakeId of previousMistakeIds) {
-      if (!newMistakeIds.has(previousMistakeId)) {
-        fixedPreviousMistakesCount++;
+    for (let exerciseIndex = 0; exerciseIndex < numberOfExercises; exerciseIndex++) {
+      const resultIndex = isFinalTest ? exerciseIndex : exerciseIndex + 1;
+      if (results[resultIndex] === true) {
+        mask |= (1 << exerciseIndex);
       }
     }
 
-    return fixedPreviousMistakesCount;
+    return mask;
   }
+
+  function countSetBits(value: number): number {
+    let bits = value;
+    let count = 0;
+
+    while (bits > 0) {
+      if ((bits & 1) === 1) {
+        count++;
+      }
+      bits >>= 1;
+    }
+
+    return count;
+  }
+
+  function buildFallbackMaskFromBest(bestCorrectAnswers: number): number {
+    if (bestCorrectAnswers <= 0) {
+      return 0;
+    }
+
+    if (bestCorrectAnswers >= numberOfExercises) {
+      return (1 << numberOfExercises) - 1;
+    }
+
+    let fallbackMask = 0;
+    for (let i = 0; i < bestCorrectAnswers; i++) {
+      fallbackMask |= (1 << i);
+    }
+    return fallbackMask;
+  }
+
+  const effectivePreviousAwardedMask = (props.previousAwardedMask && props.previousAwardedMask > 0)
+    ? props.previousAwardedMask
+    : buildFallbackMaskFromBest(props.previousBestCorrectAnswers ?? 0);
 
   // Lokalna logika je rozdelena do malych hookov kvoli citatelnosti
   const { timerSeconds, canUserProceed } = useContentSlideTimer({
@@ -188,11 +216,6 @@ export default function LearnPage(props: LearnPageProps) {
     exercises: themeData.exercises
   });
 
-  // Zapamataj si best score iba pri vstupe na iny ostrovcek, aby sa po dokonceni neprepisal.
-  useEffect(() => {
-    setInitialBestCorrectAnswers(props.previousBestCorrectAnswers || 0);
-  }, [props.level, props.theme]);
-
   // Inicializacia stavov pre cvicenia
   useEffect(() => {
     const initialStates = initializeExerciseStates(themeData.exercises, isFinalTest);
@@ -206,7 +229,6 @@ export default function LearnPage(props: LearnPageProps) {
     setShowResultsPage(false);
     setExerciseResults([]);
     setHasCalledCompleteCallback(false);
-    setLastFixedPreviousMistakesCount(0);
   }, [props.level, props.theme]);
 
   // Spracovanie dokoncenia a ulozenie chyb
@@ -215,9 +237,7 @@ export default function LearnPage(props: LearnPageProps) {
       // Po dokonceni vytvorime mistakes a ulozime vysledok ostrovceka
       const correctCount = exerciseResults.filter(result => result === true).length;
       const newMistakes = createMistakesFromResults(exerciseResults, exerciseStates, themeData, isFinalTest);
-      const fixedPreviousMistakesCount = getFixedPreviousMistakesCount(newMistakes);
-
-      setLastFixedPreviousMistakesCount(fixedPreviousMistakesCount);
+      const correctMask = getCorrectMaskFromResults(exerciseResults);
       
       replaceThemeMistakes(
         props.userEmail, 
@@ -229,7 +249,7 @@ export default function LearnPage(props: LearnPageProps) {
       );
       
       if (props.onComplete) {
-        props.onComplete(correctCount, numberOfExercises, fixedPreviousMistakesCount);
+        props.onComplete(correctCount, numberOfExercises, correctMask, effectivePreviousAwardedMask);
       }
       setHasCalledCompleteCallback(true);
     }
@@ -322,10 +342,13 @@ export default function LearnPage(props: LearnPageProps) {
   // Funkcia pre dokoncenie
   function handleFinishButton() {
     const correctCount = exerciseResults.filter(result => result === true).length;
+    const correctMask = getCorrectMaskFromResults(exerciseResults);
+
     if (props.onComplete && !hasCalledCompleteCallback) {
-      props.onComplete(correctCount, numberOfExercises, lastFixedPreviousMistakesCount);
+      props.onComplete(correctCount, numberOfExercises, correctMask, effectivePreviousAwardedMask);
       setHasCalledCompleteCallback(true);
     }
+
     props.onBack();
   }
 
@@ -443,19 +466,11 @@ export default function LearnPage(props: LearnPageProps) {
   // Ak sa zobrazuju vysledky
   if (showResultsPage) {
     const correctCount = exerciseResults.filter(result => result === true).length;
-    const previousBest = initialBestCorrectAnswers;
-    const improvedBy = Math.max(0, correctCount - previousBest);
-    const previewMistakes = createMistakesFromResults(exerciseResults, exerciseStates, themeData, isFinalTest);
-    const previewFixedCount = getFixedPreviousMistakesCount(previewMistakes);
+    const correctMask = getCorrectMaskFromResults(exerciseResults);
+    const previousAwardedMask = effectivePreviousAwardedMask;
+    const newlyAwardedMask = correctMask & ~previousAwardedMask;
+    const xpEarned = countSetBits(newlyAwardedMask) * 5;
 
-    // Po prvom ulozeni results chceme drzat stabilne XP z tohto pokusu,
-    // aj ked sa mistakes v localStorage uz medzitym prepise na novu hodnotu.
-    const fixedPreviousMistakesCount = hasCalledCompleteCallback
-      ? lastFixedPreviousMistakesCount
-      : previewFixedCount;
-
-    const progressDelta = Math.max(improvedBy, fixedPreviousMistakesCount);
-    const xpEarned = progressDelta * 5;
     return (
       <ResultPage
         correctAnswers={correctCount}
