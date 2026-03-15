@@ -41,8 +41,8 @@ export default function TrueFalseExercise(props: TrueFalseExerciseProps) {
   const viewportScale = useViewportScale({ baseHeight: 980, minScale: 0.66 });
 
   // State premenne
-  const [selectedOption, setSelectedOption] = useState<boolean | null>(initialSelectedOption || null);
-  const [isSubmitted, setIsSubmitted] = useState(initialIsSubmitted || false);
+  const [selectedOption, setSelectedOption] = useState<boolean | null>(initialSelectedOption ?? null);
+  const [isSubmitted, setIsSubmitted] = useState(initialIsSubmitted ?? false);
 
   // Konverzia spravnej odpovede na boolean
   const correctAnswerBoolean = Boolean(correctAnswer);
