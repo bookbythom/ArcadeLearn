@@ -7,7 +7,7 @@ import { PageLoader } from "@/app/components/app/PageLoader";
 const RegisterPage = lazy(() => import("@/app/components/pages/RegisterPage"));
 
 // Pomocny parser chybovej hlasky
-const getErrorMessage = (error: unknown) => {
+const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error && error.message) {
     return error.message;
   }
@@ -21,13 +21,16 @@ export default function RegisterPageWrapper() {
   // Submit handler pre registraciu
   const handleSubmit = async (name: string, email: string, password: string) => {
     setIsLoading(true);
+
     try {
       await authAPI.signUp({ email, password, name });
+
       // Po uspesnej registracii posleme usera na sign-in
       alert("Account created successfully! Please sign in with your credentials.");
       navigate("/signin");
     } catch (error: unknown) {
-      alert(getErrorMessage(error));
+      const message = getErrorMessage(error);
+      alert(message);
     } finally {
       setIsLoading(false);
     }

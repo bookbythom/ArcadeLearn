@@ -7,7 +7,7 @@ import { PageLoader } from "@/app/components/app/PageLoader";
 const SignInPage = lazy(() => import("@/app/components/pages/SignInPage"));
 
 // Pomocny parser chyby pre zrozumitelny alert text
-const getErrorMessage = (error: unknown) => {
+const getErrorMessage = (error: unknown): string => {
   if (typeof error === "object" && error !== null) {
     const maybeDataError = (error as { data?: { error?: string } }).data?.error;
     if (maybeDataError) {
@@ -27,20 +27,22 @@ export default function SignInPageWrapper() {
   // Submit handler pre prihlasenie
   const handleSubmit = async (email: string, password: string) => {
     setIsLoading(true);
+
     try {
       // Pred loginom odstranime stary token
       localStorage.removeItem("accessToken");
+
       const response = await authAPI.signIn({ email, password });
       if (!response?.accessToken || !response?.user) {
         throw new Error("Invalid response from server");
       }
+
       // Ulozime token a presmerujeme usera do app
       localStorage.setItem("accessToken", response.accessToken);
       navigate("/");
       window.location.reload();
     } catch (error: unknown) {
-      let errorMessage = "Sign-in failed.\n\n";
-      errorMessage += getErrorMessage(error);
+      const errorMessage = "Sign-in failed.\n\n" + getErrorMessage(error);
       alert(errorMessage);
     } finally {
       setIsLoading(false);
