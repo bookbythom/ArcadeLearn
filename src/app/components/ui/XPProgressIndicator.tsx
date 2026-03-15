@@ -80,7 +80,10 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
 
     return (
       <div 
-        className="fixed top-[calc(7.25rem+env(safe-area-inset-top)+0.5rem)] sm:top-[calc(4rem+env(safe-area-inset-top)+0.75rem)] left-1/2 sm:left-4 lg:left-8 -translate-x-1/2 sm:translate-x-0 z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-3 sm:p-4 lg:p-5 w-[calc(100vw-1.5rem)] max-w-[340px] transition-opacity duration-300"
+        className="fixed left-1/2 sm:left-4 lg:left-8 -translate-x-1/2 sm:translate-x-0 z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-3 sm:p-4 lg:p-5 w-[calc(100vw-1.5rem)] max-w-[340px] transition-opacity duration-300"
+        style={{
+          top: 'calc(4rem + env(safe-area-inset-top) + 0.75rem)',
+        }}
       >
         {/* Lock ikona */}
         <div className="flex items-center gap-3 mb-3">
@@ -152,7 +155,10 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
 
   return (
     <div 
-      className="fixed top-[calc(7.25rem+env(safe-area-inset-top)+0.5rem)] sm:top-[calc(4rem+env(safe-area-inset-top)+0.75rem)] left-1/2 sm:left-4 lg:left-8 -translate-x-1/2 sm:translate-x-0 z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-3 sm:p-4 lg:p-5 w-[calc(100vw-1.5rem)] max-w-[340px] transition-opacity duration-300"
+      className="fixed left-1/2 sm:left-4 lg:left-8 -translate-x-1/2 sm:translate-x-0 z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-3 sm:p-4 lg:p-5 w-[calc(100vw-1.5rem)] max-w-[340px] transition-opacity duration-300"
+      style={{
+        top: 'calc(4rem + env(safe-area-inset-top) + 0.75rem)',
+      }}
     >
       {/* Zobrazenie XP */}
       <div className="mb-3">
