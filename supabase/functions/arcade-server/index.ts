@@ -10,6 +10,21 @@ const LEGACY_API_PREFIX = Deno.env.get('LEGACY_API_PREFIX');
 const API_PREFIX = '/arcade-server';
 const LEGACY_STORAGE_BUCKET_NAME = Deno.env.get('LEGACY_STORAGE_BUCKET_NAME');
 const STORAGE_BUCKET_NAME = Deno.env.get('STORAGE_BUCKET_NAME') || 'arcadelearn-island-images';
+const SESSION_TTL_MS = Number(Deno.env.get('SESSION_TTL_MS') || (1000 * 60 * 60 * 24 * 30));
+
+const DEFAULT_ALLOWED_ORIGINS = [
+  'https://arcadelearn.pages.dev',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+];
+
+const CORS_ALLOWED_ORIGINS = (Deno.env.get('CORS_ALLOWED_ORIGINS') || '')
+  .split(',')
+  .map((value) => value.trim())
+  .filter((value) => value.length > 0);
+
+const ALLOWED_ORIGINS = CORS_ALLOWED_ORIGINS.length > 0 ? CORS_ALLOWED_ORIGINS : DEFAULT_ALLOWED_ORIGINS;
+
 const apiRoute = (path: string) => `${API_PREFIX}${path}`;
 
 type MetadataRecord = {
@@ -108,13 +123,95 @@ const migrateSingleImageMetadata = async (sb: SupabaseClient, key: string, metad
   return { migrated: true, reason: 'ok' };
 };
 
-const hash = async (plainText: string) => {
+const PASSWORD_SCHEME = 'pbkdf2-v1';
+const PBKDF2_ITERATIONS = 210000;
+const PBKDF2_KEY_LENGTH = 32;
+
+const bytesToBase64 = (bytes: Uint8Array): string => {
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+};
+
+const base64ToBytes = (base64Value: string): Uint8Array => {
+  const binary = atob(base64Value);
+  const result = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    result[i] = binary.charCodeAt(i);
+  }
+  return result;
+};
+
+const timingSafeEqual = (left: Uint8Array, right: Uint8Array): boolean => {
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  let diff = 0;
+  for (let i = 0; i < left.length; i++) {
+    diff |= left[i] ^ right[i];
+  }
+  return diff === 0;
+};
+
+const legacyHash = async (plainText: string) => {
   const bytes = new TextEncoder().encode(plainText);
   const digest = await crypto.subtle.digest('SHA-256', bytes);
 
   return Array.from(new Uint8Array(digest))
     .map((byte) => byte.toString(16).padStart(2, '0'))
     .join('');
+};
+
+const derivePbkdf2 = async (password: string, salt: Uint8Array, iterations: number): Promise<Uint8Array> => {
+  const encoder = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey('raw', encoder.encode(password), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits(
+    {
+      name: 'PBKDF2',
+      hash: 'SHA-256',
+      salt,
+      iterations,
+    },
+    keyMaterial,
+    PBKDF2_KEY_LENGTH * 8,
+  );
+  return new Uint8Array(bits);
+};
+
+const createPasswordHash = async (password: string): Promise<string> => {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const derived = await derivePbkdf2(password, salt, PBKDF2_ITERATIONS);
+  return `${PASSWORD_SCHEME}$${PBKDF2_ITERATIONS}$${bytesToBase64(salt)}$${bytesToBase64(derived)}`;
+};
+
+const verifyPassword = async (password: string, storedHash: string): Promise<{ valid: boolean; needsRehash: boolean }> => {
+  if (storedHash.startsWith(`${PASSWORD_SCHEME}$`)) {
+    const parts = storedHash.split('$');
+    if (parts.length !== 4) {
+      return { valid: false, needsRehash: false };
+    }
+
+    const iterations = Number(parts[1]);
+    if (!Number.isInteger(iterations) || iterations <= 0) {
+      return { valid: false, needsRehash: false };
+    }
+
+    try {
+      const salt = base64ToBytes(parts[2]);
+      const expected = base64ToBytes(parts[3]);
+      const derived = await derivePbkdf2(password, salt, iterations);
+      return { valid: timingSafeEqual(derived, expected), needsRehash: false };
+    } catch {
+      return { valid: false, needsRehash: false };
+    }
+  }
+
+  const legacy = await legacyHash(password);
+  const valid = legacy === storedHash;
+  return { valid, needsRehash: valid };
 };
 
 const getTok = (context: Context) =>
@@ -124,7 +221,27 @@ const getTok = (context: Context) =>
 const valSess = async (token: string) => {
   try {
     const sessionData = await kv.get(`session:${token}`);
-    return sessionData ? JSON.parse(sessionData) : null;
+    if (!sessionData) {
+      return null;
+    }
+
+    const parsedSession = JSON.parse(sessionData);
+    const createdAt = parsedSession?.createdAt;
+    if (!createdAt) {
+      return null;
+    }
+
+    const createdAtMs = Date.parse(createdAt);
+    if (Number.isNaN(createdAtMs)) {
+      return null;
+    }
+
+    if (Date.now() - createdAtMs > SESSION_TTL_MS) {
+      await kv.del(`session:${token}`);
+      return null;
+    }
+
+    return parsedSession;
   } catch {
     return null;
   }
@@ -139,6 +256,205 @@ const isAdm = async (userId: string) => {
 };
 
 const day = (date: Date) => date.toISOString().split('T')[0];
+
+type IslandState = 'locked' | 'unlocked' | 'completed-perfect' | 'completed-mistakes';
+
+const VALID_ISLAND_STATES: IslandState[] = ['locked', 'unlocked', 'completed-perfect', 'completed-mistakes'];
+const VALID_ISLAND_KEY_REGEX = /^(beginner|intermediate|professional)-(0|[1-9]|1[0-2])$/;
+const VALID_EXERCISE_DATA_KEY_REGEX = /^(beginner|intermediate|professional)-(0|[1-9]|1[0-2])$/;
+
+const isPlainObject = (value: unknown): value is Record<string, unknown> => {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+};
+
+const isSafeNumber = (value: unknown): value is number => {
+  return typeof value === 'number' && Number.isFinite(value) && !Number.isNaN(value);
+};
+
+const isCompletedIsland = (status: IslandState | undefined) => {
+  return status === 'completed-perfect' || status === 'completed-mistakes';
+};
+
+const isKnownIslandState = (value: unknown): value is IslandState => {
+  return typeof value === 'string' && VALID_ISLAND_STATES.includes(value as IslandState);
+};
+
+const getSectionXp = (progressData: unknown, level: 'beginner' | 'intermediate' | 'professional') => {
+  if (!progressData || typeof progressData !== 'object') {
+    return 0;
+  }
+
+  const maybeSectionXP = (progressData as { sectionXP?: unknown }).sectionXP;
+  if (!maybeSectionXP || typeof maybeSectionXP !== 'object') {
+    return 0;
+  }
+
+  const value = (maybeSectionXP as Record<string, unknown>)[level];
+  if (typeof value !== 'number' || Number.isNaN(value)) {
+    return 0;
+  }
+
+  return value;
+};
+
+const validateIslandsPayload = (payload: unknown, progressData: unknown): { ok: boolean; error?: string } => {
+  if (!isPlainObject(payload)) {
+    return { ok: false, error: 'Invalid islands payload format' };
+  }
+
+  const islands = payload as Record<string, unknown>;
+  const levels: Array<'beginner' | 'intermediate' | 'professional'> = ['beginner', 'intermediate', 'professional'];
+
+  // Zaklad: beginner-1 musi byt aspon unlocked.
+  const beginnerOne = islands['beginner-1'];
+  if (!isKnownIslandState(beginnerOne) || beginnerOne === 'locked') {
+    return { ok: false, error: 'beginner-1 must stay unlocked or completed' };
+  }
+
+  // Skontrolujeme kluce a hodnoty.
+  for (const key of Object.keys(islands)) {
+    if (!VALID_ISLAND_KEY_REGEX.test(key)) {
+      return { ok: false, error: `Invalid island key: ${key}` };
+    }
+
+    if (!isKnownIslandState(islands[key])) {
+      return { ok: false, error: `Invalid island status for ${key}` };
+    }
+  }
+
+  for (let levelIndex = 0; levelIndex < levels.length; levelIndex++) {
+    const level = levels[levelIndex];
+
+    // Vnutenie poradia: island N moze byt unlocked/completed len ak N-1 je completed.
+    for (let theme = 2; theme <= 12; theme++) {
+      const current = islands[`${level}-${theme}`] as IslandState | undefined;
+      if (!current || current === 'locked') {
+        continue;
+      }
+
+      const prev = islands[`${level}-${theme - 1}`] as IslandState | undefined;
+      if (!isCompletedIsland(prev)) {
+        return { ok: false, error: `${level}-${theme} requires completed ${level}-${theme - 1}` };
+      }
+    }
+
+    // Final test moze byt unlocked/completed len po 12 completed islands a 300 XP.
+    const finalKey = `${level}-0`;
+    const finalStatus = islands[finalKey] as IslandState | undefined;
+    const sectionXp = getSectionXp(progressData, level);
+
+    if (finalStatus && finalStatus !== 'locked') {
+      if (sectionXp < 300) {
+        return { ok: false, error: `${finalKey} requires at least 300 XP` };
+      }
+
+      for (let theme = 1; theme <= 12; theme++) {
+        const status = islands[`${level}-${theme}`] as IslandState | undefined;
+        if (!isCompletedIsland(status)) {
+          return { ok: false, error: `${finalKey} requires all 12 islands completed` };
+        }
+      }
+    }
+
+    // Dalsia sekcia moze mat aktivitu az po dokoncenom final teste predoslej sekcie.
+    if (levelIndex > 0) {
+      const previousLevel = levels[levelIndex - 1];
+      const previousFinal = islands[`${previousLevel}-0`] as IslandState | undefined;
+      const hasCompletedPreviousFinal = isCompletedIsland(previousFinal);
+
+      let hasAnyOpenIslandInCurrentSection = false;
+      for (let theme = 0; theme <= 12; theme++) {
+        const status = islands[`${level}-${theme}`] as IslandState | undefined;
+        if (status && status !== 'locked') {
+          hasAnyOpenIslandInCurrentSection = true;
+          break;
+        }
+      }
+
+      if (hasAnyOpenIslandInCurrentSection && !hasCompletedPreviousFinal) {
+        return { ok: false, error: `${level} requires completed ${previousLevel}-0` };
+      }
+    }
+  }
+
+  return { ok: true };
+};
+
+const validateProgressPayload = (payload: unknown): { ok: boolean; error?: string } => {
+  if (!isPlainObject(payload)) {
+    return { ok: false, error: 'Invalid progress payload format' };
+  }
+
+  const totalXP = payload.totalXP;
+  const level = payload.level;
+  const sectionXP = payload.sectionXP;
+
+  if (!isSafeNumber(totalXP) || totalXP < 0) {
+    return { ok: false, error: 'Invalid totalXP value' };
+  }
+
+  if (!isSafeNumber(level) || !Number.isInteger(level) || level < 0 || level > 15) {
+    return { ok: false, error: 'Invalid level value' };
+  }
+
+  if (!isPlainObject(sectionXP)) {
+    return { ok: false, error: 'Invalid sectionXP format' };
+  }
+
+  const beginnerXP = sectionXP.beginner;
+  const intermediateXP = sectionXP.intermediate;
+  const professionalXP = sectionXP.professional;
+
+  if (!isSafeNumber(beginnerXP) || beginnerXP < 0) {
+    return { ok: false, error: 'Invalid sectionXP.beginner value' };
+  }
+
+  if (!isSafeNumber(intermediateXP) || intermediateXP < 0) {
+    return { ok: false, error: 'Invalid sectionXP.intermediate value' };
+  }
+
+  if (!isSafeNumber(professionalXP) || professionalXP < 0) {
+    return { ok: false, error: 'Invalid sectionXP.professional value' };
+  }
+
+  return { ok: true };
+};
+
+const validateExerciseDataPayload = (payload: unknown): { ok: boolean; error?: string } => {
+  if (!isPlainObject(payload)) {
+    return { ok: false, error: 'Invalid exercise-data payload format' };
+  }
+
+  for (const key of Object.keys(payload)) {
+    if (!VALID_EXERCISE_DATA_KEY_REGEX.test(key)) {
+      return { ok: false, error: `Invalid exercise-data key: ${key}` };
+    }
+
+    const value = payload[key];
+    if (!isSafeNumber(value) || !Number.isInteger(value) || value < 0 || value > 10) {
+      return { ok: false, error: `Invalid exercise-data value for ${key}` };
+    }
+  }
+
+  return { ok: true };
+};
+
+const validateMistakesPayload = (payload: unknown): { ok: boolean; error?: string } => {
+  if (!isPlainObject(payload)) {
+    return { ok: false, error: 'Invalid mistakes payload format' };
+  }
+
+  const mistakes = payload.mistakes;
+  if (mistakes === undefined || mistakes === null) {
+    return { ok: true };
+  }
+
+  if (!isPlainObject(mistakes)) {
+    return { ok: false, error: 'Invalid mistakes field format' };
+  }
+
+  return { ok: true };
+};
 
 const auth = async (context: Context) => {
   const token = getTok(context);
@@ -204,7 +520,22 @@ if (LEGACY_API_PREFIX) {
   });
 }
 
-app.use('*', cors({ origin: '*', allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], allowHeaders: ['Content-Type', 'Authorization', 'apikey', 'X-Session-Token'], credentials: true }));
+app.use('*', cors({
+  origin: (origin) => {
+    if (!origin) {
+      return ALLOWED_ORIGINS[0] || 'https://arcadelearn.pages.dev';
+    }
+
+    if (ALLOWED_ORIGINS.includes(origin)) {
+      return origin;
+    }
+
+    return '';
+  },
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization', 'apikey', 'X-Session-Token'],
+  credentials: true,
+}));
 app.use('*', logger());
 app.onError((err, c) => {
   return c.json({ error: err?.message || 'Internal server error' }, 500);
@@ -217,7 +548,7 @@ app.post(apiRoute('/auth/signup'), async (c) => {
   const { email, password, name } = await c.req.json();
   if (await kv.get(`user:${email}`)) return c.json({ error: 'Email exists' }, 400);
   const uid = crypto.randomUUID(), tok = crypto.randomUUID();
-  await kv.set(`user:${email}`, JSON.stringify({ userId: uid, email, passwordHash: await hash(password), createdAt: new Date().toISOString() }));
+  await kv.set(`user:${email}`, JSON.stringify({ userId: uid, email, passwordHash: await createPasswordHash(password), createdAt: new Date().toISOString() }));
   await kv.set(`session:${tok}`, JSON.stringify({ userId: uid, email, createdAt: new Date().toISOString() }));
   await kv.set(`profile:${uid}`, JSON.stringify({ name: name || email.split('@')[0], email, profilePicture: '' }));
   await kv.set(`progress:${uid}`, JSON.stringify({ level: 0, totalXP: 0, sectionXP: { beginner: 0, intermediate: 0, professional: 0 } }));
@@ -231,7 +562,15 @@ app.post(apiRoute('/auth/signin'), async (c) => {
   const ud = await kv.get(`user:${email}`);
   if (!ud) return c.json({ error: 'Invalid credentials' }, 401);
   const u = JSON.parse(ud);
-  if (await hash(password) !== u.passwordHash) return c.json({ error: 'Invalid credentials' }, 401);
+  const verify = await verifyPassword(password, u.passwordHash);
+  if (!verify.valid) return c.json({ error: 'Invalid credentials' }, 401);
+
+  // Postupna migracia: po prvom uspesnom prihlaseni prepiseme legacy hash na PBKDF2.
+  if (verify.needsRehash) {
+    u.passwordHash = await createPasswordHash(password);
+    await kv.set(`user:${email}`, JSON.stringify(u));
+  }
+
   const tok = crypto.randomUUID();
   await kv.set(`session:${tok}`, JSON.stringify({ userId: u.userId, email: u.email, createdAt: new Date().toISOString() }));
   return c.json({ accessToken: tok, user: { id: u.userId, email: u.email } });
@@ -291,8 +630,9 @@ app.post(apiRoute('/profile/change-password-direct'), async (c) => {
   const ud = await kv.get(`user:${s.email}`);
   if (!ud) return c.json({ error: 'User not found' }, 404);
   const u = JSON.parse(ud);
-  if (await hash(currentPassword) !== u.passwordHash) return c.json({ error: 'Wrong password' }, 401);
-  u.passwordHash = await hash(newPassword);
+  const verify = await verifyPassword(currentPassword, u.passwordHash);
+  if (!verify.valid) return c.json({ error: 'Wrong password' }, 401);
+  u.passwordHash = await createPasswordHash(newPassword);
   await kv.set(`user:${s.email}`, JSON.stringify(u));
   return c.json({ success: true });
 });
@@ -311,6 +651,12 @@ app.put(apiRoute('/progress'), async (c) => {
   const s = await auth(c);
   if (!s) return c.json({ error: 'Unauthorized' }, 401);
   const pd = await c.req.json();
+
+  const validation = validateProgressPayload(pd);
+  if (!validation.ok) {
+    return c.json({ error: validation.error || 'Invalid progress payload' }, 400);
+  }
+
   await kv.set(`progress:${s.userId}`, JSON.stringify(pd));
   return c.json({ progress: pd });
 });
@@ -320,7 +666,12 @@ app.get(apiRoute('/islands'), async (c) => {
   if (!s) return c.json({ error: 'Unauthorized' }, 401);
   if (await isAdm(s.userId)) {
     const all: Record<string, string> = {};
-    ['beginner', 'intermediate', 'professional'].forEach(l => { for (let i = 1; i <= 13; i++) all[`${l}-${i}`] = 'unlocked'; });
+    ['beginner', 'intermediate', 'professional'].forEach((level) => {
+      all[`${level}-0`] = 'unlocked';
+      for (let i = 1; i <= 12; i++) {
+        all[`${level}-${i}`] = 'unlocked';
+      }
+    });
     return c.json({ islands: all });
   }
   const id = await kv.get(`islands:${s.userId}`);
@@ -331,6 +682,14 @@ app.put(apiRoute('/islands'), async (c) => {
   const s = await auth(c);
   if (!s) return c.json({ error: 'Unauthorized' }, 401);
   const id = await c.req.json();
+
+  const progressRaw = await kv.get(`progress:${s.userId}`);
+  const progressData = progressRaw ? JSON.parse(progressRaw) : null;
+  const validation = validateIslandsPayload(id, progressData);
+  if (!validation.ok) {
+    return c.json({ error: validation.error || 'Invalid islands payload' }, 400);
+  }
+
   await kv.set(`islands:${s.userId}`, JSON.stringify(id));
   return c.json({ islands: id });
 });
@@ -346,6 +705,12 @@ app.put(apiRoute('/exercise-data'), async (c) => {
   const s = await auth(c);
   if (!s) return c.json({ error: 'Unauthorized' }, 401);
   const ed = await c.req.json();
+
+  const validation = validateExerciseDataPayload(ed);
+  if (!validation.ok) {
+    return c.json({ error: validation.error || 'Invalid exercise-data payload' }, 400);
+  }
+
   await kv.set(`exercise-data:${s.userId}`, JSON.stringify(ed));
   return c.json({ exerciseData: ed });
 });
@@ -398,7 +763,14 @@ app.get(apiRoute('/mistakes'), async (c) => {
 app.post(apiRoute('/mistakes'), async (c) => {
   const s = await auth(c);
   if (!s) return c.json({ error: 'Unauthorized' }, 401);
-  const { mistakes } = await c.req.json();
+
+  const payload = await c.req.json();
+  const validation = validateMistakesPayload(payload);
+  if (!validation.ok) {
+    return c.json({ error: validation.error || 'Invalid mistakes payload' }, 400);
+  }
+
+  const { mistakes } = payload;
   await kv.set(`mistakes:${s.userId}`, JSON.stringify(mistakes || {}));
   return c.json({ mistakes: mistakes || {} });
 });
@@ -493,7 +865,7 @@ app.post(apiRoute('/admin/reset-user-data'), async (c) => {
   const { userId } = await c.req.json();
   await kv.set(`progress:${userId}`, JSON.stringify({ level: 0, totalXP: 0, sectionXP: { beginner: 0, intermediate: 0, professional: 0 } }));
   await kv.set(`islands:${userId}`, JSON.stringify({ 'beginner-1': 'unlocked' }));
-  await kv.set(`streak:${userId}`, JSON.stringify({ count: 0, lastActiveDate: null, activeToday: false }));
+  await kv.set(`streak:${userId}`, JSON.stringify({ count: 0, lastIslandCompletedDate: null, activeToday: false }));
   await kv.del(`mistakes:${userId}`);
   await kv.del(`exercise-data:${userId}`);
   return c.json({ success: true });

@@ -19,19 +19,10 @@ interface HeaderProps {
 
 // Header komponent
 export function Header(props: HeaderProps) {
-  // Vypocet levelu
-  let currentLevel = 0;
-  if (props.userProgress && props.userProgress.level) {
-    currentLevel = props.userProgress.level;
-  }
-  
-  let nextLevel = currentLevel + 1;
-  
-  // Vypocet XP progressu
-  let totalXP = 0;
-  if (props.userProgress && props.userProgress.totalXP) {
-    totalXP = props.userProgress.totalXP;
-  }
+  // Vypocet levelu a XP progressu
+  const currentLevel = props.userProgress?.level ?? 0;
+  const nextLevel = currentLevel + 1;
+  const totalXP = props.userProgress?.totalXP ?? 0;
   
   const levelProgressPercent = getLevelProgress(totalXP);
   const progressWidth = levelProgressPercent + '%';
@@ -55,15 +46,11 @@ export function Header(props: HeaderProps) {
   }
   
   // Styling pre streak
-  let streakIconClass = 'transition-all';
-  if (!props.streakActiveToday) {
-    streakIconClass = streakIconClass + ' grayscale opacity-50';
-  }
-  
-  let streakTextColor = 'text-gray-500';
-  if (props.streakActiveToday) {
-    streakTextColor = 'text-[#ff9505]';
-  }
+  const streakIconClass = props.streakActiveToday
+    ? 'transition-all'
+    : 'transition-all grayscale opacity-50';
+
+  const streakTextColor = props.streakActiveToday ? 'text-[#ff9505]' : 'text-gray-500';
   
   // Tab styling
   const homeTabColor = props.activeTab === "home" ? "text-white" : "text-[#b6b6b6] hover:text-white";

@@ -4,8 +4,7 @@ interface LockedIslandProps {
   onClick?: () => void;
 }
 
-export default function LockedIsland(props: LockedIslandProps) {
-  void props;
+export default function LockedIsland(_props: LockedIslandProps) {
   // Zamknute ostrovy nemaju onClick handler, su neaktivne
   return (
     <div

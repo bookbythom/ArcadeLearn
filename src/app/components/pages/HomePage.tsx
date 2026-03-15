@@ -67,7 +67,7 @@ export function HomePage(props: HomePageProps) {
   // Funkcia na ziskanie stavu ostrova
   const getIslandStatus = (levelName: string, themeNumber: number): IslandStatus => {
     // Ak je admin, vsetko je odomknute
-    if (props.isAdmin === true) {
+    if (props.isAdmin) {
       return "unlocked";
     }
     
@@ -77,57 +77,50 @@ export function HomePage(props: HomePageProps) {
     // Specialny handling pre finalny test (tema 0)
     if (themeNumber === 0) {
       // Zistime XP pre danu sekciu
-      let sectionXpValue = 0;
-      if (levelName === 'beginner') {
-        sectionXpValue = props.userProgress.sectionXP.beginner;
-      } else if (levelName === 'intermediate') {
-        sectionXpValue = props.userProgress.sectionXP.intermediate;
-      } else if (levelName === 'professional') {
-        sectionXpValue = props.userProgress.sectionXP.professional;
-      }
+      const sectionXpValue = levelName === 'beginner'
+        ? props.userProgress.sectionXP.beginner
+        : levelName === 'intermediate'
+          ? props.userProgress.sectionXP.intermediate
+          : props.userProgress.sectionXP.professional;
       
       // Skontrolujeme ci je finalny test odomknuty
-      const isFinalTestUnlockedNow = isFinalTestUnlocked(sectionXpValue);
-      if (isFinalTestUnlockedNow === false) {
+      if (!isFinalTestUnlocked(sectionXpValue)) {
         return "locked";
       }
       
       // Spocitame kolko ostrovov je dokoncene
       let completedIslandsCount = 0;
-      let i = 1;
-      while (i <= 12) {
+      for (let i = 1; i <= 12; i++) {
         const checkKey = levelName + '-' + i;
         const islandStatus = props.islandProgress[checkKey];
         if (islandStatus === "completed-perfect" || islandStatus === "completed-mistakes") {
           completedIslandsCount = completedIslandsCount + 1;
         }
-        i = i + 1;
       }
       
       // Ak nie su vsetky ostrovy dokoncene, test je zamknute
       if (completedIslandsCount < 12) {
         return "locked";
       }
+
+      // Ak su podmienky splnene, final test je odomknuty.
+      // Ak uz bol final test dokonceny, zachovame completed stav.
+      const finalStatusFromProgress = props.islandProgress[islandKey];
+      if (finalStatusFromProgress === "completed-perfect" || finalStatusFromProgress === "completed-mistakes") {
+        return finalStatusFromProgress;
+      }
+
+      return "unlocked";
     }
     
     // Vratime status z progress objektu alebo locked ak neexistuje
-    const statusFromProgress = props.islandProgress[islandKey];
-    if (statusFromProgress) {
-      return statusFromProgress;
-    } else {
-      return "locked";
-    }
+    return props.islandProgress[islandKey] ?? "locked";
   };
 
   // Funkcia na ziskanie poctu spravnych cviceni
   const getIslandExerciseData = (levelName: string, themeNumber: number): number => {
     const islandKey = levelName + '-' + themeNumber;
-    const exerciseData = props.islandExerciseData[islandKey];
-    if (exerciseData) {
-      return exerciseData;
-    } else {
-      return 0;
-    }
+    return props.islandExerciseData[islandKey] ?? 0;
   };
 
   // Funkcia na vykreslenie ostrovov pre danu uroven
@@ -135,8 +128,7 @@ export function HomePage(props: HomePageProps) {
     const resultElements = [];
     
     // Najprv vykreslime 12 normalnych ostrovov
-    let islandIndex = 0;
-    while (islandIndex < 12) {
+    for (let islandIndex = 0; islandIndex < 12; islandIndex++) {
       const themeNumber = islandIndex + 1;
       const positionData = islandPositions[islandIndex];
       
@@ -172,7 +164,6 @@ export function HomePage(props: HomePageProps) {
       );
       
       resultElements.push(islandElement);
-      islandIndex = islandIndex + 1;
     }
     
     // Potom vykreslime finalny test ostrov (tema 0)
@@ -230,9 +221,7 @@ export function HomePage(props: HomePageProps) {
     // Callback funkcia pre observer
     const observerCallback = (entriesArray: IntersectionObserverEntry[]) => {
       // Prejdeme vsetky entries a aktualizujeme mapu
-      let entryIndex = 0;
-      while (entryIndex < entriesArray.length) {
-        const currentEntry = entriesArray[entryIndex];
+      for (const currentEntry of entriesArray) {
         
         if (currentEntry.isIntersecting === true) {
           intersectionRatioMap.set(
@@ -243,7 +232,6 @@ export function HomePage(props: HomePageProps) {
           intersectionRatioMap.delete(currentEntry.target as HTMLElement);
         }
         
-        entryIndex = entryIndex + 1;
       }
       
       // Najdeme sekciu s najvyssim intersection ratio
@@ -296,8 +284,8 @@ export function HomePage(props: HomePageProps) {
   // Effect pre automaticke scrollovanie k prvemu odomknutemu ostrovu
   useEffect(() => {
     // Skontrolujeme podmienky pre auto scroll
-    const shouldPerformAutoScroll = props.shouldAutoScroll === true;
-    const userIsLoggedIn = props.isLoggedIn === true;
+    const shouldPerformAutoScroll = props.shouldAutoScroll;
+    const userIsLoggedIn = props.isLoggedIn;
     
     if (!shouldPerformAutoScroll || !userIsLoggedIn) {
       return;
@@ -306,15 +294,12 @@ export function HomePage(props: HomePageProps) {
     // Funkcia na najdenie prveho odomknuteho ostrova
     const findFirstUnlockedLevel = () => {
       // Prejdeme vsetky urovne
-      const levelsToCheck = ['beginner', 'intermediate', 'professional'];
-      
-      let levelIndex = 0;
-      while (levelIndex < levelsToCheck.length) {
-        const currentLevel = levelsToCheck[levelIndex];
+      const levelsToCheck: Array<'beginner' | 'intermediate' | 'professional'> = ['beginner', 'intermediate', 'professional'];
+
+      for (const currentLevel of levelsToCheck) {
         
         // Prejdeme vsetky ostrovy v urovni (1-12)
-        let islandNumber = 1;
-        while (islandNumber <= 12) {
+        for (let islandNumber = 1; islandNumber <= 12; islandNumber++) {
           const islandKey = currentLevel + '-' + islandNumber;
           const islandStatus = props.islandProgress[islandKey];
           
@@ -322,7 +307,6 @@ export function HomePage(props: HomePageProps) {
             return currentLevel as 'beginner' | 'intermediate' | 'professional';
           }
           
-          islandNumber = islandNumber + 1;
         }
         
         // Skontrolujeme aj finalny test (0)
@@ -332,7 +316,6 @@ export function HomePage(props: HomePageProps) {
           return currentLevel as 'beginner' | 'intermediate' | 'professional';
         }
         
-        levelIndex = levelIndex + 1;
       }
       
       return null;

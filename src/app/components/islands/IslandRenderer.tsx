@@ -116,10 +116,7 @@ const testIslandByLevel: Record<"beginner" | "intermediate" | "professional", Is
 // Hlavny IslandRenderer komponent
 export default function IslandRenderer(props: IslandRendererProps) {
   // Nastavime default hodnotu pre exercisesCorrect
-  let exercisesCorrectCount = 0;
-  if (props.exercisesCorrect !== undefined) {
-    exercisesCorrectCount = props.exercisesCorrect;
-  }
+  const exercisesCorrectCount = props.exercisesCorrect ?? 0;
 
   // Render funkcia
   function renderIsland() {
@@ -134,25 +131,18 @@ export default function IslandRenderer(props: IslandRendererProps) {
     
     // Ak je completed, zobrazime completed verziu
     if (props.status === "completed-perfect" || props.status === "completed-mistakes") {
-      let isPerfectStatus = false;
-      if (props.status === "completed-perfect") {
-        isPerfectStatus = true;
-      }
+      const isPerfectStatus = props.status === "completed-perfect";
       
       // Test island alebo regular island
       if (props.theme === 0) {
-        if (isPerfectStatus) {
-          return <CompletedTestGold onClick={props.onClick} />;
-        } else {
-          return <CompletedTestGreen onClick={props.onClick} />;
-        }
-      } else {
-        if (isPerfectStatus) {
-          return <CompletedIslandGold onClick={props.onClick} />;
-        } else {
-          return <CompletedIslandGreen onClick={props.onClick} />;
-        }
+        return isPerfectStatus
+          ? <CompletedTestGold onClick={props.onClick} />
+          : <CompletedTestGreen onClick={props.onClick} />;
       }
+
+      return isPerfectStatus
+        ? <CompletedIslandGold onClick={props.onClick} />
+        : <CompletedIslandGreen onClick={props.onClick} />;
     }
     
     // Default - zobrazime normalne unlocked ostrovy
@@ -181,10 +171,7 @@ export default function IslandRenderer(props: IslandRendererProps) {
   );
   
   // Celkovy pocet cviceni - finalny test ma 10, normalne ostrovy maju 5
-  let totalExercisesCount = 5;
-  if (props.theme === 0) {
-    totalExercisesCount = 10;
-  }
+  const totalExercisesCount = props.theme === 0 ? 10 : 5;
 
   // Render ostrova s pripadnymi progress arcs
   return (

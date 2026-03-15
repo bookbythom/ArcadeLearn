@@ -69,9 +69,6 @@ const INITIAL_AUTH_SESSION_STATE: AuthSessionState = {
   isAdmin: false
 };
 
-// Pomocna funkcia pre API chyby
-async function EMPTY_ERROR_HANDLER(_error: unknown) {}
-
 // Z URL zistime ci sme v learn route a aku temu mame otvorenu
 function parseLearnRoute(pathname: string): { level: LearnLevel; theme: number } | null {
   const match = pathname.match(/^\/learn\/(beginner|intermediate|professional)\/(\d+)$/);
@@ -173,9 +170,13 @@ export default function AppContent() {
     if (!isLoggedIn) return;
     if (tab === "home") {
       void loadHomePage();
-    } else if (tab === "mistakes") {
+      return;
+    }
+    if (tab === "mistakes") {
       void loadMistakesPage();
-    } else if (tab === "admin" && isAdmin) {
+      return;
+    }
+    if (tab === "admin" && isAdmin) {
       void loadAdminPanel();
     }
   }
@@ -190,6 +191,44 @@ export default function AppContent() {
     // Prefetch LearnPage pri hoveri nad ostrovcekom
     if (!isLoggedIn) return;
     void loadLearnPage();
+  }
+
+  function getCompletedIslandsCount(level: LearnLevel): number {
+    let completedCount = 0;
+    for (let i = 1; i <= 12; i++) {
+      const status = islandProgress[`${level}-${i}`];
+      if (status === "completed-perfect" || status === "completed-mistakes") {
+        completedCount++;
+      }
+    }
+    return completedCount;
+  }
+
+  function isIslandAccessible(level: LearnLevel, theme: number): boolean {
+    if (isAdmin) {
+      return true;
+    }
+
+    if (theme === 0) {
+      const hasRequiredXp = isFinalTestUnlocked(userProgress.sectionXP[level]);
+      const hasAllThemesCompleted = getCompletedIslandsCount(level) >= 12;
+      return hasRequiredXp && hasAllThemesCompleted;
+    }
+
+    const status = islandProgress[`${level}-${theme}`] ?? "locked";
+    return status !== "locked";
+  }
+
+  function clearOwnedLocalStorageKeys(email?: string) {
+    localStorage.removeItem("accessToken");
+
+    if (!email) {
+      return;
+    }
+
+    localStorage.removeItem(`mistakes_${email}`);
+    localStorage.removeItem(`mistakes_history_${email}`);
+    localStorage.removeItem(`mistakes_hydrated_${email}`);
   }
 
   async function forceLogout(tokenToRevoke?: string) {
@@ -208,12 +247,19 @@ export default function AppContent() {
       setIslandExerciseData({});
       setStreakCount(0);
       setStreakActiveToday(false);
-      localStorage.clear();
+      clearOwnedLocalStorageKeys(currentUserEmail);
       navigate("/signin");
     }
   }
 
-  const handleApiError = EMPTY_ERROR_HANDLER;
+  async function handleApiError(error: unknown) {
+    if (typeof error === "object" && error !== null && "status" in error) {
+      const status = (error as { status?: number }).status;
+      if (status === 401) {
+        await forceLogout(accessToken);
+      }
+    }
+  }
 
   useEffect(() => {
     // Pri starte overime session token a podla toho pustime app alebo signin
@@ -254,8 +300,10 @@ export default function AppContent() {
   }, []);
 
   async function loadUserData(token: string, email?: string) {
+    const emailToUse = email || currentUserEmail;
+
     // Nacitanie profilu/progressu/streaku + admin statusu
-    const result = await loadUserDataHelper(token, email || currentUserEmail, {
+    const result = await loadUserDataHelper(token, emailToUse, {
       setUserProfile: setUserProfile,
       setUserProgress: setUserProgress,
       setIslandProgress: setIslandProgress,
@@ -273,7 +321,7 @@ export default function AppContent() {
 
     try {
       // Mistakes drzim v sync s backendom hned po nacitani session
-      await loadMistakesFromBackend(token, email || currentUserEmail);
+      await loadMistakesFromBackend(token, emailToUse);
     } catch {
       // Ak sync zlyha, app stale funguje a data sa dosynchronizuju neskor.
     }
@@ -306,7 +354,7 @@ export default function AppContent() {
         });
 
         ["beginner", "intermediate", "professional"].forEach((level) => {
-          for (let i = 1; i <= 12; i++) {
+          for (let i = 1; i < 12; i++) {
             const currentKey = `${level}-${i}`;
             if (correctedProgress[currentKey] === "completed-mistakes" || correctedProgress[currentKey] === "completed-perfect") {
               const nextKey = `${level}-${i + 1}`;
@@ -316,14 +364,22 @@ export default function AppContent() {
             }
           }
 
-          const island12Key = `${level}-12`;
-          if (correctedProgress[island12Key] === "completed-mistakes" || correctedProgress[island12Key] === "completed-perfect") {
-            const testKey = `${level}-0`;
-            if (!correctedProgress[testKey]) {
-              correctedProgress[testKey] = "unlocked";
-            }
-          }
         });
+
+        // Ak je final test hotovy, odomkneme zaciatok dalsiej sekcie.
+        const beginnerFinal = correctedProgress["beginner-0"];
+        if (beginnerFinal === "completed-mistakes" || beginnerFinal === "completed-perfect") {
+          if (!correctedProgress["intermediate-1"]) {
+            correctedProgress["intermediate-1"] = "unlocked";
+          }
+        }
+
+        const intermediateFinal = correctedProgress["intermediate-0"];
+        if (intermediateFinal === "completed-mistakes" || intermediateFinal === "completed-perfect") {
+          if (!correctedProgress["professional-1"]) {
+            correctedProgress["professional-1"] = "unlocked";
+          }
+        }
 
         setIslandProgress(correctedProgress);
       }
@@ -368,42 +424,28 @@ export default function AppContent() {
 
   function handleIslandClick(level: LearnLevel, theme: number, _isFinal: boolean) {
     // Admin moze ist na ktorukolvek temu bez podmienok
-    if (isAdmin) {
+    if (isIslandAccessible(level, theme)) {
       navigate(`/learn/${level}/${theme}`);
       return;
     }
 
-    const key = `${level}-${theme}`;
-    const status = islandProgress[key] || "locked";
-
-    if (status === "locked") {
-      // Pri zamknutom final teste zobrazime co este chyba splnit
-      if (theme === 0) {
-        const sectionXp = userProgress.sectionXP[level];
-        const xpNeeded = Math.max(0, 300 - sectionXp);
-        let completedCount = 0;
-        for (let i = 1; i <= 12; i++) {
-          const islandStatus = islandProgress[`${level}-${i}`];
-          if (islandStatus === "completed-perfect" || islandStatus === "completed-mistakes") {
-            completedCount++;
-          }
-        }
-        const islandsNeeded = 12 - completedCount;
-        if (islandsNeeded > 0) {
-          alert(`To unlock the final test, you need:\n\n• 300 XP (Currently: ${sectionXp} XP)\n• Complete all 12 islands (Completed: ${completedCount}/12)\n\nYou still need to complete ${islandsNeeded} more island${islandsNeeded > 1 ? "s" : ""}.`);
-        } else {
-          alert(`You have completed all 12 islands but need ${xpNeeded} more XP to unlock the final test.\n\nCurrent XP: ${sectionXp}/300\n\nTip: Replay islands with perfect scores to earn more XP!`);
-        }
+    // Pri zamknutom final teste zobrazime co este chyba splnit
+    if (theme === 0) {
+      const sectionXp = userProgress.sectionXP[level];
+      const xpNeeded = Math.max(0, 300 - sectionXp);
+      const completedCount = getCompletedIslandsCount(level);
+      const islandsNeeded = 12 - completedCount;
+      if (islandsNeeded > 0) {
+        alert(`To unlock the final test, you need:\n\n• 300 XP (Currently: ${sectionXp} XP)\n• Complete all 12 islands (Completed: ${completedCount}/12)\n\nYou still need to complete ${islandsNeeded} more island${islandsNeeded > 1 ? "s" : ""}.`);
+      } else {
+        alert(`You have completed all 12 islands but need ${xpNeeded} more XP to unlock the final test.\n\nCurrent XP: ${sectionXp}/300\n\nTip: Replay islands with perfect scores to earn more XP!`);
       }
-      return;
     }
-
-    navigate(`/learn/${level}/${theme}`);
   }
 
   async function handleLearnComplete(correctAnswers: number, totalExercises: number) {
     // Po dokonceni ostrovceka prepocitame XP a odomykanie dalsieho kroku
-    if (!currentLearnLevel || currentLearnTheme === null || currentLearnTheme === undefined) return;
+    if (currentLearnTheme === null || currentLearnTheme === undefined) return;
 
     const currentKey = `${currentLearnLevel}-${currentLearnTheme}`;
     const previousBest = islandExerciseData[currentKey] || 0;
@@ -428,22 +470,23 @@ export default function AppContent() {
       }
     } else if (currentLearnTheme < 12) {
       nextKey = `${currentLearnLevel}-${currentLearnTheme + 1}`;
-    } else {
-      const updatedSectionXp = newProgress.sectionXP[currentLearnLevel];
-      let completedCount = 0;
-      for (let i = 1; i <= 12; i++) {
-        if (i === currentLearnTheme) {
+    }
+
+    const updatedSectionXp = newProgress.sectionXP[currentLearnLevel];
+    let completedCount = 0;
+    for (let i = 1; i <= 12; i++) {
+      if (i === currentLearnTheme) {
+        completedCount++;
+      } else {
+        const status = islandProgress[`${currentLearnLevel}-${i}`];
+        if (status === "completed-perfect" || status === "completed-mistakes") {
           completedCount++;
-        } else {
-          const status = islandProgress[`${currentLearnLevel}-${i}`];
-          if (status === "completed-perfect" || status === "completed-mistakes") {
-            completedCount++;
-          }
         }
       }
-      if (isFinalTestUnlocked(updatedSectionXp) && completedCount >= 12) {
-        nextKey = `${currentLearnLevel}-0`;
-      }
+    }
+
+    if (currentLearnTheme !== 0 && isFinalTestUnlocked(updatedSectionXp) && completedCount >= 12) {
+      nextKey = `${currentLearnLevel}-0`;
     }
 
     setIslandProgress((prev) => {
@@ -487,21 +530,33 @@ export default function AppContent() {
     // Profil modal iba pre prihlaseneho usera
     if (isLoggedIn) {
       setModalState("profile");
-    } else {
-      navigate("/signin");
+      return;
     }
-  }
 
-  if (isLoadingAuth) {
-    // Kym overujeme session, zobrazime loader
-    return <LoadingSpinner className="z-[110]" />;
+    navigate("/signin");
   }
 
   // Context pre Learn route a porovnanie najlepsieho vysledku
   const learnRoute = parseLearnRoute(location.pathname);
   const isLearnRoute = Boolean(learnRoute);
   const learnIslandKey = learnRoute ? `${learnRoute.level}-${learnRoute.theme}` : null;
-  const previousBestCorrectAnswers = learnIslandKey ? (islandExerciseData[learnIslandKey] || 0) : 0;
+  const previousBestCorrectAnswers = learnIslandKey ? (islandExerciseData[learnIslandKey] ?? 0) : 0;
+
+  // Guard proti direct URL pristupu na zamknute learn route.
+  useEffect(() => {
+    if (!learnRoute) {
+      return;
+    }
+
+    if (!isIslandAccessible(learnRoute.level, learnRoute.theme)) {
+      navigate("/");
+    }
+  }, [learnRoute, isAdmin, islandProgress, userProgress, navigate]);
+
+  if (isLoadingAuth) {
+    // Kym overujeme session, zobrazime loader
+    return <LoadingSpinner className="z-[110]" />;
+  }
 
   return (
     <>

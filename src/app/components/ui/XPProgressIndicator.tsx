@@ -22,45 +22,20 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
     if (currentLevel === 'beginner') {
       return false; // Beginner je vzdy odomknuty
     }
-    
-    if (currentLevel === 'intermediate') {
-      // Intermediate sa odomkne po dokonceni beginner final testu
-      const beginnerFinal = islandProgress['beginner-0'];
-      
-      if (!beginnerFinal) {
-        return true;
-      }
-      
-      if (beginnerFinal === 'locked') {
-        return true;
-      }
-      
-      if (beginnerFinal === 'unlocked') {
-        return true;
-      }
-      
-      return false;
+
+    // Intermediate sa odomkne po dokonceni beginner final testu,
+    // Professional po dokonceni intermediate final testu.
+    const requiredFinalTestKey = currentLevel === 'intermediate' ? 'beginner-0' : 'intermediate-0';
+    const requiredFinalTestStatus = islandProgress[requiredFinalTestKey];
+
+    if (!requiredFinalTestStatus) {
+      return true;
     }
-    
-    if (currentLevel === 'professional') {
-      // Professional sa odomkne po dokonceni intermediate final testu
-      const intermediateFinal = islandProgress['intermediate-0'];
-      
-      if (!intermediateFinal) {
-        return true;
-      }
-      
-      if (intermediateFinal === 'locked') {
-        return true;
-      }
-      
-      if (intermediateFinal === 'unlocked') {
-        return true;
-      }
-      
-      return false;
+
+    if (requiredFinalTestStatus === 'locked' || requiredFinalTestStatus === 'unlocked') {
+      return true;
     }
-    
+
     return false;
   };
 
@@ -117,14 +92,11 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
   
   // Pocitanie dokoncených islandov
   let completedCount = 0;
-  
   for (let i = 1; i <= 12; i++) {
     const islandKey = currentLevel + '-' + i;
     const islandStatus = islandProgress[islandKey];
-    
-    if (islandStatus === "completed-perfect") {
-      completedCount = completedCount + 1;
-    } else if (islandStatus === "completed-mistakes") {
+
+    if (islandStatus === 'completed-perfect' || islandStatus === 'completed-mistakes') {
       completedCount = completedCount + 1;
     }
   }

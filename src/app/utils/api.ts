@@ -46,9 +46,10 @@ function makeHeaders(accessToken?: string, skipWarning = false) {
   
   if (accessToken) {
     headers['X-Session-Token'] = accessToken;
-  } else if (!skipWarning) {
-    // Pri sign-in/sign-up je normalne, ze token este neexistuje
   }
+
+  // Pri sign-in/sign-up je normalne, ze token este neexistuje.
+  void skipWarning;
   
   return headers;
 }
@@ -56,9 +57,7 @@ function makeHeaders(accessToken?: string, skipWarning = false) {
 // Fetch s retry mechanikou
 async function doFetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
   // Jednoduchy retry cyklus pre docasne vypadky siete
-  let attemptNumber = 1;
-
-  while (attemptNumber <= maxRetries) {
+  for (let attemptNumber = 1; attemptNumber <= maxRetries; attemptNumber++) {
     try {
       return await fetch(url, options);
     } catch (error: unknown) {
@@ -71,8 +70,6 @@ async function doFetchWithRetry(url: string, options: RequestInit, maxRetries = 
       // Kratka pauza pred dalsim pokusom
       const delayMs = 1000;
       await new Promise(resolve => setTimeout(resolve, delayMs));
-
-      attemptNumber = attemptNumber + 1;
     }
   }
 
