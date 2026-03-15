@@ -189,11 +189,7 @@ export default function IslandRenderer(props: IslandRendererProps) {
   // Render ostrova s pripadnymi progress arcs
   return (
     <div
-      className="relative group transition-transform"
-      style={{
-        transform: 'scale(clamp(0.10, calc((100vw - 8px) / 1100), 1))',
-        transformOrigin: 'center center',
-      }}
+      className="relative group transition-transform scale-[clamp(0.14,calc(100vw/1550),1)]"
       onMouseEnter={props.onHover}
     >
       {shouldShowProgressArcs && (

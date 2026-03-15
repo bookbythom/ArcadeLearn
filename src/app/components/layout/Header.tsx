@@ -76,7 +76,7 @@ export function Header(props: HeaderProps) {
         <div
           className="flex flex-nowrap items-center justify-between min-h-14 sm:min-h-16 py-2 sm:py-0 gap-[clamp(6px,2.5vw,12px)]"
           style={{
-            transform: 'scale(clamp(0.42, calc((100vw - 8px) / 980), 1))',
+            transform: 'scale(clamp(0.62, calc(100vw / 768), 1))',
             transformOrigin: 'top center',
           }}
         >
