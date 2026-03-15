@@ -75,7 +75,7 @@ export function Header(props: HeaderProps) {
       <div className="w-full px-3 sm:px-6 lg:px-8">
         <div className="flex flex-wrap sm:flex-nowrap items-center justify-between min-h-16 py-2 sm:py-0 gap-2 sm:gap-4">
           {/* Lava strana: Level a Streak */}
-          <div className="flex items-center gap-4 sm:gap-8 lg:gap-12 order-1">
+          <div className="flex items-center gap-4 sm:gap-8 lg:gap-12 order-1 shrink-0">
             <div className="flex items-center gap-2 w-[124px] sm:w-[140px]">
               <div className="relative flex items-center gap-2 flex-1">
                 <div className="absolute right-2 text-[#7f7f7f] text-sm sm:text-base lg:text-lg font-medium z-10 pointer-events-none">
@@ -109,7 +109,7 @@ export function Header(props: HeaderProps) {
           </div>
 
           {/* Stred: Navigacia */}
-          <nav className="flex items-center justify-center gap-6 sm:gap-10 lg:gap-12 w-full sm:w-auto order-3 sm:order-2 sm:absolute sm:left-1/2 sm:-translate-x-1/2 pb-1 sm:pb-0">
+          <nav className="flex items-center justify-center gap-6 sm:gap-8 lg:gap-10 w-full sm:w-auto sm:flex-1 sm:min-w-0 order-3 sm:order-2 pb-1 sm:pb-0">
             <button 
               onClick={() => {
                 props.onTabChange("home");
@@ -145,14 +145,14 @@ export function Header(props: HeaderProps) {
           <button 
             onClick={props.onProfileClick}
             onMouseEnter={props.onProfileHover}
-            className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity order-2 sm:order-3"
+            className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity order-2 sm:order-3 shrink min-w-0 max-w-[58vw] sm:max-w-[320px]"
           >
             {props.isAdmin ? (
-              <span className="text-[#FFD700] text-xs sm:text-sm font-bold bg-[#FFD700]/20 px-2 py-1 rounded">
+              <span className="text-[#FFD700] text-xs sm:text-sm font-bold bg-[#FFD700]/20 px-2 py-1 rounded shrink-0">
                 ADMIN
               </span>
             ) : null}
-            <span className="text-[#b6b6b6] text-sm sm:text-base max-w-[90px] sm:max-w-none truncate">{props.userProfile.name}</span>
+            <span className="text-[#b6b6b6] text-sm sm:text-base min-w-0 max-w-[90px] sm:max-w-[130px] md:max-w-[180px] lg:max-w-[240px] truncate">{props.userProfile.name}</span>
             {props.userProfile.profilePicture ? (
               <img 
                 src={props.userProfile.profilePicture} 
