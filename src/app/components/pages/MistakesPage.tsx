@@ -44,8 +44,8 @@ export default function MistakesPage(props: MistakesPageProps) {
 
   // Ak je vybrate nejake chybne cvicenie, zobrazime detail
   const isMistakeSelected = selectedMistake !== null;
-  
-  if (isMistakeSelected === true) {
+
+  if (isMistakeSelected) {
     return (
       <MistakeDetailView
         mistake={selectedMistake.mistake}
@@ -60,18 +60,19 @@ export default function MistakesPage(props: MistakesPageProps) {
 
   // Funkcia na formatovanie typu cvicenia do citelneho textu
   function formatExerciseTypeToReadableText(exerciseType: string): string {
-    if (exerciseType === 'single-choice') {
-      return 'Single Choice';
-    } else if (exerciseType === 'multiple-choice') {
-      return 'Multiple Choice';
-    } else if (exerciseType === 'true-false') {
-      return 'True or False';
-    } else if (exerciseType === 'sorting') {
-      return 'Sorting';
-    } else if (exerciseType === 'matching') {
-      return 'Choosing';
-    } else {
-      return exerciseType;
+    switch (exerciseType) {
+      case 'single-choice':
+        return 'Single Choice';
+      case 'multiple-choice':
+        return 'Multiple Choice';
+      case 'true-false':
+        return 'True or False';
+      case 'sorting':
+        return 'Sorting';
+      case 'matching':
+        return 'Choosing';
+      default:
+        return exerciseType;
     }
   }
 
@@ -95,7 +96,7 @@ export default function MistakesPage(props: MistakesPageProps) {
 
       {/* Obsah stranky s chybami */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        {mistakesExist === false ? (
+        {!mistakesExist ? (
           // Prazdny stav - ziadne chyby
           <div className="text-center py-14 sm:py-20">
             <div className="text-5xl sm:text-6xl mb-4">

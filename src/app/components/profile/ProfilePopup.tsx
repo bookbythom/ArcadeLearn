@@ -16,15 +16,20 @@ interface ProfilePopupProps {
   onProfileUpdate: (profile: UserProfile) => void;
 }
 
-function getErrorMessage(error: unknown, fallback: string) {
+function getErrorMessage(error: unknown, fallback: string): string {
   if (error instanceof Error && error.message) {
     return error.message;
   }
   return fallback;
 }
 
-function hasStatusCode(error: unknown, status: number) {
+function hasStatusCode(error: unknown, status: number): boolean {
   return typeof error === 'object' && error !== null && 'status' in error && (error as { status?: number }).status === status;
+}
+
+function getRandomTip(tips: string[]): string {
+  const randomIndex = Math.floor(Math.random() * tips.length);
+  return tips[randomIndex];
 }
 
 // Hlavny komponent pre profile popup
@@ -99,8 +104,7 @@ export default function ProfilePopup(props: ProfilePopupProps) {
   
   // Effect pre nahodny vyber tipu pri nacitani
   useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * tips.length);
-    const randomTip = tips[randomIndex];
+    const randomTip = getRandomTip(tips);
     setCurrentTip(randomTip);
   }, []);
   
