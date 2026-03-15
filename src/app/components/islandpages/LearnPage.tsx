@@ -181,6 +181,14 @@ export default function LearnPage(props: LearnPageProps) {
     setIsInitialized(true);
   }, [props.theme, props.level, isFinalTest]);
 
+  // Pri zmene ostrovceka vynulujeme vysledkovy stav, aby sa neprenasali stare data.
+  useEffect(() => {
+    setCurrentSlideIndex(0);
+    setShowResultsPage(false);
+    setExerciseResults([]);
+    setHasCalledCompleteCallback(false);
+  }, [props.level, props.theme]);
+
   // Spracovanie dokoncenia a ulozenie chyb
   useEffect(() => {
     if (showResultsPage && !hasCalledCompleteCallback) {
@@ -268,17 +276,18 @@ export default function LearnPage(props: LearnPageProps) {
 
   // Funkcia pre kontrolu chyb
   function handleCheckMistakesButton() {
-    // Pri final teste je prve cvicenie na indexe 0.
-    // Pri beznej teme je index 0 content slide, ten nechceme ratat.
-    const incorrectIndices = exerciseResults
-      .map((result, index) => {
-        const isExerciseIndex = isFinalTest ? index >= 0 : index > 0;
-        if (result === false && isExerciseIndex) {
-          return index;
-        }
-        return -1;
-      })
-      .filter(index => index !== -1);
+    // Ratajme len cvicenia aktualnej temy, nie cely obsah pola.
+    // Tymto odstranime pripadny vplyv starych indexov z predchadzajuceho ostrovceka.
+    const incorrectIndices: number[] = [];
+
+    for (let exerciseIndex = 0; exerciseIndex < numberOfExercises; exerciseIndex++) {
+      const resultIndex = isFinalTest ? exerciseIndex : exerciseIndex + 1;
+      const resultValue = exerciseResults[resultIndex];
+
+      if (resultValue === false) {
+        incorrectIndices.push(resultIndex);
+      }
+    }
     
     if (incorrectIndices.length > 0) {
       startReview(incorrectIndices);
