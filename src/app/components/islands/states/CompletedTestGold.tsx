@@ -4,10 +4,10 @@ interface CompletedTestGoldProps {
   onClick?: () => void;
 }
 
-export default function CompletedTestGold(props: CompletedTestGoldProps) {
+export default function CompletedTestGold({ onClick }: CompletedTestGoldProps) {
   return (
     <button
-      onClick={props.onClick}
+      onClick={onClick}
       className="relative group cursor-pointer transition-transform hover:scale-110 active:scale-95 w-28 h-24"
       aria-label="completed test perfectly"
     >

@@ -4,10 +4,10 @@ interface CompletedIslandGoldProps {
   onClick?: () => void;
 }
 
-export default function CompletedIslandGold(props: CompletedIslandGoldProps) {
+export default function CompletedIslandGold({ onClick }: CompletedIslandGoldProps) {
   return (
     <button
-      onClick={props.onClick}
+      onClick={onClick}
       className="relative group cursor-pointer transition-transform hover:scale-110 active:scale-95 w-28 h-24"
       aria-label="completed island perfectly"
     >
