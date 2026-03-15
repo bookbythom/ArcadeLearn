@@ -72,23 +72,23 @@ export function Header(props: HeaderProps) {
   
   return (
     <header className="fixed top-0 left-0 right-0 z-[60] backdrop-blur-lg bg-[rgba(55,55,55,0.2)] border-b border-[rgba(255,255,255,0.1)]">
-      <div className="w-full px-[clamp(6px,2.4vw,10px)] sm:px-6 lg:px-8">
+      <div className="w-full px-2.5 sm:px-6 lg:px-8">
         <div className="flex flex-wrap sm:flex-nowrap items-center justify-between min-h-16 py-2 sm:py-0 gap-1.5 sm:gap-4">
           {/* Lava strana: Level a Streak */}
-          <div className="flex items-center gap-[clamp(6px,2.5vw,10px)] sm:gap-8 lg:gap-12 order-1">
-            <div className="flex items-center gap-1.5 sm:gap-2 w-[clamp(98px,31vw,124px)] sm:w-[140px]">
+          <div className="flex items-center gap-2.5 sm:gap-8 lg:gap-12 order-1">
+            <div className="flex items-center gap-1.5 sm:gap-2 w-[112px] min-[380px]:w-[124px] sm:w-[140px]">
               <div className="relative flex items-center gap-2 flex-1">
-                <div className="absolute right-1.5 sm:right-2 text-[#7f7f7f] text-[clamp(10px,3vw,14px)] sm:text-base lg:text-lg font-medium z-10 pointer-events-none">
+                <div className="absolute right-1.5 sm:right-2 text-[#7f7f7f] text-xs min-[380px]:text-sm sm:text-base lg:text-lg font-medium z-10 pointer-events-none">
                   {nextLevel}
                 </div>
-                <div className="flex-1 h-[clamp(18px,5.2vw,24px)] sm:h-7 border-2 border-[#7f7f7f] rounded-full relative overflow-hidden">
+                <div className="flex-1 h-5.5 min-[380px]:h-6 sm:h-7 border-2 border-[#7f7f7f] rounded-full relative overflow-hidden">
                   <div className="absolute inset-0.5 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-[#4cb025] rounded-r-full" 
                       style={{ width: progressWidth }} 
                     />
                   </div>
-                  <div className="absolute inset-0 flex items-center justify-center text-white text-[clamp(9px,2.7vw,12px)] font-medium z-10 pl-1.5 sm:pl-2">
+                  <div className="absolute inset-0 flex items-center justify-center text-white text-[11px] min-[380px]:text-xs font-medium z-10 pl-1.5 sm:pl-2">
                     LVL.{currentLevel}
                   </div>
                 </div>
@@ -102,20 +102,20 @@ export function Header(props: HeaderProps) {
               <div className={streakIconClass}>
                 <StreakIcon />
               </div>
-              <span className={streakTextColor + ' text-[clamp(12px,3.8vw,16px)] sm:text-lg lg:text-xl font-medium'}>
+              <span className={streakTextColor + ' text-sm min-[380px]:text-base sm:text-lg lg:text-xl font-medium'}>
                 {props.streakCount}
               </span>
             </button>
           </div>
 
           {/* Stred: Navigacia */}
-          <nav className="flex items-center justify-center gap-[clamp(12px,5vw,24px)] sm:gap-10 lg:gap-12 w-full sm:w-auto order-3 sm:order-2 sm:absolute sm:left-1/2 sm:-translate-x-1/2 pb-0.5 sm:pb-0">
+          <nav className="flex items-center justify-center gap-4 min-[380px]:gap-6 sm:gap-10 lg:gap-12 w-full sm:w-auto order-3 sm:order-2 sm:absolute sm:left-1/2 sm:-translate-x-1/2 pb-0.5 sm:pb-0">
             <button 
               onClick={() => {
                 props.onTabChange("home");
               }}
               onMouseEnter={() => props.onTabHover?.("home")}
-              className={'text-[clamp(12px,4.2vw,16px)] sm:text-lg lg:text-xl transition-colors ' + homeTabColor}
+              className={'text-[14px] min-[380px]:text-base sm:text-lg lg:text-xl transition-colors ' + homeTabColor}
             >
               Home
             </button>
@@ -124,7 +124,7 @@ export function Header(props: HeaderProps) {
                 props.onTabChange("mistakes");
               }}
               onMouseEnter={() => props.onTabHover?.("mistakes")}
-              className={'text-[clamp(12px,4.2vw,16px)] sm:text-lg lg:text-xl transition-colors ' + mistakesTabColor}
+              className={'text-[14px] min-[380px]:text-base sm:text-lg lg:text-xl transition-colors ' + mistakesTabColor}
             >
               Mistakes
             </button>
@@ -134,7 +134,7 @@ export function Header(props: HeaderProps) {
                   props.onTabChange("admin");
                 }}
                 onMouseEnter={() => props.onTabHover?.("admin")}
-                className={'text-[clamp(12px,4.2vw,16px)] sm:text-lg lg:text-xl transition-colors ' + adminTabColor}
+                className={'text-[14px] min-[380px]:text-base sm:text-lg lg:text-xl transition-colors ' + adminTabColor}
               >
                 Admin
               </button>
@@ -145,22 +145,22 @@ export function Header(props: HeaderProps) {
           <button 
             onClick={props.onProfileClick}
             onMouseEnter={props.onProfileHover}
-            className="flex items-center gap-[clamp(5px,2vw,8px)] sm:gap-3 hover:opacity-80 transition-opacity order-2 sm:order-3"
+            className="flex items-center gap-1.5 min-[380px]:gap-2 sm:gap-3 hover:opacity-80 transition-opacity order-2 sm:order-3"
           >
             {props.isAdmin ? (
-              <span className="text-[#FFD700] text-[clamp(9px,2.8vw,12px)] sm:text-sm font-bold bg-[#FFD700]/20 px-[clamp(4px,1.4vw,8px)] py-1 rounded">
+              <span className="text-[#FFD700] text-[10px] min-[380px]:text-xs sm:text-sm font-bold bg-[#FFD700]/20 px-1.5 min-[380px]:px-2 py-1 rounded">
                 ADMIN
               </span>
             ) : null}
-            <span className="text-[#b6b6b6] text-[clamp(11px,3.4vw,14px)] sm:text-base max-w-[clamp(52px,20vw,90px)] sm:max-w-none truncate">{props.userProfile.name}</span>
+            <span className="text-[#b6b6b6] text-xs min-[380px]:text-sm sm:text-base max-w-[68px] min-[380px]:max-w-[90px] sm:max-w-none truncate">{props.userProfile.name}</span>
             {props.userProfile.profilePicture ? (
               <img 
                 src={props.userProfile.profilePicture} 
                 alt={props.userProfile.name} 
-                className="w-[clamp(24px,7.5vw,32px)] h-[clamp(24px,7.5vw,32px)] sm:w-9 sm:h-9 rounded-full object-cover flex-shrink-0" 
+                className="w-7.5 h-7.5 min-[380px]:w-8 min-[380px]:h-8 sm:w-9 sm:h-9 rounded-full object-cover flex-shrink-0" 
               />
             ) : (
-              <div className="w-[clamp(24px,7.5vw,32px)] h-[clamp(24px,7.5vw,32px)] sm:w-9 sm:h-9 bg-[#c4c4c4] rounded-full flex-shrink-0" />
+              <div className="w-7.5 h-7.5 min-[380px]:w-8 min-[380px]:h-8 sm:w-9 sm:h-9 bg-[#c4c4c4] rounded-full flex-shrink-0" />
             )}
           </button>
         </div>
