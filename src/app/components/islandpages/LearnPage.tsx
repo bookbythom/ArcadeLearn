@@ -164,6 +164,10 @@ export default function LearnPage(props: LearnPageProps) {
     return mask;
   }
 
+  function getCorrectCountFromResults(results: boolean[]): number {
+    return results.filter(result => result === true).length;
+  }
+
   function countSetBits(value: number): number {
     let bits = value;
     let count = 0;
@@ -241,7 +245,7 @@ export default function LearnPage(props: LearnPageProps) {
   useEffect(() => {
     if (showResultsPage && !hasCalledCompleteCallback) {
       // Po dokonceni vytvorime mistakes a ulozime vysledok ostrovceka
-      const correctCount = exerciseResults.filter(result => result === true).length;
+      const correctCount = getCorrectCountFromResults(exerciseResults);
       const newMistakes = createMistakesFromResults(exerciseResults, exerciseStates, themeData, isFinalTest);
       const correctMask = getCorrectMaskFromResults(exerciseResults);
       
@@ -347,7 +351,7 @@ export default function LearnPage(props: LearnPageProps) {
 
   // Funkcia pre dokoncenie
   function handleFinishButton() {
-    const correctCount = exerciseResults.filter(result => result === true).length;
+    const correctCount = getCorrectCountFromResults(exerciseResults);
     const correctMask = getCorrectMaskFromResults(exerciseResults);
 
     if (props.onComplete && !hasCalledCompleteCallback) {
@@ -471,7 +475,7 @@ export default function LearnPage(props: LearnPageProps) {
 
   // Ak sa zobrazuju vysledky
   if (showResultsPage) {
-    const correctCount = exerciseResults.filter(result => result === true).length;
+    const correctCount = getCorrectCountFromResults(exerciseResults);
     const correctMask = getCorrectMaskFromResults(exerciseResults);
     const previousAwardedMask = attemptStartAwardedMask;
     const newlyAwardedMask = correctMask & ~previousAwardedMask;
