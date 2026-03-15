@@ -412,11 +412,11 @@ export function HomePage(props: HomePageProps) {
       />
       
       {/* Beginner sekcia */}
-      <section ref={beginnerSectionRef} className="py-10 max-[380px]:py-8 max-[360px]:py-7 sm:py-14 lg:py-20">
-        <div className="w-full px-3 max-[380px]:px-2 sm:px-6 lg:px-8">
+      <section ref={beginnerSectionRef} className="py-10 sm:py-14 lg:py-20">
+        <div className="w-full px-3 sm:px-6 lg:px-8">
           <SectionHeader level="beginner" />
           <div className="max-w-6xl mx-auto">
-            <div className="relative w-full aspect-[3/5] max-[380px]:aspect-[11/20] sm:aspect-[6/7] max-h-[1000px]">
+            <div className="relative w-full aspect-[3/5] sm:aspect-[6/7] max-h-[1000px]">
               {renderIslandsForLevel('beginner')}
               <BeginnerIllustrations />
             </div>
@@ -425,11 +425,11 @@ export function HomePage(props: HomePageProps) {
       </section>
       
       {/* Intermediate sekcia */}
-      <section ref={intermediateSectionRef} className="py-10 max-[380px]:py-8 max-[360px]:py-7 sm:py-14 lg:py-20">
-        <div className="w-full px-3 max-[380px]:px-2 sm:px-6 lg:px-8">
+      <section ref={intermediateSectionRef} className="py-10 sm:py-14 lg:py-20">
+        <div className="w-full px-3 sm:px-6 lg:px-8">
           <SectionHeader level="intermediate" />
           <div className="max-w-6xl mx-auto">
-            <div className="relative w-full aspect-[3/5] max-[380px]:aspect-[11/20] sm:aspect-[6/7] max-h-[1000px]">
+            <div className="relative w-full aspect-[3/5] sm:aspect-[6/7] max-h-[1000px]">
               {renderIslandsForLevel('intermediate')}
               <IntermediateIllustrations />
             </div>
@@ -438,11 +438,11 @@ export function HomePage(props: HomePageProps) {
       </section>
       
       {/* Professional sekcia */}
-      <section ref={professionalSectionRef} className="py-10 max-[380px]:py-8 max-[360px]:py-7 sm:py-14 lg:py-20">
-        <div className="w-full px-3 max-[380px]:px-2 sm:px-6 lg:px-8">
+      <section ref={professionalSectionRef} className="py-10 sm:py-14 lg:py-20">
+        <div className="w-full px-3 sm:px-6 lg:px-8">
           <SectionHeader level="professional" />
           <div className="max-w-6xl mx-auto">
-            <div className="relative w-full aspect-[3/5] max-[380px]:aspect-[11/20] sm:aspect-[6/7] max-h-[1000px]">
+            <div className="relative w-full aspect-[3/5] sm:aspect-[6/7] max-h-[1000px]">
               {renderIslandsForLevel('professional')}
               <ProfessionalIllustrations />
             </div>
