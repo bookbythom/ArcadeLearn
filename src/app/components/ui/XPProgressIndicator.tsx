@@ -80,7 +80,7 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
 
     return (
       <div 
-        className="fixed left-1/2 sm:left-4 lg:left-8 -translate-x-1/2 sm:translate-x-0 z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-3 max-[380px]:p-2.5 max-[360px]:p-2 sm:p-4 lg:p-5 w-[calc(100vw-1.5rem)] max-[380px]:w-[calc(100vw-1rem)] max-w-[340px] max-[380px]:max-w-[300px] transition-opacity duration-300"
+        className="fixed left-2 right-2 sm:left-4 sm:right-auto lg:left-8 z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-3 max-[430px]:p-2.5 max-[390px]:p-2 sm:p-4 lg:p-5 w-auto sm:w-[calc(100vw-1.5rem)] max-w-[340px] max-[430px]:max-w-[300px] transition-opacity duration-300"
         style={{
           top: 'calc(4rem + env(safe-area-inset-top) + 0.75rem)',
         }}
@@ -90,13 +90,13 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
           <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
-          <div className="text-xl max-[380px]:text-lg sm:text-2xl font-bold text-gray-300">
+          <div className="text-xl max-[430px]:text-lg sm:text-2xl font-bold text-gray-300">
             {levelName} Locked
           </div>
         </div>
 
         {/* Sprava */}
-        <div className="text-sm max-[380px]:text-xs text-gray-300">
+        <div className="text-sm max-[430px]:text-xs text-gray-300">
           Complete previous section to unlock{' '}
           <span className="font-semibold text-white">{levelName}</span> section.
         </div>
@@ -155,7 +155,7 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
 
   return (
     <div 
-      className="fixed left-1/2 sm:left-4 lg:left-8 -translate-x-1/2 sm:translate-x-0 z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-3 max-[380px]:p-2.5 max-[360px]:p-2 sm:p-4 lg:p-5 w-[calc(100vw-1.5rem)] max-[380px]:w-[calc(100vw-1rem)] max-w-[340px] max-[380px]:max-w-[300px] transition-opacity duration-300"
+      className="fixed left-2 right-2 sm:left-4 sm:right-auto lg:left-8 z-50 backdrop-blur-lg bg-[rgba(28,28,30,0.95)] border border-[rgba(255,255,255,0.2)] rounded-lg shadow-2xl p-3 max-[430px]:p-2.5 max-[390px]:p-2 sm:p-4 lg:p-5 w-auto sm:w-[calc(100vw-1.5rem)] max-w-[340px] max-[430px]:max-w-[300px] transition-opacity duration-300"
       style={{
         top: 'calc(4rem + env(safe-area-inset-top) + 0.75rem)',
       }}
@@ -163,10 +163,10 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
       {/* Zobrazenie XP */}
       <div className="mb-3">
         <div className="flex items-baseline justify-between mb-3">
-          <span className="text-3xl max-[380px]:text-2xl sm:text-4xl lg:text-5xl font-bold text-white transition-all duration-300">
+          <span className="text-3xl max-[430px]:text-2xl sm:text-4xl lg:text-5xl font-bold text-white transition-all duration-300">
             {xpInCurrentLevel}
           </span>
-          <span className="text-sm max-[380px]:text-xs sm:text-base lg:text-lg text-gray-400">
+          <span className="text-sm max-[430px]:text-xs sm:text-base lg:text-lg text-gray-400">
             / {FINAL_TEST_XP} XP
           </span>
         </div>
@@ -186,14 +186,14 @@ export default function XPProgressIndicator({ userProgress, currentLevel, isVisi
 
       {/* Stavova sprava */}
       {finalTestUnlocked ? (
-        <div className="flex items-center gap-2 max-[380px]:gap-1.5 text-green-400 text-sm max-[380px]:text-xs transition-all duration-300">
+        <div className="flex items-center gap-2 max-[430px]:gap-1.5 text-green-400 text-sm max-[430px]:text-xs transition-all duration-300">
           <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
           </svg>
           <span className="font-medium">Final Test Unlocked!</span>
         </div>
       ) : (
-        <div className="text-sm max-[380px]:text-xs text-gray-300 transition-all duration-300">
+        <div className="text-sm max-[430px]:text-xs text-gray-300 transition-all duration-300">
           <span className="font-semibold transition-colors duration-300" style={{ color: barColor }}>
             {xpStillNeeded < 0 ? 0 : xpStillNeeded} XP
           </span>
