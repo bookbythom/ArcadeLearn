@@ -427,6 +427,92 @@ export default function AppContent() {
   function saveToBackend<T>(data: T, saveFunction: (token: string, data: T) => Promise<unknown>) {
     // Auto-save je vypnuty pocas prveho loadu, aby sa neprepisi initial data
     if (!accessToken || !isLoggedIn || isInitialLoad) return;
+
+    const isCompletedStatus = (status: IslandStatus | undefined) => {
+      return status === "completed-perfect" || status === "completed-mistakes";
+    };
+
+    const isValidIslandPayload = (payload: IslandProgress) => {
+      const validStates: IslandStatus[] = ["locked", "unlocked", "completed-perfect", "completed-mistakes"];
+      const keyRegex = /^(beginner|intermediate|professional)-(0|[1-9]|1[0-2])$/;
+      const levels: LearnLevel[] = ["beginner", "intermediate", "professional"];
+
+      const beginnerOne = payload["beginner-1"];
+      if (!beginnerOne || beginnerOne === "locked") {
+        return false;
+      }
+
+      for (const key of Object.keys(payload)) {
+        if (!keyRegex.test(key)) {
+          return false;
+        }
+
+        const status = payload[key];
+        if (!status || !validStates.includes(status)) {
+          return false;
+        }
+      }
+
+      for (let levelIndex = 0; levelIndex < levels.length; levelIndex++) {
+        const level = levels[levelIndex];
+
+        for (let theme = 2; theme <= 12; theme++) {
+          const current = payload[`${level}-${theme}`];
+          if (!current || current === "locked") {
+            continue;
+          }
+
+          const previous = payload[`${level}-${theme - 1}`];
+          if (!isCompletedStatus(previous)) {
+            return false;
+          }
+        }
+
+        const finalStatus = payload[`${level}-0`];
+        if (finalStatus && finalStatus !== "locked") {
+          const sectionXP = userProgress.sectionXP[level] || 0;
+          if (sectionXP < 300) {
+            return false;
+          }
+
+          for (let theme = 1; theme <= 12; theme++) {
+            if (!isCompletedStatus(payload[`${level}-${theme}`])) {
+              return false;
+            }
+          }
+        }
+
+        if (levelIndex > 0) {
+          const previousLevel = levels[levelIndex - 1];
+          const hasCompletedPreviousFinal = isCompletedStatus(payload[`${previousLevel}-0`]);
+
+          let hasAnyOpenInCurrentLevel = false;
+          for (let theme = 0; theme <= 12; theme++) {
+            const status = payload[`${level}-${theme}`];
+            if (status && status !== "locked") {
+              hasAnyOpenInCurrentLevel = true;
+              break;
+            }
+          }
+
+          if (hasAnyOpenInCurrentLevel && !hasCompletedPreviousFinal) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    };
+
+    // Admin ma ostrovceky vzdy odomknute bez ohladu na ulozene islands data, PUT /islands pre admin preset byval zdroj 400.
+    if (saveFunction === progressAPI.updateIslands && isAdmin) {
+      return;
+    }
+
+    if (saveFunction === progressAPI.updateIslands && !isValidIslandPayload(data as IslandProgress)) {
+      return;
+    }
+
     const timeoutId = setTimeout(async () => {
       try {
         await saveFunction(accessToken, data);
