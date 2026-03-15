@@ -19,8 +19,6 @@ interface HeaderProps {
 
 // Header komponent
 export function Header(props: HeaderProps) {
-  const mobileScale = "clamp(0.84, calc(0.84 + (0.16 * ((100vw - 320px) / 220))), 1)";
-
   // Vypocet levelu
   let currentLevel = 0;
   if (props.userProgress && props.userProgress.level) {
@@ -78,19 +76,19 @@ export function Header(props: HeaderProps) {
         <div className="flex flex-wrap sm:flex-nowrap items-center justify-between min-h-16 py-2 sm:py-0 gap-2 sm:gap-4">
           {/* Lava strana: Level a Streak */}
           <div className="flex items-center gap-4 sm:gap-8 lg:gap-12 order-1">
-            <div className="flex items-center gap-2 w-[124px] sm:w-[140px]" style={{ width: `calc(124px * ${mobileScale})` }}>
+            <div className="flex items-center gap-2 w-[124px] sm:w-[140px]">
               <div className="relative flex items-center gap-2 flex-1">
-                <div className="absolute right-2 text-[#7f7f7f] font-medium z-10 pointer-events-none" style={{ fontSize: `calc(0.875rem * ${mobileScale})` }}>
+                <div className="absolute right-2 text-[#7f7f7f] text-sm sm:text-base lg:text-lg font-medium z-10 pointer-events-none">
                   {nextLevel}
                 </div>
-                <div className="flex-1 border-2 border-[#7f7f7f] rounded-full relative overflow-hidden" style={{ height: `calc(1.5rem * ${mobileScale})` }}>
+                <div className="flex-1 h-6 sm:h-7 border-2 border-[#7f7f7f] rounded-full relative overflow-hidden">
                   <div className="absolute inset-0.5 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-[#4cb025] rounded-r-full" 
                       style={{ width: progressWidth }} 
                     />
                   </div>
-                  <div className="absolute inset-0 flex items-center justify-center text-white font-medium z-10 pl-2" style={{ fontSize: `calc(0.75rem * ${mobileScale})` }}>
+                  <div className="absolute inset-0 flex items-center justify-center text-white text-xs font-medium z-10 pl-2">
                     LVL.{currentLevel}
                   </div>
                 </div>
@@ -104,7 +102,7 @@ export function Header(props: HeaderProps) {
               <div className={streakIconClass}>
                 <StreakIcon />
               </div>
-              <span className={streakTextColor + ' font-medium'} style={{ fontSize: `calc(1rem * ${mobileScale})` }}>
+              <span className={streakTextColor + ' text-base sm:text-lg lg:text-xl font-medium'}>
                 {props.streakCount}
               </span>
             </button>
@@ -117,8 +115,7 @@ export function Header(props: HeaderProps) {
                 props.onTabChange("home");
               }}
               onMouseEnter={() => props.onTabHover?.("home")}
-              className={'transition-colors ' + homeTabColor}
-              style={{ fontSize: `calc(1rem * ${mobileScale})` }}
+              className={'text-base sm:text-lg lg:text-xl transition-colors ' + homeTabColor}
             >
               Home
             </button>
@@ -127,8 +124,7 @@ export function Header(props: HeaderProps) {
                 props.onTabChange("mistakes");
               }}
               onMouseEnter={() => props.onTabHover?.("mistakes")}
-              className={'transition-colors ' + mistakesTabColor}
-              style={{ fontSize: `calc(1rem * ${mobileScale})` }}
+              className={'text-base sm:text-lg lg:text-xl transition-colors ' + mistakesTabColor}
             >
               Mistakes
             </button>
@@ -138,8 +134,7 @@ export function Header(props: HeaderProps) {
                   props.onTabChange("admin");
                 }}
                 onMouseEnter={() => props.onTabHover?.("admin")}
-                className={'transition-colors ' + adminTabColor}
-                style={{ fontSize: `calc(1rem * ${mobileScale})` }}
+                className={'text-base sm:text-lg lg:text-xl transition-colors ' + adminTabColor}
               >
                 Admin
               </button>
@@ -157,16 +152,15 @@ export function Header(props: HeaderProps) {
                 ADMIN
               </span>
             ) : null}
-            <span className="text-[#b6b6b6] max-w-[90px] sm:max-w-none truncate" style={{ fontSize: `calc(0.875rem * ${mobileScale})` }}>{props.userProfile.name}</span>
+            <span className="text-[#b6b6b6] text-sm sm:text-base max-w-[90px] sm:max-w-none truncate">{props.userProfile.name}</span>
             {props.userProfile.profilePicture ? (
               <img 
                 src={props.userProfile.profilePicture} 
                 alt={props.userProfile.name} 
-                className="rounded-full object-cover flex-shrink-0"
-                style={{ width: `calc(2rem * ${mobileScale})`, height: `calc(2rem * ${mobileScale})` }}
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover flex-shrink-0" 
               />
             ) : (
-              <div className="bg-[#c4c4c4] rounded-full flex-shrink-0" style={{ width: `calc(2rem * ${mobileScale})`, height: `calc(2rem * ${mobileScale})` }} />
+              <div className="w-8 h-8 sm:w-9 sm:h-9 bg-[#c4c4c4] rounded-full flex-shrink-0" />
             )}
           </button>
         </div>

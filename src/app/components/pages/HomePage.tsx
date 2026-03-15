@@ -56,8 +56,6 @@ const islandPositions = [
 
 // Hlavny HomePage komponent
 export function HomePage(props: HomePageProps) {
-  const sectionVerticalPadding = "clamp(2rem, calc(2rem + (3 * ((100vw - 320px) / 704))), 5rem)";
-
   // Referencie na sekcie pre scrollovanie
   const beginnerSectionRef = useRef<HTMLElement>(null);
   const intermediateSectionRef = useRef<HTMLElement>(null);
@@ -414,7 +412,7 @@ export function HomePage(props: HomePageProps) {
       />
       
       {/* Beginner sekcia */}
-      <section ref={beginnerSectionRef} style={{ paddingTop: sectionVerticalPadding, paddingBottom: sectionVerticalPadding }}>
+      <section ref={beginnerSectionRef} className="py-10 sm:py-14 lg:py-20">
         <div className="w-full px-3 sm:px-6 lg:px-8">
           <SectionHeader level="beginner" />
           <div className="max-w-6xl mx-auto">
@@ -427,7 +425,7 @@ export function HomePage(props: HomePageProps) {
       </section>
       
       {/* Intermediate sekcia */}
-      <section ref={intermediateSectionRef} style={{ paddingTop: sectionVerticalPadding, paddingBottom: sectionVerticalPadding }}>
+      <section ref={intermediateSectionRef} className="py-10 sm:py-14 lg:py-20">
         <div className="w-full px-3 sm:px-6 lg:px-8">
           <SectionHeader level="intermediate" />
           <div className="max-w-6xl mx-auto">
@@ -440,7 +438,7 @@ export function HomePage(props: HomePageProps) {
       </section>
       
       {/* Professional sekcia */}
-      <section ref={professionalSectionRef} style={{ paddingTop: sectionVerticalPadding, paddingBottom: sectionVerticalPadding }}>
+      <section ref={professionalSectionRef} className="py-10 sm:py-14 lg:py-20">
         <div className="w-full px-3 sm:px-6 lg:px-8">
           <SectionHeader level="professional" />
           <div className="max-w-6xl mx-auto">
