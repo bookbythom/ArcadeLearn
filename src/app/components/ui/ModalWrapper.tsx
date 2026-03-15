@@ -14,10 +14,7 @@ export function ModalWrapper({ isOpen, onClose, children, canClose = true, modal
   }
   
   // Urcenie background farby
-  let bgClass = 'bg-[#1c1c1e]';
-  if (modalType === 'profile') {
-    bgClass = 'bg-black/40';
-  }
+  const bgClass = modalType === 'profile' ? 'bg-black/40' : 'bg-[#1c1c1e]';
   
   // Handler pre kliknutie na backdrop
   const handleBackdropClick = () => {

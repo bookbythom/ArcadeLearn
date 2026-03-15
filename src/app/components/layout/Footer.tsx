@@ -2,7 +2,7 @@
 export function Footer() {
   const bgColor = '#222224';
   const textColor = '#7f7f7f';
-  const currentYear = 2025;
+  const footerYear = 2025;
   const appName = 'ArcadeLearn';
   
   return (
@@ -15,7 +15,7 @@ export function Footer() {
           className="text-sm sm:text-base" 
           style={{ color: textColor }}
         >
-          ©{currentYear} {appName} — All Rights Reserved
+          ©{footerYear} {appName} — All Rights Reserved
         </p>
       </div>
     </footer>

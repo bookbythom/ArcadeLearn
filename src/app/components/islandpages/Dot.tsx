@@ -4,8 +4,7 @@ interface DotProps {
 }
 
 // Komponent pre bodku v navigacii
-export function Dot(props: DotProps) {
-  const isActive = props.isActive || false;
+export function Dot({ isActive = false }: DotProps) {
   
   // Vyber farby podla aktivneho stavu
   const dotColor = isActive ? "#4CB025" : "#D9D9D9";

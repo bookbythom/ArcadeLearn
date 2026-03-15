@@ -3,22 +3,20 @@ interface SectionHeaderProps {
   level: 'beginner' | 'intermediate' | 'professional';
 }
 
+function getSectionVisuals(level: SectionHeaderProps['level']): { color: string; label: string } {
+  if (level === 'intermediate') {
+    return { color: '#EC4545', label: 'Intermediate' };
+  }
+  if (level === 'professional') {
+    return { color: '#6E44FF', label: 'Professional' };
+  }
+  return { color: '#C69C6D', label: 'Beginner' };
+}
+
 // Komponent pre hlavicku sekcie s nazvom urovne a ciarami
 export function SectionHeader(props: SectionHeaderProps) {
-  // Urcime farbu a nazov podla urovne
-  let levelColor = '#C69C6D';
-  let levelDisplayName = 'Beginner';
-  
-  if (props.level === 'beginner') {
-    levelColor = '#C69C6D';
-    levelDisplayName = 'Beginner';
-  } else if (props.level === 'intermediate') {
-    levelColor = '#EC4545';
-    levelDisplayName = 'Intermediate';
-  } else if (props.level === 'professional') {
-    levelColor = '#6E44FF';
-    levelDisplayName = 'Professional';
-  }
+  const { level } = props;
+  const { color: levelColor, label: levelDisplayName } = getSectionVisuals(level);
   
   // Vytvorime gradient pre lavu ciaru (transparent -> farba)
   const leftLineGradient = 'linear-gradient(to right, transparent, ' + levelColor + ', ' + levelColor + ')';
