@@ -29,6 +29,31 @@ interface ExerciseRendererProps {
   onAnswerSubmit: (isCorrect: boolean) => void;
 }
 
+function getInitialSelectedArray(value: ExerciseRenderState['selectedOptions']): number[] | undefined {
+  return Array.isArray(value) ? value : undefined;
+}
+
+function getInitialMatchingSelections(value: ExerciseRenderState['selectedOptions']): { [key: number]: string } | undefined {
+  if (Array.isArray(value)) {
+    return undefined;
+  }
+  return value as { [key: number]: string } | undefined;
+}
+
+function getInitialBooleanSelection(value: ExerciseRenderState['selectedOption']): boolean | null | undefined {
+  if (typeof value === 'boolean' || value === null) {
+    return value;
+  }
+  return undefined;
+}
+
+function getInitialNumberSelection(value: ExerciseRenderState['selectedOption']): number | null | undefined {
+  if (typeof value === 'number' || value === null) {
+    return value;
+  }
+  return undefined;
+}
+
 export function renderExerciseByType({
   exercise,
   state,
@@ -55,7 +80,7 @@ export function renderExerciseByType({
           onBack={onPrevious}
           currentSlide={slideNumber}
           totalSlides={totalSlidesCount}
-          initialSelectedOptions={Array.isArray(state.selectedOptions) ? state.selectedOptions : undefined}
+          initialSelectedOptions={getInitialSelectedArray(state.selectedOptions)}
           initialIsSubmitted={Boolean(state.isSubmitted)}
           onStateChange={(selectedOptions, isSubmitted) => {
             onStateChange({ selectedOptions, isSubmitted });
@@ -77,7 +102,7 @@ export function renderExerciseByType({
           onBack={onPrevious}
           currentSlide={slideNumber}
           totalSlides={totalSlidesCount}
-          initialSelectedOption={typeof state.selectedOption === 'boolean' || state.selectedOption === null ? state.selectedOption : undefined}
+          initialSelectedOption={getInitialBooleanSelection(state.selectedOption)}
           initialIsSubmitted={Boolean(state.isSubmitted)}
           onStateChange={(selectedOption, isSubmitted) => {
             onStateChange({ selectedOption, isSubmitted });
@@ -100,7 +125,7 @@ export function renderExerciseByType({
           onBack={onPrevious}
           currentSlide={slideNumber}
           totalSlides={totalSlidesCount}
-          initialSelectedOptions={!Array.isArray(state.selectedOptions) ? state.selectedOptions as { [key: number]: string } : undefined}
+          initialSelectedOptions={getInitialMatchingSelections(state.selectedOptions)}
           initialIsSubmitted={Boolean(state.isSubmitted)}
           onStateChange={(selectedOptions, isSubmitted) => {
             onStateChange({ selectedOptions, isSubmitted });
@@ -147,7 +172,7 @@ export function renderExerciseByType({
           onBack={onPrevious}
           currentSlide={slideNumber}
           totalSlides={totalSlidesCount}
-          initialSelectedOption={typeof state.selectedOption === 'number' || state.selectedOption === null ? state.selectedOption : undefined}
+          initialSelectedOption={getInitialNumberSelection(state.selectedOption)}
           initialIsSubmitted={Boolean(state.isSubmitted)}
           onStateChange={(selectedOption, isSubmitted) => {
             onStateChange({ selectedOption, isSubmitted });

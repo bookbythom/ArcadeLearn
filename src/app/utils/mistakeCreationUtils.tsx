@@ -22,6 +22,24 @@ const toItemOrderArray = (value: unknown): Array<{ label: string; position: numb
   });
 };
 
+function isExerciseResultIndex(index: number, isFinalTest: boolean): boolean {
+  return isFinalTest || index > 0;
+}
+
+function getExerciseIndex(index: number, isFinalTest: boolean): number {
+  return isFinalTest ? index : index - 1;
+}
+
+function mapOptionIndexesToLabels(optionIndexes: number[], options: string[]): string[] {
+  const labels: string[] = [];
+
+  for (let i = 0; i < optionIndexes.length; i++) {
+    labels.push(options[optionIndexes[i]]);
+  }
+
+  return labels;
+}
+
 // Vytvorenie mistakes zo zle zodpovedanych cviceni
 export function createMistakesFromResults(
   exerciseResults: boolean[],
@@ -34,26 +52,11 @@ export function createMistakesFromResults(
   // Prejdi cez vsetky vysledky
   for (let i = 0; i < exerciseResults.length; i++) {
     const isCorrect = exerciseResults[i];
-    
-    // Je to cvicenie?
-    let isExercise = false;
-    if (isFinalTest) {
-      isExercise = true;
-    } else {
-      if (i > 0) {
-        isExercise = true;
-      }
-    }
+    const isExercise = isExerciseResultIndex(i, isFinalTest);
     
     // Ak nie je spravne a je to cvicenie
     if (!isCorrect && isExercise) {
-      let exerciseIndex = 0;
-      
-      if (isFinalTest) {
-        exerciseIndex = i;
-      } else {
-        exerciseIndex = i - 1;
-      }
+      const exerciseIndex = getExerciseIndex(i, isFinalTest);
       
       const exercise = themeData.exercises[exerciseIndex];
       const state = exerciseStates[i];
@@ -71,22 +74,12 @@ export function createMistakesFromResults(
       // Viacnasobny vyber
       if (exercise.type === 'multiple-choice') {
         const userSelectedOptions = toNumberArray(state.selectedOptions);
-        const userAnswers = [];
+        const userAnswers = mapOptionIndexesToLabels(userSelectedOptions, exercise.options);
         
-        for (let j = 0; j < userSelectedOptions.length; j++) {
-          const optionIndex = userSelectedOptions[j];
-          const optionText = exercise.options[optionIndex];
-          userAnswers.push(optionText);
-        }
-        
-        let correctAnswers = [];
+        let correctAnswers: string[] = [];
         if (Array.isArray(exercise.correctAnswer)) {
           const correctIndices = toNumberArray(exercise.correctAnswer);
-          for (let k = 0; k < correctIndices.length; k++) {
-            const correctIndex = correctIndices[k];
-            const correctText = exercise.options[correctIndex];
-            correctAnswers.push(correctText);
-          }
+          correctAnswers = mapOptionIndexesToLabels(correctIndices, exercise.options);
         }
         
         mistakeData = {
@@ -99,19 +92,8 @@ export function createMistakesFromResults(
 
       // Pravda/Nepravda
       else if (exercise.type === 'true-false') {
-        let userAnswerText = '';
-        if (state.selectedOption === true) {
-          userAnswerText = 'True';
-        } else {
-          userAnswerText = 'False';
-        }
-        
-        let correctAnswerText = '';
-        if (exercise.correctAnswer === true) {
-          correctAnswerText = 'True';
-        } else {
-          correctAnswerText = 'False';
-        }
+        const userAnswerText = state.selectedOption === true ? 'True' : 'False';
+        const correctAnswerText = exercise.correctAnswer === true ? 'True' : 'False';
         
         mistakeData = {
           type: 'true-false',
@@ -134,10 +116,7 @@ export function createMistakesFromResults(
       // Zoradovanie
       else if (exercise.type === 'sort') {
         const stateItemOrder = toItemOrderArray(state.itemOrder);
-        const itemsCopy: { label: string; position: number }[] = [];
-        for (let m = 0; m < stateItemOrder.length; m++) {
-          itemsCopy.push(stateItemOrder[m]);
-        }
+        const itemsCopy = [...stateItemOrder];
         
         // Zorad podla pozicie
         for (let n = 0; n < itemsCopy.length; n++) {
@@ -150,7 +129,7 @@ export function createMistakesFromResults(
           }
         }
         
-        const userOrderLabels = [];
+        const userOrderLabels: string[] = [];
         for (let q = 0; q < itemsCopy.length; q++) {
           userOrderLabels.push(itemsCopy[q].label);
         }

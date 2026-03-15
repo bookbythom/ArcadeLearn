@@ -7,6 +7,23 @@ interface ViewportScaleOptions {
   maxScale?: number;
 }
 
+function clampScale(value: number, minScale: number, maxScale: number): number {
+  if (value < minScale) {
+    return minScale;
+  }
+  if (value > maxScale) {
+    return maxScale;
+  }
+  return value;
+}
+
+function computeViewportScale(baseWidth: number, baseHeight: number, minScale: number, maxScale: number): number {
+  const widthScale = window.innerWidth / baseWidth;
+  const heightScale = window.innerHeight / baseHeight;
+  const smallerRatio = Math.min(widthScale, heightScale);
+  return clampScale(smallerRatio, minScale, maxScale);
+}
+
 // Returns a smooth scale factor based on current viewport size.
 export default function useViewportScale(options: ViewportScaleOptions = {}) {
   const { baseWidth = 1440, baseHeight = 980, minScale = 0.68, maxScale = 1 } = options;
@@ -15,34 +32,12 @@ export default function useViewportScale(options: ViewportScaleOptions = {}) {
       return 1;
     }
 
-    const widthScale = window.innerWidth / baseWidth;
-    const heightScale = window.innerHeight / baseHeight;
-    const smallerRatio = Math.min(widthScale, heightScale);
-
-    if (smallerRatio < minScale) {
-      return minScale;
-    }
-    if (smallerRatio > maxScale) {
-      return maxScale;
-    }
-    return smallerRatio;
+    return computeViewportScale(baseWidth, baseHeight, minScale, maxScale);
   });
 
   useEffect(() => {
     const updateScale = () => {
-      const widthScale = window.innerWidth / baseWidth;
-      const heightScale = window.innerHeight / baseHeight;
-      const smallerRatio = Math.min(widthScale, heightScale);
-
-      let nextScale = smallerRatio;
-      if (nextScale < minScale) {
-        nextScale = minScale;
-      }
-      if (nextScale > maxScale) {
-        nextScale = maxScale;
-      }
-
-      setScale(nextScale);
+      setScale(computeViewportScale(baseWidth, baseHeight, minScale, maxScale));
     };
 
     if (typeof window === "undefined") {
