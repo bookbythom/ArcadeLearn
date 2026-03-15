@@ -7,6 +7,37 @@ export interface ExerciseState {
   isSubmitted?: boolean;
 }
 
+function getSlideNumber(index: number, isFinalTest: boolean): number {
+  return isFinalTest ? index : index + 1;
+}
+
+function getSortItemLabel(optionText: string, categories: string[] | undefined): string {
+  if (categories) {
+    return optionText;
+  }
+
+  const splitParts = optionText.split(' - ');
+  return splitParts.length > 1 ? splitParts[1] : splitParts[0];
+}
+
+function shuffleSortItems(items: Array<{ id: string; label: string; position: number }>): Array<{ id: string; label: string; position: number }> {
+  const tempItems = [...items];
+  const shuffledItems: Array<{ id: string; label: string; position: number }> = [];
+
+  while (tempItems.length > 0) {
+    const randomIndex = Math.floor(Math.random() * tempItems.length);
+    const pickedItem = tempItems[randomIndex];
+    shuffledItems.push(pickedItem);
+    tempItems.splice(randomIndex, 1);
+  }
+
+  for (let i = 0; i < shuffledItems.length; i++) {
+    shuffledItems[i].position = i;
+  }
+
+  return shuffledItems;
+}
+
 // Inicializacia stavov pre cvicenia
 export function initializeExerciseStates(exercises: Exercise[], isFinalTest: boolean): Record<number, ExerciseState> {
   const states: Record<number, ExerciseState> = {};
@@ -14,13 +45,7 @@ export function initializeExerciseStates(exercises: Exercise[], isFinalTest: boo
   // Prejdi cez vsetky cvicenia
   for (let i = 0; i < exercises.length; i++) {
     const exercise = exercises[i];
-    let slideNumber = 0;
-    
-    if (isFinalTest) {
-      slideNumber = i;
-    } else {
-      slideNumber = i + 1;
-    }
+    const slideNumber = getSlideNumber(i, isFinalTest);
     
     // Viacnasobny vyber cvicenie
     if (exercise.type === 'multiple-choice') {
@@ -31,15 +56,7 @@ export function initializeExerciseStates(exercises: Exercise[], isFinalTest: boo
     }
     
     // Jedna moznost cvicenie
-    else if (exercise.type === 'single-choice') {
-      states[slideNumber] = {
-        selectedOption: null,
-        isSubmitted: false
-      };
-    }
-    
-    // Pravda/Nepravda cvicenie
-    else if (exercise.type === 'true-false') {
+    else if (exercise.type === 'single-choice' || exercise.type === 'true-false') {
       states[slideNumber] = {
         selectedOption: null,
         isSubmitted: false
@@ -60,18 +77,7 @@ export function initializeExerciseStates(exercises: Exercise[], isFinalTest: boo
       
       for (let j = 0; j < exercise.options.length; j++) {
         const opt = exercise.options[j];
-        let itemLabel = '';
-        
-        if (exercise.categories) {
-          itemLabel = opt;
-        } else {
-          const splitParts = opt.split(' - ');
-          if (splitParts.length > 1) {
-            itemLabel = splitParts[1];
-          } else {
-            itemLabel = splitParts[0];
-          }
-        }
+        const itemLabel = getSortItemLabel(opt, exercise.categories);
         
         const newItem = {
           id: String(j + 1),
@@ -82,25 +88,7 @@ export function initializeExerciseStates(exercises: Exercise[], isFinalTest: boo
         itemsList.push(newItem);
       }
       
-      // Shuffle items
-      const shuffledItems = [];
-      const tempItems = [];
-      
-      for (let k = 0; k < itemsList.length; k++) {
-        tempItems.push(itemsList[k]);
-      }
-      
-      while (tempItems.length > 0) {
-        const randomIndex = Math.floor(Math.random() * tempItems.length);
-        const pickedItem = tempItems[randomIndex];
-        shuffledItems.push(pickedItem);
-        tempItems.splice(randomIndex, 1);
-      }
-      
-      // Nastav pozicie
-      for (let m = 0; m < shuffledItems.length; m++) {
-        shuffledItems[m].position = m;
-      }
+      const shuffledItems = shuffleSortItems(itemsList);
       
       states[slideNumber] = {
         itemOrder: shuffledItems,

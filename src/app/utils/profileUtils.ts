@@ -29,7 +29,7 @@ export function validateEmail(email: string): { valid: boolean; error?: string }
   // Kontrola povolených znakov
   const allowedChars = 'abcdefghijklmnopqrstuvwxyz0123456789@._-';
   for (let i = 0; i < email.length; i++) {
-    let char = email[i];
+    const char = email[i];
     let isAllowed = false;
     
     for (let j = 0; j < allowedChars.length; j++) {
@@ -86,7 +86,7 @@ export function validateName(name: string): { valid: boolean; error?: string } {
     return { valid: false, error: 'Name is required' };
   }
   
-  let trimmedName = name.trim();
+  const trimmedName = name.trim();
   
   if (trimmedName.length === 0) {
     return { valid: false, error: 'Name is required' };
@@ -131,16 +131,12 @@ export function imageToBase64(file: File): Promise<string> {
         let h = img.height;
         
         // Prepocet rozmeru
-        if (w > h) {
-          if (w > maxWidth) {
-            h = Math.round((h * maxWidth) / w);
-            w = maxWidth;
-          }
-        } else {
-          if (h > maxHeight) {
-            w = Math.round((w * maxHeight) / h);
-            h = maxHeight;
-          }
+        if (w > h && w > maxWidth) {
+          h = Math.round((h * maxWidth) / w);
+          w = maxWidth;
+        } else if (h > maxHeight) {
+          w = Math.round((w * maxHeight) / h);
+          h = maxHeight;
         }
         
         // Nastavenie rozmeru canvas
