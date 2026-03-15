@@ -109,13 +109,13 @@ export function Header(props: HeaderProps) {
           </div>
 
           {/* Stred: Navigacia */}
-          <nav className="flex items-center justify-center gap-[clamp(6px,2.5vw,24px)] sm:gap-10 lg:gap-12 flex-1 min-w-0 order-2 pb-0">
+          <nav className="flex items-center justify-center gap-[clamp(10px,4vw,24px)] sm:gap-10 lg:gap-12 flex-1 min-w-0 order-2 pb-0">
             <button 
               onClick={() => {
                 props.onTabChange("home");
               }}
               onMouseEnter={() => props.onTabHover?.("home")}
-              className={'text-[clamp(9px,2.9vw,16px)] sm:text-lg lg:text-xl transition-colors whitespace-nowrap ' + homeTabColor}
+              className={'text-[clamp(10px,3.4vw,16px)] sm:text-lg lg:text-xl transition-colors whitespace-nowrap ' + homeTabColor}
             >
               Home
             </button>
@@ -124,7 +124,7 @@ export function Header(props: HeaderProps) {
                 props.onTabChange("mistakes");
               }}
               onMouseEnter={() => props.onTabHover?.("mistakes")}
-              className={'text-[clamp(9px,2.9vw,16px)] sm:text-lg lg:text-xl transition-colors whitespace-nowrap ' + mistakesTabColor}
+              className={'text-[clamp(10px,3.4vw,16px)] sm:text-lg lg:text-xl transition-colors whitespace-nowrap ' + mistakesTabColor}
             >
               Mistakes
             </button>
@@ -134,7 +134,7 @@ export function Header(props: HeaderProps) {
                   props.onTabChange("admin");
                 }}
                 onMouseEnter={() => props.onTabHover?.("admin")}
-                className={'text-[clamp(9px,2.9vw,16px)] sm:text-lg lg:text-xl transition-colors whitespace-nowrap ' + adminTabColor}
+                className={'text-[clamp(10px,3.4vw,16px)] sm:text-lg lg:text-xl transition-colors whitespace-nowrap ' + adminTabColor}
               >
                 Admin
               </button>
@@ -148,11 +148,11 @@ export function Header(props: HeaderProps) {
             className="flex items-center gap-[clamp(5px,2vw,8px)] sm:gap-3 hover:opacity-80 transition-opacity order-3 flex-shrink-0 min-w-0"
           >
             {props.isAdmin ? (
-              <span className="hidden min-[380px]:inline text-[#FFD700] text-[clamp(8px,2.4vw,12px)] sm:text-sm font-bold bg-[#FFD700]/20 px-[clamp(3px,1.2vw,8px)] py-1 rounded whitespace-nowrap">
+              <span className="text-[#FFD700] text-[clamp(8px,2.4vw,12px)] sm:text-sm font-bold bg-[#FFD700]/20 px-[clamp(3px,1.2vw,8px)] py-1 rounded whitespace-nowrap">
                 ADMIN
               </span>
             ) : null}
-            <span className="hidden min-[420px]:inline text-[#b6b6b6] text-[clamp(10px,2.9vw,14px)] sm:text-base max-w-[clamp(44px,16vw,90px)] sm:max-w-none truncate">{props.userProfile.name}</span>
+            <span className="text-[#b6b6b6] text-[clamp(10px,2.9vw,14px)] sm:text-base max-w-[clamp(44px,16vw,90px)] sm:max-w-none truncate">{props.userProfile.name}</span>
             {props.userProfile.profilePicture ? (
               <img 
                 src={props.userProfile.profilePicture} 
