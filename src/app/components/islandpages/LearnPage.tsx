@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { replaceThemeMistakes } from "@/app/utils/mistakesUtils";
+import { getUserMistakes, replaceThemeMistakes } from "@/app/utils/mistakesUtils";
 import { Dot } from './Dot';
 import ResultPage from './ResultPage';
 import ExerciseTypePopup from '@/app/components/reusable/ExerciseTypePopup';
@@ -15,7 +15,7 @@ interface LearnPageProps {
   level: "beginner" | "intermediate" | "professional";
   theme: number;
   onBack: () => void;
-  onComplete?: (correctAnswers: number, totalExercises: number) => void;
+  onComplete?: (correctAnswers: number, totalExercises: number, fixedPreviousMistakesCount?: number) => void;
   userEmail: string;
   themeName: string;
   isAdmin?: boolean;
@@ -146,6 +146,7 @@ export default function LearnPage(props: LearnPageProps) {
   const [showResultsPage, setShowResultsPage] = useState(false);
   const [exerciseResults, setExerciseResults] = useState<boolean[]>([]);
   const [hasCalledCompleteCallback, setHasCalledCompleteCallback] = useState(false);
+  const [lastFixedPreviousMistakesCount, setLastFixedPreviousMistakesCount] = useState(0);
   const [exerciseStates, setExerciseStates] = useState<ExerciseStateMap>({});
   const [isInitialized, setIsInitialized] = useState(false);
   const [initialBestCorrectAnswers, setInitialBestCorrectAnswers] = useState(props.previousBestCorrectAnswers || 0);
@@ -187,6 +188,7 @@ export default function LearnPage(props: LearnPageProps) {
     setShowResultsPage(false);
     setExerciseResults([]);
     setHasCalledCompleteCallback(false);
+    setLastFixedPreviousMistakesCount(0);
   }, [props.level, props.theme]);
 
   // Spracovanie dokoncenia a ulozenie chyb
@@ -195,6 +197,21 @@ export default function LearnPage(props: LearnPageProps) {
       // Po dokonceni vytvorime mistakes a ulozime vysledok ostrovceka
       const correctCount = exerciseResults.filter(result => result === true).length;
       const newMistakes = createMistakesFromResults(exerciseResults, exerciseStates, themeData, isFinalTest);
+      const themeKey = props.level + '-' + props.theme;
+      const currentMistakesData = getUserMistakes(props.userEmail);
+      const previousThemeMistakes = currentMistakesData[themeKey]?.mistakes || [];
+
+      const previousMistakeIds = new Set(previousThemeMistakes.map((mistake) => `${mistake.type}::${mistake.question}`));
+      const newMistakeIds = new Set(newMistakes.map((mistake) => `${mistake.type}::${mistake.question}`));
+
+      let fixedPreviousMistakesCount = 0;
+      for (const previousMistakeId of previousMistakeIds) {
+        if (!newMistakeIds.has(previousMistakeId)) {
+          fixedPreviousMistakesCount++;
+        }
+      }
+
+      setLastFixedPreviousMistakesCount(fixedPreviousMistakesCount);
       
       replaceThemeMistakes(
         props.userEmail, 
@@ -206,7 +223,7 @@ export default function LearnPage(props: LearnPageProps) {
       );
       
       if (props.onComplete) {
-        props.onComplete(correctCount, numberOfExercises);
+        props.onComplete(correctCount, numberOfExercises, fixedPreviousMistakesCount);
       }
       setHasCalledCompleteCallback(true);
     }
@@ -300,7 +317,7 @@ export default function LearnPage(props: LearnPageProps) {
   function handleFinishButton() {
     const correctCount = exerciseResults.filter(result => result === true).length;
     if (props.onComplete && !hasCalledCompleteCallback) {
-      props.onComplete(correctCount, numberOfExercises);
+      props.onComplete(correctCount, numberOfExercises, lastFixedPreviousMistakesCount);
       setHasCalledCompleteCallback(true);
     }
     props.onBack();

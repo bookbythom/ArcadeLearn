@@ -443,14 +443,20 @@ export default function AppContent() {
     }
   }
 
-  async function handleLearnComplete(correctAnswers: number, totalExercises: number) {
+  async function handleLearnComplete(correctAnswers: number, totalExercises: number, fixedPreviousMistakesCount = 0) {
     // Po dokonceni ostrovceka prepocitame XP a odomykanie dalsieho kroku
     if (currentLearnTheme === null || currentLearnTheme === undefined) return;
 
     const currentKey = `${currentLearnLevel}-${currentLearnTheme}`;
     const previousBest = islandExerciseData[currentKey] || 0;
     const improvedBy = Math.max(0, correctAnswers - previousBest);
-    const xpToAward = improvedBy * 5;
+    const fixedMistakesDelta = Math.max(0, fixedPreviousMistakesCount);
+
+    // XP dame podla vacsieho ziskaneho progresu:
+    // - lepsi celkovy vysledok oproti best score,
+    // - alebo pocet opravenych starych chyb oproti minulemu pokusu.
+    const progressDelta = Math.max(improvedBy, fixedMistakesDelta);
+    const xpToAward = progressDelta * 5;
 
     let newProgress = userProgress;
     if (xpToAward > 0) {
