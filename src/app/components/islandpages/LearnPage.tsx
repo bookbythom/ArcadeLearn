@@ -268,8 +268,16 @@ export default function LearnPage(props: LearnPageProps) {
 
   // Funkcia pre kontrolu chyb
   function handleCheckMistakesButton() {
+    // Pri final teste je prve cvicenie na indexe 0.
+    // Pri beznej teme je index 0 content slide, ten nechceme ratat.
     const incorrectIndices = exerciseResults
-      .map((result, index) => (result === false && index > 0 ? index : -1))
+      .map((result, index) => {
+        const isExerciseIndex = isFinalTest ? index >= 0 : index > 0;
+        if (result === false && isExerciseIndex) {
+          return index;
+        }
+        return -1;
+      })
       .filter(index => index !== -1);
     
     if (incorrectIndices.length > 0) {
