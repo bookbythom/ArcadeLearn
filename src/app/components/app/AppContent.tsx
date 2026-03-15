@@ -523,7 +523,7 @@ export default function AppContent() {
           />
         )}
 
-        <main className={`w-full pb-8 flex-1 ${isLearnRoute ? "pt-0" : "pt-[clamp(6.2rem,18vw,7.25rem)] sm:pt-16"}`}>
+        <main className={`w-full pb-8 flex-1 ${isLearnRoute ? "pt-0" : "pt-[clamp(4.25rem,11vw,4.75rem)] sm:pt-16"}`}>
           {/* Learn obsah */}
           {isLearnRoute && learnRoute && (
             <Suspense fallback={<PageLoader />}>
