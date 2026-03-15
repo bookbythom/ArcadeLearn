@@ -5,33 +5,41 @@ interface IslandProgressArcsProps {
   status: "locked" | "unlocked" | "completed-perfect" | "completed-mistakes";
 }
 
-export default function IslandProgressArcs(props: IslandProgressArcsProps) {
-  // Nastavime default hodnotu pre totalCount
-  const totalExercises = props.totalCount || 5;
-  
-  // Funkcia na ziskanie farby podla stavu ostrova
-  const getColorForStatus = () => {
-    if (props.status === "unlocked") {
-      // Sivy pre odomknute ostrovy
-      return "#4a4a4c";
-    }
-    
-    if (props.status === "completed-perfect") {
-      // Zlaty/oranzovy pre perfektne dokoncenie
-      return "#FCAF2B";
-    }
-    
-    if (props.status === "completed-mistakes") {
-      // Zeleny pre dokoncenie s chybami
-      return "#62BB46";
-    }
-    
-    // Default sivy
+function getColorForStatus(status: IslandProgressArcsProps['status']): string {
+  if (status === "unlocked") {
     return "#4a4a4c";
-  };
+  }
+  if (status === "completed-perfect") {
+    return "#FCAF2B";
+  }
+  if (status === "completed-mistakes") {
+    return "#62BB46";
+  }
+  return "#4a4a4c";
+}
+
+function buildEllipticalArcPath(startAngleDeg: number, endAngleDeg: number, centerX: number, centerY: number, radiusX: number, radiusY: number): string {
+  const startAngleRad = (startAngleDeg - 90) * (Math.PI / 180);
+  const endAngleRad = (endAngleDeg - 90) * (Math.PI / 180);
+
+  const startX = centerX + radiusX * Math.cos(startAngleRad);
+  const startY = centerY + radiusY * Math.sin(startAngleRad);
+  const endX = centerX + radiusX * Math.cos(endAngleRad);
+  const endY = centerY + radiusY * Math.sin(endAngleRad);
+
+  const largeArcFlag = (endAngleDeg - startAngleDeg) > 180 ? 1 : 0;
+  return 'M ' + startX + ' ' + startY + ' A ' + radiusX + ' ' + radiusY + ' 0 ' + largeArcFlag + ' 1 ' + endX + ' ' + endY;
+}
+
+export default function IslandProgressArcs(props: IslandProgressArcsProps) {
+  const { correctCount, level, status } = props;
+  void level;
+
+  // Nastavime default hodnotu pre totalCount
+  const totalExercises = props.totalCount ?? 5;
 
   // Ziskame farbu
-  const activeSegmentColor = getColorForStatus();
+  const activeSegmentColor = getColorForStatus(status);
   const inactiveSegmentColor = "#2a2a2c"; // Tmavo sivy pre nedokoncene segmenty
 
   // Parametre pre elipticku cestu ktora sa prispôsobuje tvaru ostrova
@@ -44,49 +52,29 @@ export default function IslandProgressArcs(props: IslandProgressArcsProps) {
   const gapBetweenSegmentsDegrees = 18; // Velke medzery medzi segmentami
   const segmentSizeDegrees = (360 / totalExercises) - gapBetweenSegmentsDegrees;
 
-  // Funkcia na vytvorenie eliptickej cesty pre segment
-  const createEllipticalArcPath = (startAngleDeg: number, endAngleDeg: number) => {
-    // Konvertujeme stupne na radiany a upravime o -90 stupnov pre spravne smerovanie
-    const startAngleRad = (startAngleDeg - 90) * (Math.PI / 180);
-    const endAngleRad = (endAngleDeg - 90) * (Math.PI / 180);
-    
-    // Vypocitame x,y suradnice zaciatku a konca obluka
-    const startX = ellipseCenterX + ellipseRadiusX * Math.cos(startAngleRad);
-    const startY = ellipseCenterY + ellipseRadiusY * Math.sin(startAngleRad);
-    const endX = ellipseCenterX + ellipseRadiusX * Math.cos(endAngleRad);
-    const endY = ellipseCenterY + ellipseRadiusY * Math.sin(endAngleRad);
-    
-    // Urcime ci je to velky obluk (viac ako 180 stupnov)
-    let largeArcFlag = 0;
-    if ((endAngleDeg - startAngleDeg) > 180) {
-      largeArcFlag = 1;
-    }
-    
-    // Vytvorime SVG path string pre elipticky obluk
-    const pathString = 'M ' + startX + ' ' + startY + ' A ' + ellipseRadiusX + ' ' + ellipseRadiusY + ' 0 ' + largeArcFlag + ' 1 ' + endX + ' ' + endY;
-    
-    return pathString;
-  };
-
   // Vytvorime pole segmentov
   // Kazdy segment je sfarbeny ak je jeho index mensi ako correctCount
   // Priklad: ak correctCount=3, segmenty 0,1,2 su sfarbene; segmenty 3,4 su sive
   // Ak correctCount=5, vsetky segmenty 0,1,2,3,4 su sfarbene
   const segmentsArray = [];
-  let segmentIndex = 0;
-  while (segmentIndex < totalExercises) {
+
+  for (let segmentIndex = 0; segmentIndex < totalExercises; segmentIndex++) {
     // Urcime ci je tento segment aktivny
-    let isSegmentActive = false;
-    if (segmentIndex < props.correctCount) {
-      isSegmentActive = true;
-    }
+    const isSegmentActive = segmentIndex < correctCount;
     
     // Vypocitame uhly pre tento segment
     const startAngle = segmentIndex * (360 / totalExercises);
     const endAngle = startAngle + segmentSizeDegrees;
     
     // Vytvorime cestu pre tento segment
-    const segmentPath = createEllipticalArcPath(startAngle, endAngle);
+    const segmentPath = buildEllipticalArcPath(
+      startAngle,
+      endAngle,
+      ellipseCenterX,
+      ellipseCenterY,
+      ellipseRadiusX,
+      ellipseRadiusY
+    );
     
     // Pridame segment do pola
     segmentsArray.push({
@@ -94,8 +82,6 @@ export default function IslandProgressArcs(props: IslandProgressArcsProps) {
       path: segmentPath,
       index: segmentIndex
     });
-    
-    segmentIndex = segmentIndex + 1;
   }
 
   // Render SVG s progress segmentami
@@ -115,10 +101,7 @@ export default function IslandProgressArcs(props: IslandProgressArcsProps) {
         {/* Vykreslime vsetky segmenty pomocou manualne loop */}
         {segmentsArray.map((segmentData) => {
           // Urcime farbu segmentu
-          let segmentColor = inactiveSegmentColor;
-          if (segmentData.isActive === true) {
-            segmentColor = activeSegmentColor;
-          }
+          const segmentColor = segmentData.isActive ? activeSegmentColor : inactiveSegmentColor;
           
           return (
             <path

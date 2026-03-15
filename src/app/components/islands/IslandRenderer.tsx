@@ -115,76 +115,78 @@ const testIslandByLevel: Record<"beginner" | "intermediate" | "professional", Is
 
 // Hlavny IslandRenderer komponent
 export default function IslandRenderer(props: IslandRendererProps) {
+  const { level, theme, status, onClick, onHover, exercisesCorrect } = props;
+
   // Nastavime default hodnotu pre exercisesCorrect
-  const exercisesCorrectCount = props.exercisesCorrect ?? 0;
+  const exercisesCorrectCount = exercisesCorrect ?? 0;
+
+  const isCompleted = status === "completed-perfect" || status === "completed-mistakes";
 
   // Render funkcia
   function renderIsland() {
     // Ak je ostrov locked, zobrazime locked verziu
-    if (props.status === "locked") {
+    if (status === "locked") {
       // Locked test island alebo locked regular island
-      if (props.theme === 0) {
-        return <LockedTestIsland onClick={props.onClick} />;
+      if (theme === 0) {
+        return <LockedTestIsland onClick={onClick} />;
       }
-      return <LockedIsland onClick={props.onClick} />;
+      return <LockedIsland onClick={onClick} />;
     }
     
     // Ak je completed, zobrazime completed verziu
-    if (props.status === "completed-perfect" || props.status === "completed-mistakes") {
-      const isPerfectStatus = props.status === "completed-perfect";
+    if (isCompleted) {
+      const isPerfectStatus = status === "completed-perfect";
       
       // Test island alebo regular island
-      if (props.theme === 0) {
+      if (theme === 0) {
         return isPerfectStatus
-          ? <CompletedTestGold onClick={props.onClick} />
-          : <CompletedTestGreen onClick={props.onClick} />;
+          ? <CompletedTestGold onClick={onClick} />
+          : <CompletedTestGreen onClick={onClick} />;
       }
 
       return isPerfectStatus
-        ? <CompletedIslandGold onClick={props.onClick} />
-        : <CompletedIslandGreen onClick={props.onClick} />;
+        ? <CompletedIslandGold onClick={onClick} />
+        : <CompletedIslandGreen onClick={onClick} />;
     }
     
     // Default - zobrazime normalne unlocked ostrovy
-    if (props.theme === 0) {
-      const TestIsland = testIslandByLevel[props.level];
-      return <TestIsland onClick={props.onClick} />;
+    if (theme === 0) {
+      const TestIsland = testIslandByLevel[level];
+      return <TestIsland onClick={onClick} />;
     }
 
-    const islandIndex = props.theme - 1;
-    const islandsForLevel = regularIslandsByLevel[props.level];
+    const islandIndex = theme - 1;
+    const islandsForLevel = regularIslandsByLevel[level];
     const IslandComponentForTheme = islandsForLevel[islandIndex];
 
     if (IslandComponentForTheme) {
-      return <IslandComponentForTheme onClick={props.onClick} />;
+      return <IslandComponentForTheme onClick={onClick} />;
     }
 
     // Fallback ak nenajdeme spravny ostrov
-    return <LockedIsland onClick={props.onClick} />;
+    return <LockedIsland onClick={onClick} />;
   }
 
   // Urcime ci zobrazit progress arcs (kruzky s progressom)
   const shouldShowProgressArcs = (
-    props.status === "completed-perfect" || 
-    props.status === "completed-mistakes" || 
-    props.status === "unlocked"
+    isCompleted || status === "unlocked"
   );
   
   // Celkovy pocet cviceni - finalny test ma 10, normalne ostrovy maju 5
-  const totalExercisesCount = props.theme === 0 ? 10 : 5;
+  const totalExercisesCount = theme === 0 ? 10 : 5;
 
   // Render ostrova s pripadnymi progress arcs
   return (
     <div
       className="relative group transition-transform scale-[0.42] sm:scale-[0.56] md:scale-[0.78] lg:scale-100 lg:hover:scale-110 active:scale-95"
-      onMouseEnter={props.onHover}
+      onMouseEnter={onHover}
     >
       {shouldShowProgressArcs && (
         <IslandProgressArcs 
           correctCount={exercisesCorrectCount} 
           totalCount={totalExercisesCount} 
-          level={props.level}
-          status={props.status}
+          level={level}
+          status={status}
         />
       )}
       <div className="relative z-10">
