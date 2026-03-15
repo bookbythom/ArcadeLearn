@@ -73,7 +73,13 @@ export function Header(props: HeaderProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-[60] backdrop-blur-lg bg-[rgba(55,55,55,0.2)] border-b border-[rgba(255,255,255,0.1)]">
       <div className="w-full px-[clamp(6px,2.4vw,10px)] sm:px-6 lg:px-8 overflow-hidden">
-        <div className="flex flex-nowrap items-center justify-between min-h-14 sm:min-h-16 py-2 sm:py-0 gap-[clamp(6px,2.5vw,12px)]">
+        <div
+          className="flex flex-nowrap items-center justify-between min-h-14 sm:min-h-16 py-2 sm:py-0 gap-[clamp(6px,2.5vw,12px)]"
+          style={{
+            transform: 'scale(clamp(0.62, calc(100vw / 768), 1))',
+            transformOrigin: 'top center',
+          }}
+        >
           {/* Lava strana: Level a Streak */}
           <div className="flex items-center gap-[clamp(6px,2.5vw,10px)] sm:gap-8 lg:gap-12 order-1 flex-shrink-0">
             <div className="flex items-center gap-1.5 sm:gap-2 w-[clamp(98px,31vw,124px)] sm:w-[140px]">
@@ -148,11 +154,11 @@ export function Header(props: HeaderProps) {
             className="flex items-center gap-[clamp(5px,2vw,8px)] sm:gap-3 hover:opacity-80 transition-opacity order-3 flex-shrink-0 min-w-0"
           >
             {props.isAdmin ? (
-              <span className="hidden min-[380px]:inline text-[#FFD700] text-[clamp(8px,2.4vw,12px)] sm:text-sm font-bold bg-[#FFD700]/20 px-[clamp(3px,1.2vw,8px)] py-1 rounded whitespace-nowrap">
+              <span className="text-[#FFD700] text-[clamp(8px,2.4vw,12px)] sm:text-sm font-bold bg-[#FFD700]/20 px-[clamp(3px,1.2vw,8px)] py-1 rounded whitespace-nowrap">
                 ADMIN
               </span>
             ) : null}
-            <span className="hidden min-[420px]:inline text-[#b6b6b6] text-[clamp(10px,2.9vw,14px)] sm:text-base max-w-[clamp(44px,16vw,90px)] sm:max-w-none truncate">{props.userProfile.name}</span>
+            <span className="text-[#b6b6b6] text-[clamp(10px,2.9vw,14px)] sm:text-base max-w-[clamp(44px,16vw,90px)] sm:max-w-none truncate">{props.userProfile.name}</span>
             {props.userProfile.profilePicture ? (
               <img 
                 src={props.userProfile.profilePicture} 
