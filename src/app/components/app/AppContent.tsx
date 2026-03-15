@@ -81,6 +81,10 @@ function parseLearnRoute(pathname: string): { level: LearnLevel; theme: number }
   return { level, theme };
 }
 
+function isCompletedIslandStatus(status: IslandStatus | undefined): boolean {
+  return status === "completed-perfect" || status === "completed-mistakes";
+}
+
 const LEVEL_CONFIG = {
   beginner: { themes: beginnerThemes },
   intermediate: { themes: intermediateThemes },
@@ -227,7 +231,7 @@ export default function AppContent() {
     let completedCount = 0;
     for (let i = 1; i <= 12; i++) {
       const status = islandProgress[`${level}-${i}`];
-      if (status === "completed-perfect" || status === "completed-mistakes") {
+      if (isCompletedIslandStatus(status)) {
         completedCount++;
       }
     }
@@ -378,7 +382,7 @@ export default function AppContent() {
         };
 
         Object.keys(currentProgress).forEach((key) => {
-          if (currentProgress[key] === "completed-mistakes" || currentProgress[key] === "completed-perfect") {
+          if (isCompletedIslandStatus(currentProgress[key])) {
             correctedProgress[key] = currentProgress[key];
           }
         });
@@ -386,7 +390,7 @@ export default function AppContent() {
         ["beginner", "intermediate", "professional"].forEach((level) => {
           for (let i = 1; i < 12; i++) {
             const currentKey = `${level}-${i}`;
-            if (correctedProgress[currentKey] === "completed-mistakes" || correctedProgress[currentKey] === "completed-perfect") {
+            if (isCompletedIslandStatus(correctedProgress[currentKey])) {
               const nextKey = `${level}-${i + 1}`;
               if (!correctedProgress[nextKey]) {
                 correctedProgress[nextKey] = "unlocked";
@@ -398,14 +402,14 @@ export default function AppContent() {
 
         // Ak je final test hotovy, odomkneme zaciatok dalsiej sekcie.
         const beginnerFinal = correctedProgress["beginner-0"];
-        if (beginnerFinal === "completed-mistakes" || beginnerFinal === "completed-perfect") {
+        if (isCompletedIslandStatus(beginnerFinal)) {
           if (!correctedProgress["intermediate-1"]) {
             correctedProgress["intermediate-1"] = "unlocked";
           }
         }
 
         const intermediateFinal = correctedProgress["intermediate-0"];
-        if (intermediateFinal === "completed-mistakes" || intermediateFinal === "completed-perfect") {
+        if (isCompletedIslandStatus(intermediateFinal)) {
           if (!correctedProgress["professional-1"]) {
             correctedProgress["professional-1"] = "unlocked";
           }
@@ -515,7 +519,7 @@ export default function AppContent() {
         completedCount++;
       } else {
         const status = islandProgress[`${currentLearnLevel}-${i}`];
-        if (status === "completed-perfect" || status === "completed-mistakes") {
+        if (isCompletedIslandStatus(status)) {
           completedCount++;
         }
       }
