@@ -19,43 +19,59 @@ interface HeaderProps {
 
 // Header komponent
 export function Header(props: HeaderProps) {
+  const {
+    activeTab,
+    onTabChange,
+    onTabHover,
+    userProgress,
+    streakCount,
+    streakActiveToday,
+    userProfile,
+    isAdmin,
+    onProfileClick,
+    onProfileHover,
+  } = props;
+
   // Vypocet levelu a XP progressu
-  const currentLevel = props.userProgress?.level ?? 0;
+  const currentLevel = userProgress?.level ?? 0;
   const nextLevel = currentLevel + 1;
-  const totalXP = props.userProgress?.totalXP ?? 0;
-  
+  const totalXP = userProgress?.totalXP ?? 0;
+
   const levelProgressPercent = getLevelProgress(totalXP);
   const progressWidth = levelProgressPercent + '%';
-  
+
   // Handler pre streak klik
   function handleStreakClick() {
-    const dayLabel = props.streakCount === 1 ? 'day' : 'days';
-    let message = 'Current streak: ' + props.streakCount + ' ' + dayLabel + '!';
+    const dayLabel = streakCount === 1 ? 'day' : 'days';
+    let message = 'Current streak: ' + streakCount + ' ' + dayLabel + '!';
 
-    if (props.streakCount === 0) {
+    if (streakCount === 0) {
       message = 'Current streak: 0 days.\n\nComplete an island today to start your streak!';
       alert(message);
       return;
     }
-    
-    if (!props.streakActiveToday) {
+
+    if (!streakActiveToday) {
       message = message + '\n\nComplete an island today to grow your streak!';
     }
-    
+
     alert(message);
   }
-  
+
   // Styling pre streak
-  const streakIconClass = props.streakActiveToday
+  const streakIconClass = streakActiveToday
     ? 'transition-all'
     : 'transition-all grayscale opacity-50';
 
-  const streakTextColor = props.streakActiveToday ? 'text-[#ff9505]' : 'text-gray-500';
-  
-  // Tab styling
-  const homeTabColor = props.activeTab === "home" ? "text-white" : "text-[#b6b6b6] hover:text-white";
-  const mistakesTabColor = props.activeTab === "mistakes" ? "text-white" : "text-[#b6b6b6] hover:text-white";
-  const adminTabColor = props.activeTab === "admin" ? "text-white" : "text-[#b6b6b6] hover:text-white";
+  const streakTextColor = streakActiveToday ? 'text-[#ff9505]' : 'text-gray-500';
+
+  function getTabColor(tab: "home" | "mistakes" | "admin"): string {
+    return activeTab === tab ? "text-white" : "text-[#b6b6b6] hover:text-white";
+  }
+
+  const homeTabColor = getTabColor("home");
+  const mistakesTabColor = getTabColor("mistakes");
+  const adminTabColor = getTabColor("admin");
   
   return (
     <header className="fixed top-0 left-0 right-0 z-[60] backdrop-blur-lg bg-[rgba(55,55,55,0.2)] border-b border-[rgba(255,255,255,0.1)]">
@@ -90,7 +106,7 @@ export function Header(props: HeaderProps) {
                 <StreakIcon />
               </div>
               <span className={streakTextColor + ' text-base sm:text-lg lg:text-xl font-medium'}>
-                {props.streakCount}
+                {streakCount}
               </span>
             </button>
           </div>
@@ -99,28 +115,28 @@ export function Header(props: HeaderProps) {
           <nav className="flex items-center justify-center gap-6 sm:gap-8 lg:gap-10 w-full sm:w-auto sm:flex-1 sm:min-w-0 order-3 sm:order-2 pb-1 sm:pb-0">
             <button 
               onClick={() => {
-                props.onTabChange("home");
+                onTabChange("home");
               }}
-              onMouseEnter={() => props.onTabHover?.("home")}
+              onMouseEnter={() => onTabHover?.("home")}
               className={'text-base sm:text-lg lg:text-xl transition-colors ' + homeTabColor}
             >
               Home
             </button>
             <button 
               onClick={() => {
-                props.onTabChange("mistakes");
+                onTabChange("mistakes");
               }}
-              onMouseEnter={() => props.onTabHover?.("mistakes")}
+              onMouseEnter={() => onTabHover?.("mistakes")}
               className={'text-base sm:text-lg lg:text-xl transition-colors ' + mistakesTabColor}
             >
               Mistakes
             </button>
-            {props.isAdmin ? (
+            {isAdmin ? (
               <button 
                 onClick={() => {
-                  props.onTabChange("admin");
+                  onTabChange("admin");
                 }}
-                onMouseEnter={() => props.onTabHover?.("admin")}
+                onMouseEnter={() => onTabHover?.("admin")}
                 className={'text-base sm:text-lg lg:text-xl transition-colors ' + adminTabColor}
               >
                 Admin
@@ -130,20 +146,20 @@ export function Header(props: HeaderProps) {
 
           {/* Prava strana: Profil */}
           <button 
-            onClick={props.onProfileClick}
-            onMouseEnter={props.onProfileHover}
+            onClick={onProfileClick}
+            onMouseEnter={onProfileHover}
             className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity order-2 sm:order-3 shrink min-w-0 max-w-[58vw] sm:max-w-[320px]"
           >
-            {props.isAdmin ? (
+            {isAdmin ? (
               <span className="text-[#FFD700] text-xs sm:text-sm font-bold bg-[#FFD700]/20 px-2 py-1 rounded shrink-0">
                 ADMIN
               </span>
             ) : null}
-            <span className="text-[#b6b6b6] text-sm sm:text-base min-w-0 max-w-[90px] sm:max-w-[130px] md:max-w-[180px] lg:max-w-[240px] truncate">{props.userProfile.name}</span>
-            {props.userProfile.profilePicture ? (
+            <span className="text-[#b6b6b6] text-sm sm:text-base min-w-0 max-w-[90px] sm:max-w-[130px] md:max-w-[180px] lg:max-w-[240px] truncate">{userProfile.name}</span>
+            {userProfile.profilePicture ? (
               <img 
-                src={props.userProfile.profilePicture} 
-                alt={props.userProfile.name} 
+                src={userProfile.profilePicture} 
+                alt={userProfile.name} 
                 className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover flex-shrink-0" 
               />
             ) : (

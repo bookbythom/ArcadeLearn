@@ -56,6 +56,21 @@ const islandPositions = [
 
 // Hlavny HomePage komponent
 export function HomePage(props: HomePageProps) {
+  const {
+    userProgress,
+    islandProgress,
+    islandExerciseData,
+    isAdmin,
+    accessToken,
+    isLoggedIn,
+    shouldAutoScroll,
+    autoScrollTarget,
+    onVisibleSectionChange,
+    onIslandClick,
+    onIslandHover,
+    onAutoScrollComplete,
+  } = props;
+
   // Referencie na sekcie pre scrollovanie
   const beginnerSectionRef = useRef<HTMLElement>(null);
   const intermediateSectionRef = useRef<HTMLElement>(null);
@@ -67,7 +82,7 @@ export function HomePage(props: HomePageProps) {
   // Funkcia na ziskanie stavu ostrova
   const getIslandStatus = (levelName: string, themeNumber: number): IslandStatus => {
     // Ak je admin, vsetko je odomknute
-    if (props.isAdmin) {
+    if (isAdmin) {
       return "unlocked";
     }
     
@@ -78,10 +93,10 @@ export function HomePage(props: HomePageProps) {
     if (themeNumber === 0) {
       // Zistime XP pre danu sekciu
       const sectionXpValue = levelName === 'beginner'
-        ? props.userProgress.sectionXP.beginner
+        ? userProgress.sectionXP.beginner
         : levelName === 'intermediate'
-          ? props.userProgress.sectionXP.intermediate
-          : props.userProgress.sectionXP.professional;
+          ? userProgress.sectionXP.intermediate
+          : userProgress.sectionXP.professional;
       
       // Skontrolujeme ci je finalny test odomknuty
       if (!isFinalTestUnlocked(sectionXpValue)) {
@@ -92,7 +107,7 @@ export function HomePage(props: HomePageProps) {
       let completedIslandsCount = 0;
       for (let i = 1; i <= 12; i++) {
         const checkKey = levelName + '-' + i;
-        const islandStatus = props.islandProgress[checkKey];
+        const islandStatus = islandProgress[checkKey];
         if (islandStatus === "completed-perfect" || islandStatus === "completed-mistakes") {
           completedIslandsCount = completedIslandsCount + 1;
         }
@@ -105,7 +120,7 @@ export function HomePage(props: HomePageProps) {
 
       // Ak su podmienky splnene, final test je odomknuty.
       // Ak uz bol final test dokonceny, zachovame completed stav.
-      const finalStatusFromProgress = props.islandProgress[islandKey];
+      const finalStatusFromProgress = islandProgress[islandKey];
       if (finalStatusFromProgress === "completed-perfect" || finalStatusFromProgress === "completed-mistakes") {
         return finalStatusFromProgress;
       }
@@ -114,13 +129,13 @@ export function HomePage(props: HomePageProps) {
     }
     
     // Vratime status z progress objektu alebo locked ak neexistuje
-    return props.islandProgress[islandKey] ?? "locked";
+    return islandProgress[islandKey] ?? "locked";
   };
 
   // Funkcia na ziskanie poctu spravnych cviceni
   const getIslandExerciseData = (levelName: string, themeNumber: number): number => {
     const islandKey = levelName + '-' + themeNumber;
-    return props.islandExerciseData[islandKey] ?? 0;
+    return islandExerciseData[islandKey] ?? 0;
   };
 
   // Funkcia na vykreslenie ostrovov pre danu uroven
@@ -151,13 +166,13 @@ export function HomePage(props: HomePageProps) {
             theme={themeNumber} 
             status={islandStatus} 
             onClick={() => {
-              props.onIslandClick(levelName, themeNumber, false);
+              onIslandClick(levelName, themeNumber, false);
             }} 
             onHover={() => {
-              props.onIslandHover?.(levelName, themeNumber, false);
+              onIslandHover?.(levelName, themeNumber, false);
             }}
-            isAdmin={props.isAdmin} 
-            accessToken={props.accessToken} 
+            isAdmin={isAdmin} 
+            accessToken={accessToken} 
             exercisesCorrect={exercisesCorrect} 
           />
         </div>
@@ -187,13 +202,13 @@ export function HomePage(props: HomePageProps) {
           theme={0} 
           status={finalTestStatus} 
           onClick={() => {
-            props.onIslandClick(levelName, 0, true);
+            onIslandClick(levelName, 0, true);
           }} 
           onHover={() => {
-            props.onIslandHover?.(levelName, 0, true);
+            onIslandHover?.(levelName, 0, true);
           }}
-          isAdmin={props.isAdmin} 
-          accessToken={props.accessToken} 
+          isAdmin={isAdmin} 
+          accessToken={accessToken} 
           exercisesCorrect={finalTestExercises} 
         />
       </div>
@@ -255,7 +270,7 @@ export function HomePage(props: HomePageProps) {
       // Ak sme nasli viditelnu sekciu, aktualizujeme state
       if (mostVisibleSectionName !== null) {
         setVisibleSection(mostVisibleSectionName);
-        props.onVisibleSectionChange(mostVisibleSectionName);
+        onVisibleSectionChange(mostVisibleSectionName);
       }
     };
     
@@ -279,13 +294,13 @@ export function HomePage(props: HomePageProps) {
       intersectionObserver.disconnect(); 
       intersectionRatioMap.clear(); 
     };
-  }, [props.userProgress, props.islandProgress, props.onVisibleSectionChange]);
+  }, [userProgress, islandProgress, onVisibleSectionChange]);
 
   // Effect pre automaticke scrollovanie k prvemu odomknutemu ostrovu
   useEffect(() => {
     // Skontrolujeme podmienky pre auto scroll
-    const shouldPerformAutoScroll = props.shouldAutoScroll;
-    const userIsLoggedIn = props.isLoggedIn;
+    const shouldPerformAutoScroll = shouldAutoScroll;
+    const userIsLoggedIn = isLoggedIn;
     
     if (!shouldPerformAutoScroll || !userIsLoggedIn) {
       return;
@@ -301,7 +316,7 @@ export function HomePage(props: HomePageProps) {
         // Prejdeme vsetky ostrovy v urovni (1-12)
         for (let islandNumber = 1; islandNumber <= 12; islandNumber++) {
           const islandKey = currentLevel + '-' + islandNumber;
-          const islandStatus = props.islandProgress[islandKey];
+          const islandStatus = islandProgress[islandKey];
           
           if (islandStatus === 'unlocked') {
             return currentLevel as 'beginner' | 'intermediate' | 'professional';
@@ -311,7 +326,7 @@ export function HomePage(props: HomePageProps) {
         
         // Skontrolujeme aj finalny test (0)
         const finalTestKey = currentLevel + '-0';
-        const finalTestStatus = props.islandProgress[finalTestKey];
+        const finalTestStatus = islandProgress[finalTestKey];
         if (finalTestStatus === 'unlocked') {
           return currentLevel as 'beginner' | 'intermediate' | 'professional';
         }
@@ -322,8 +337,8 @@ export function HomePage(props: HomePageProps) {
     };
     
     // Ak mame konkretny target z LearnPage, pouzijeme ho prednostne.
-    const targetIslandKey = props.autoScrollTarget
-      ? `${props.autoScrollTarget.level}-${props.autoScrollTarget.theme}`
+    const targetIslandKey = autoScrollTarget
+      ? `${autoScrollTarget.level}-${autoScrollTarget.theme}`
       : null;
 
     const scrollToSection = (targetLevel: 'beginner' | 'intermediate' | 'professional') => {
@@ -371,7 +386,7 @@ export function HomePage(props: HomePageProps) {
           scrollToSection(targetLevel);
         }
         
-        props.onAutoScrollComplete();
+        onAutoScrollComplete();
       }, 500);
       
       return () => {
@@ -379,19 +394,19 @@ export function HomePage(props: HomePageProps) {
       };
     } else {
       // Ak nie je ziadny odomknuty ostrov, hned zavolame callback
-      props.onAutoScrollComplete();
+      onAutoScrollComplete();
     }
-  }, [props.shouldAutoScroll, props.autoScrollTarget, props.isLoggedIn, props.isAdmin, props.islandProgress, props.onAutoScrollComplete]);
+  }, [shouldAutoScroll, autoScrollTarget, isLoggedIn, isAdmin, islandProgress, onAutoScrollComplete]);
 
   // Render hlavneho contentu
   return (
     <>
       <XPProgressIndicator 
         key={visibleSection}
-        userProgress={props.userProgress} 
+        userProgress={userProgress} 
         currentLevel={visibleSection} 
-        isVisible={props.isLoggedIn} 
-        islandProgress={props.islandProgress} 
+        isVisible={isLoggedIn} 
+        islandProgress={islandProgress} 
       />
       
       {/* Beginner sekcia */}
