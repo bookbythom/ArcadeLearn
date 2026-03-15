@@ -151,6 +151,24 @@ export default function LearnPage(props: LearnPageProps) {
   const [isInitialized, setIsInitialized] = useState(false);
   const [initialBestCorrectAnswers, setInitialBestCorrectAnswers] = useState(props.previousBestCorrectAnswers || 0);
 
+  function getFixedPreviousMistakesCount(newMistakes: Omit<import("@/app/utils/mistakesUtils").MistakeExercise, 'timestamp'>[]): number {
+    const themeKey = props.level + '-' + props.theme;
+    const currentMistakesData = getUserMistakes(props.userEmail);
+    const previousThemeMistakes = currentMistakesData[themeKey]?.mistakes || [];
+
+    const previousMistakeIds = new Set(previousThemeMistakes.map((mistake) => `${mistake.type}::${mistake.question}`));
+    const newMistakeIds = new Set(newMistakes.map((mistake) => `${mistake.type}::${mistake.question}`));
+
+    let fixedPreviousMistakesCount = 0;
+    for (const previousMistakeId of previousMistakeIds) {
+      if (!newMistakeIds.has(previousMistakeId)) {
+        fixedPreviousMistakesCount++;
+      }
+    }
+
+    return fixedPreviousMistakesCount;
+  }
+
   // Lokalna logika je rozdelena do malych hookov kvoli citatelnosti
   const { timerSeconds, canUserProceed } = useContentSlideTimer({
     currentSlideIndex,
@@ -197,19 +215,7 @@ export default function LearnPage(props: LearnPageProps) {
       // Po dokonceni vytvorime mistakes a ulozime vysledok ostrovceka
       const correctCount = exerciseResults.filter(result => result === true).length;
       const newMistakes = createMistakesFromResults(exerciseResults, exerciseStates, themeData, isFinalTest);
-      const themeKey = props.level + '-' + props.theme;
-      const currentMistakesData = getUserMistakes(props.userEmail);
-      const previousThemeMistakes = currentMistakesData[themeKey]?.mistakes || [];
-
-      const previousMistakeIds = new Set(previousThemeMistakes.map((mistake) => `${mistake.type}::${mistake.question}`));
-      const newMistakeIds = new Set(newMistakes.map((mistake) => `${mistake.type}::${mistake.question}`));
-
-      let fixedPreviousMistakesCount = 0;
-      for (const previousMistakeId of previousMistakeIds) {
-        if (!newMistakeIds.has(previousMistakeId)) {
-          fixedPreviousMistakesCount++;
-        }
-      }
+      const fixedPreviousMistakesCount = getFixedPreviousMistakesCount(newMistakes);
 
       setLastFixedPreviousMistakesCount(fixedPreviousMistakesCount);
       
@@ -439,7 +445,17 @@ export default function LearnPage(props: LearnPageProps) {
     const correctCount = exerciseResults.filter(result => result === true).length;
     const previousBest = initialBestCorrectAnswers;
     const improvedBy = Math.max(0, correctCount - previousBest);
-    const xpEarned = improvedBy * 5;
+    const previewMistakes = createMistakesFromResults(exerciseResults, exerciseStates, themeData, isFinalTest);
+    const previewFixedCount = getFixedPreviousMistakesCount(previewMistakes);
+
+    // Po prvom ulozeni results chceme drzat stabilne XP z tohto pokusu,
+    // aj ked sa mistakes v localStorage uz medzitym prepise na novu hodnotu.
+    const fixedPreviousMistakesCount = hasCalledCompleteCallback
+      ? lastFixedPreviousMistakesCount
+      : previewFixedCount;
+
+    const progressDelta = Math.max(improvedBy, fixedPreviousMistakesCount);
+    const xpEarned = progressDelta * 5;
     return (
       <ResultPage
         correctAnswers={correctCount}
