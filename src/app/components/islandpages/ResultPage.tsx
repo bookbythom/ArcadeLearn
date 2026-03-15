@@ -12,13 +12,11 @@ interface ResultPageProps {
 
 // Komponent pre zobrazenie vysledkov
 export default function ResultPage(props: ResultPageProps) {
+  const { correctAnswers, totalExercises, xpEarned, onCheckMistakes, onFinish } = props;
   const viewportScale = useViewportScale({ baseHeight: 930, minScale: 0.7 });
 
   // Vypocet percentualneho uspesnosti
-  let percentageScore = 0;
-  if (props.totalExercises > 0) {
-    percentageScore = (props.correctAnswers / props.totalExercises) * 100;
-  }
+  const percentageScore = totalExercises > 0 ? (correctAnswers / totalExercises) * 100 : 0;
   
   // Konstanty pre kruhovy indikator
   const circleRadius = 140;
@@ -72,7 +70,7 @@ export default function ResultPage(props: ResultPageProps) {
               {/* Text so skore v strede */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <p className="font-bold text-white text-[clamp(50px,8vw,80px)] leading-[1.5]">
-                  {props.correctAnswers}/{props.totalExercises}
+                  {correctAnswers}/{totalExercises}
                 </p>
               </div>
             </div>
@@ -86,14 +84,14 @@ export default function ResultPage(props: ResultPageProps) {
               disabled
             >
               <p className="font-bold text-[#c99e00] text-[clamp(16px,3vw,32px)] leading-[1.4]">
-                +{props.xpEarned}xp
+                +{xpEarned}xp
               </p>
             </button>
 
             {/* Tlacidlo kontroly chyb (len ak nie je perfektne skore) */}
-            {props.correctAnswers < props.totalExercises && (
+            {correctAnswers < totalExercises && (
               <button
-                onClick={props.onCheckMistakes}
+                onClick={onCheckMistakes}
                 className="bg-[#ff7d7d] rounded-[20px] sm:rounded-[24px] px-5 sm:px-8 py-3 sm:py-5 hover:bg-[#ff6b6b] transition-colors flex-shrink-0 min-w-[180px]"
               >
                 <p className="font-bold text-[#bb2323] text-[clamp(16px,3vw,32px)] leading-[1.4] whitespace-nowrap">
@@ -104,7 +102,7 @@ export default function ResultPage(props: ResultPageProps) {
 
             {/* Tlacidlo FINISH (Biele) */}
             <button
-              onClick={props.onFinish}
+              onClick={onFinish}
               className="bg-white rounded-[20px] sm:rounded-[24px] px-5 sm:px-8 py-3 sm:py-5 hover:bg-[#f0f0f0] transition-colors flex-shrink-0 min-w-[130px]"
             >
               <p className="font-bold text-[#222224] text-[clamp(16px,3vw,32px)] leading-[1.4]">

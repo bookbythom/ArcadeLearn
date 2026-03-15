@@ -57,6 +57,10 @@ export default function SingleChoiceTextExercise(props: SingleChoiceTextExercise
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(props.initialIsSubmitted || false);
 
+  function getOriginalIndexFromShuffled(shuffledIndex: number): number | undefined {
+    return Array.from(shuffledData.indexMap.entries()).find(([_, shuffled]) => shuffled === shuffledIndex)?.[0];
+  }
+
   useEffect(() => {
     setShuffledData(createShuffledSingleChoiceData(props.options));
   }, [props.options.join(',')]);
@@ -78,7 +82,7 @@ export default function SingleChoiceTextExercise(props: SingleChoiceTextExercise
       setIsSubmitted(true);
       
       // Konverzia pomieshaneho indexu spat na originalny index
-      const originalIndex = Array.from(shuffledData.indexMap.entries()).find(([_, shuffled]) => shuffled === selectedOption)?.[0];
+      const originalIndex = getOriginalIndexFromShuffled(selectedOption);
       
       if (props.onStateChange && originalIndex !== undefined) {
         props.onStateChange(originalIndex, true);
@@ -112,7 +116,7 @@ export default function SingleChoiceTextExercise(props: SingleChoiceTextExercise
       setSelectedOption(index);
       
       // Konverzia pomieshaneho indexu spat na originalny index
-      const originalIndex = Array.from(shuffledData.indexMap.entries()).find(([_, shuffled]) => shuffled === index)?.[0];
+      const originalIndex = getOriginalIndexFromShuffled(index);
       
       if (props.onStateChange && originalIndex !== undefined) {
         props.onStateChange(originalIndex, false);
