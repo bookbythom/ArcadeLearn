@@ -149,6 +149,7 @@ export default function LearnPage(props: LearnPageProps) {
   const [hasCalledCompleteCallback, setHasCalledCompleteCallback] = useState(false);
   const [exerciseStates, setExerciseStates] = useState<ExerciseStateMap>({});
   const [isInitialized, setIsInitialized] = useState(false);
+  const [attemptStartAwardedMask, setAttemptStartAwardedMask] = useState(0);
 
   function getCorrectMaskFromResults(results: boolean[]): number {
     let mask = 0;
@@ -193,9 +194,13 @@ export default function LearnPage(props: LearnPageProps) {
     return fallbackMask;
   }
 
-  const effectivePreviousAwardedMask = (props.previousAwardedMask && props.previousAwardedMask > 0)
-    ? props.previousAwardedMask
-    : buildFallbackMaskFromBest(props.previousBestCorrectAnswers ?? 0);
+  function resolveAttemptStartAwardedMask(): number {
+    if (props.previousAwardedMask && props.previousAwardedMask > 0) {
+      return props.previousAwardedMask;
+    }
+
+    return buildFallbackMaskFromBest(props.previousBestCorrectAnswers ?? 0);
+  }
 
   // Lokalna logika je rozdelena do malych hookov kvoli citatelnosti
   const { timerSeconds, canUserProceed } = useContentSlideTimer({
@@ -229,6 +234,7 @@ export default function LearnPage(props: LearnPageProps) {
     setShowResultsPage(false);
     setExerciseResults([]);
     setHasCalledCompleteCallback(false);
+    setAttemptStartAwardedMask(resolveAttemptStartAwardedMask());
   }, [props.level, props.theme]);
 
   // Spracovanie dokoncenia a ulozenie chyb
@@ -249,11 +255,11 @@ export default function LearnPage(props: LearnPageProps) {
       );
       
       if (props.onComplete) {
-        props.onComplete(correctCount, numberOfExercises, correctMask, effectivePreviousAwardedMask);
+        props.onComplete(correctCount, numberOfExercises, correctMask, attemptStartAwardedMask);
       }
       setHasCalledCompleteCallback(true);
     }
-  }, [showResultsPage, hasCalledCompleteCallback, exerciseResults, exerciseStates, props.userEmail, props.level, props.theme, props.themeName, props.accessToken, isFinalTest, themeData, numberOfExercises, props.onComplete]);
+  }, [showResultsPage, hasCalledCompleteCallback, exerciseResults, exerciseStates, props.userEmail, props.level, props.theme, props.themeName, props.accessToken, isFinalTest, themeData, numberOfExercises, props.onComplete, attemptStartAwardedMask]);
 
   // Funkcia pre prechod na dalsi slide
   function handleNextButton() {
@@ -345,7 +351,7 @@ export default function LearnPage(props: LearnPageProps) {
     const correctMask = getCorrectMaskFromResults(exerciseResults);
 
     if (props.onComplete && !hasCalledCompleteCallback) {
-      props.onComplete(correctCount, numberOfExercises, correctMask, effectivePreviousAwardedMask);
+      props.onComplete(correctCount, numberOfExercises, correctMask, attemptStartAwardedMask);
       setHasCalledCompleteCallback(true);
     }
 
@@ -467,7 +473,7 @@ export default function LearnPage(props: LearnPageProps) {
   if (showResultsPage) {
     const correctCount = exerciseResults.filter(result => result === true).length;
     const correctMask = getCorrectMaskFromResults(exerciseResults);
-    const previousAwardedMask = effectivePreviousAwardedMask;
+    const previousAwardedMask = attemptStartAwardedMask;
     const newlyAwardedMask = correctMask & ~previousAwardedMask;
     const xpEarned = countSetBits(newlyAwardedMask) * 5;
 
